@@ -28,7 +28,7 @@ class AUCComparator:
             RandomForestClassifier(),
             SVC(probability=True),
             ]
-        self.n_folds = 2
+        self.n_folds = 10
 
     def get_scores(self, features):
             return [AUCCalculator(self.df, features, self.target, c).calc_mean_auc(self.n_folds) for c in self.classifiers]
@@ -184,5 +184,5 @@ def test5():
     print(df)
     AUCComparator(df, ['A','B'], ['B','C'], 'T').compare()
 
-if __name__ == '__main__':
-    test5()
+# if __name__ == '__main__':
+#     test5()
