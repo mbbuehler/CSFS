@@ -1,4 +1,6 @@
-import numpy
+from random import shuffle
+
+import numpy as np
 from sklearn import tree
 from numpy import ravel, interp
 from sklearn import datasets, svm, metrics
@@ -6,7 +8,7 @@ import pandas as pd
 from sklearn.cross_validation import train_test_split, StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, roc_auc_score
 import matplotlib.pyplot as plt
 # https://datamize.wordpress.com/2015/01/24/how-to-plot-a-roc-curve-in-scikit-learn/
 # http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
@@ -16,41 +18,27 @@ from sklearn.svm import SVC
 
 class AUCComparator:
 
-    def __init__(self, df, features1, features2, target):
+    def __init__(self, df, target, fast=True, n_folds=10):
         self.df = df
-        self.features1 = features1
-        self.features2 = features2
         self.target = target
+        self.fast = fast
         self.classifiers = [
             GaussianNB(),
             LogisticRegression(),
             tree.DecisionTreeClassifier(),
             RandomForestClassifier(),
-            SVC(probability=True),
+            # SVC(probability=True), # slows it down a lot
             ]
-        self.n_folds = 10
+        self.n_folds = n_folds
 
-    def get_scores(self, features):
-            return [AUCCalculator(self.df, features, self.target, c).calc_mean_auc(self.n_folds) for c in self.classifiers]
+    def get_scores(self, feat):
+        return [AUCCalculator(self.df, feat, self.target, c, fast=self.fast).calc_mean_auc(self.n_folds) for c in self.classifiers]
 
-    def compare(self):
-        scores_fs1 = self.get_scores(self.features1)
-        scores_fs2 = self.get_scores(self.features2)
-        print(scores_fs1)
-        print(scores_fs2)
-        df = pd.DataFrame({'fs1 (mean: %.2f)' % numpy.mean(scores_fs1) : scores_fs1,
-                           'fs2 (mean: %.2f)' % numpy.mean(scores_fs2): scores_fs2,
-                        }).plot()
-        plt.ylabel('AUC')
-        plt.xlabel('Classifier')
-        plt.xlim([0,1.1])
-        plt.ylim([0,1.1])
-
-        plt.show()
-
+    def get_mean_score(self, feat):
+        return np.mean(self.get_scores(feat))
 
 class AUCCalculator:
-    def __init__(self, df, features, target, classifier):
+    def __init__(self, df, features, target, classifier, fast=True):
         """
 
         :param df: pandas.DataFrame
@@ -63,6 +51,7 @@ class AUCCalculator:
         self.features = features
         self.target = target
         self.classifier = classifier
+        self.fast = fast
 
     def _extract_X_from_df(self):
         return self.df[self.features].values
@@ -71,6 +60,16 @@ class AUCCalculator:
         return ravel(self.df[self.target].values)
 
     def calc_mean_auc(self, n_folds):
+        if self.fast:
+            return self.calc_mean_auc_fast(n_folds)
+        return self.calc_mean_auc_slow(n_folds)
+
+    def calc_mean_auc_fast(self, n_folds):
+        X = self._extract_X_from_df()
+        y = self._extract_y_from_df()
+        return np.mean([roc_auc_score(y[test], self.classifier.fit(X[train], y[train]).predict_proba(X[test])[:,1]) for i, (train,test) in enumerate(StratifiedKFold(y, n_folds=n_folds))])
+
+    def calc_mean_auc_slow(self, n_folds):
         X = self._extract_X_from_df()
         y = self._extract_y_from_df()
 
@@ -82,8 +81,14 @@ class AUCCalculator:
             probas_ = classifier.fit(X[train], y[train]).predict_proba(X[test])
             fpr, tpr, thresholds = roc_curve(y[test], probas_[:,1])
             roc_aucs.append(auc(fpr, tpr))
-        auc_mean = numpy.mean(roc_aucs)
+        auc_mean = np.mean(roc_aucs)
         return auc_mean
+
+def select_random_features(features, n):
+    shuffle(features)
+    return features[:n]
+
+
 
 def test4():
     iris = datasets.load_iris()
@@ -120,7 +125,7 @@ def test2():
     classifier = LogisticRegression()
 
     mean_tpr = 0.0
-    mean_fpr = numpy.linspace(0,1,100)
+    mean_fpr = np.linspace(0,1,100)
     all_tpr = []
     roc_aucs = list()
 
@@ -140,7 +145,7 @@ def test2():
     plt.xlabel('False Positive Rate')
     plt.legend(loc='lower right')
     plt.show()
-    auc_mean = numpy.mean(roc_aucs)
+    auc_mean = np.mean(roc_aucs)
     print('avg roc auc: {}'.format(auc_mean))
     return auc_mean
 
@@ -178,11 +183,40 @@ def test():
     plt.legend(loc='lower right')
     plt.show()
 
-def test5():
+def measure_time():
+    setup = """
+from random import shuffle
+
+import numpy as np
+from sklearn import tree
+from numpy import ravel, interp
+from sklearn import datasets, svm, metrics
+import pandas as pd
+from sklearn.cross_validation import train_test_split, StratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_curve, auc, roc_auc_score
+import matplotlib.pyplot as plt
+# https://datamize.wordpress.com/2015/01/24/how-to-plot-a-roc-curve-in-scikit-learn/
+# http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
+from __main__ import AUCComparator
+from __main__ import AUCCalculator
+features = ['A', 'B', 'C']
+data = {'A': [0,1,2,3,4,5], 'B': [0,0,0,1,1,1], 'C' : [1,3,5,2,3,4], 'T': [0,0,0,1,1,1]}
+df = pd.DataFrame(data)
+    """
+    slow = """AUCComparator(df, 'T', n_folds=3, fast=False).get_mean_score(features)"""
+    fast = """AUCComparator(df, 'T', n_folds=3, fast=True).get_mean_score(features)"""
+    print (min(timeit.Timer(slow, setup=setup).repeat(7, 100)))
+    print (min(timeit.Timer(fast, setup=setup).repeat(7, 100)))
+
+if __name__ == '__main__':
+    import timeit
+    features = ['A', 'B', 'C']
     data = {'A': [0,1,2,3,4,5], 'B': [0,0,0,1,1,1], 'C' : [1,3,5,2,3,4], 'T': [0,0,0,1,1,1]}
     df = pd.DataFrame(data)
-    print(df)
-    AUCComparator(df, ['A','B'], ['B','C'], 'T').compare()
+    print(AUCComparator(df, 'T', n_folds=3, fast=False).get_mean_score(features))
+    print(AUCComparator(df, 'T', n_folds=3, fast=True).get_mean_score(features))
 
-# if __name__ == '__main__':
-#     test5()
