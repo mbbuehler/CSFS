@@ -9,16 +9,18 @@ import matplotlib.pyplot as plt
 from math import log2
 
 
-def structure_data(df):
+def structure_data(df, target='target'):
     data = {}
     for f in df:
+        ig = IG(df[target], df[f])
+
         mean = np.mean(df[f])
         std = np.std(df[f])
         tmp = df[df[f] == 1]
-        cond_mean_y_1 = sum(tmp['target'])/len(tmp[f])
+        cond_mean_y_1 = sum(tmp['target'])/len(tmp[f]) if len(tmp[f]) > 0 else 0
         tmp = df[df[f] == 0]
-        cond_mean_y_0 = sum(tmp['target'])/len(tmp[f])
-        data[f] = {'mean': mean, 'std': std, 'cond_mean_f_1' : cond_mean_y_1, 'cond_mean_f_0': cond_mean_y_0}
+        cond_mean_y_0 = sum(tmp['target'])/len(tmp[f]) if len(tmp[f]) > 0 else 0
+        data[f] = {'mean': mean, 'std': std, 'cond_mean_f_1' : cond_mean_y_1, 'cond_mean_f_0': cond_mean_y_0, 'ig': ig}
     df_actual = pd.DataFrame(data).transpose()
     """
                                     mean       std
