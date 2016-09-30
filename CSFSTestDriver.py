@@ -1,4 +1,4 @@
-from CSFSSelector import CSFSRandomSelector, CSFSBestActualSelector
+from CSFSSelector import CSFSRandomSelector, CSFSBestActualSelector, CSFSBestUncertainSelector
 from CSFSLoader import CSFSLoader
 
 
@@ -18,6 +18,10 @@ def main():
     selector = CSFSBestActualSelector(df, target)
     pred_best = selector.select(3)
     print(pred_best)
+
+    # df_crowd = pd.DataFrame()
+    selector = CSFSBestUncertainSelector(df, target)
+    selector.select(3)
 
 
 
