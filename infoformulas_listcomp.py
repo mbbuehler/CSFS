@@ -105,6 +105,19 @@ def cond_means(X,Y,y):
     ratios = [prob(X_selected, xi) for xi in set(X_selected)]
     return ratios
 
+def H_cond(x1_y0, x1_y1, y1):
+    """
+    with (cond.) probabilities
+    :param x1_y0:
+    :param x1_y1: (noisy) cond p
+    :param y1:
+    :return:
+    """
+    y0 = 1-y1
+    x0_y0 = 1 - x1_y0
+    x0_y1 = 1 - x1_y1
+    return y0 * (_H([x1_y0, x0_y0])) + y1 * (_H([x1_y1, x0_y1]))
+
 def test():
     print(' == Start Tests ==')
     y = [1, 1, 1, 0, 0]

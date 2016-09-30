@@ -21,7 +21,7 @@ def main():
 
     # df_crowd = pd.DataFrame()
     selector = CSFSBestUncertainSelector(df, target)
-    selector.select(3)
+    print(selector.select(3))
 
 
 
