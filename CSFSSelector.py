@@ -1,9 +1,7 @@
 from random import shuffle
 import numpy as np
-from infoformulas_listcomp import IG, H, _H
+from infoformulas_listcomp import IG, H, _H, H_cond
 import pandas as pd
-
-from noise_helper_funcs import H_cond
 
 
 class CSFSSelector:
@@ -22,7 +20,8 @@ class CSFSSelector:
         if len(self.all_predictors) < n:
             raise Exception('n > than len(all_predictors). Not enough features available')
 
-    def _get_orderend_predictors_dsc(self, dict_ig):
+    @staticmethod
+    def _get_ordered_predictors_dsc(dict_ig):
         return sorted(dict_ig, key=dict_ig.__getitem__, reverse=True)
 
 
@@ -40,7 +39,7 @@ class CSFSBestActualSelector(CSFSSelector):
     def __init__(self, df, target, df_crowd = None):
         super().__init__(df, target)
         self.dict_ig = self._get_dict_ig(df, self.target)
-        self.ordered_predictors_dsc = self._get_orderend_predictors_dsc(self.dict_ig)
+        self.ordered_predictors_dsc = self._get_ordered_predictors_dsc(self.dict_ig)
 
     def select(self, n):
         self._check_predictors_length(n)
@@ -106,4 +105,4 @@ class CSFSBestUncertainSelector(CSFSSelector):
     def select(self, n):
         self._check_predictors_length(n)
         dict_ig = self._get_dict_ig()
-        return self._get_orderend_predictors_dsc(dict_ig)[:n]
+        return self._get_ordered_predictors_dsc(dict_ig)[:n]
