@@ -1,3 +1,5 @@
+import pickle
+
 from CSFSSelector import CSFSRandomSelector, CSFSBestActualSelector, CSFSBestUncertainSelector
 
 from feature_subset_comparison2 import AUCComparator
@@ -62,9 +64,11 @@ class CSFSEvaluator:
         plt.legend(legend_list, loc=4)
         plt.xlabel('# samples (total: {})'.format(scores_count))
         plt.ylabel('AUC')
+        fig1 = plt.gcf()
+        fig1.savefig('plots/{}/{}features_{}samples.png'.format(info['dataset'], info['N_features'], scores_count), dpi=100)
+        pickle.dump(auc_scores, open("pickle-dumps/{}_{}features_{}samples.pickle".format(info['dataset'], info['N_features'], scores_count), 'wb'))
+
         if show:
             plt.show()
-        fig1 = plt.gcf()
         plt.draw()
         plt.hold(False)
-        fig1.savefig('plots/{}/{}features_{}samples.png'.format(info['dataset'], info['N_features'], scores_count), dpi=100)
