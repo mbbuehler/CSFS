@@ -11,7 +11,7 @@ def main():
     dataset_name = "madelon"
     target = 'target'
     N_features = [2,3,5,7,11,13,16]
-    N_samples = 100
+    N_samples = 500
 
     df = CSFSLoader.load_dataset(path, format='csv')
     df = preprocess(df)
