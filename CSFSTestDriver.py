@@ -8,7 +8,7 @@ def main():
     path = 'datasets/test/test.csv'
     target = 'T'
     N_features = 3
-    N_samples = 100
+    N_samples = 2
 
     df = CSFSLoader.load_dataset(path, format='csv')
     evaluator = CSFSEvaluator(df, target)

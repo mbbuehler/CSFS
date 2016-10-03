@@ -1,6 +1,8 @@
 from math import log
 
+import math
 # Checked with results from http://www.cs.man.ac.uk/~pococka4/MIToolbox.html (7.9.16)
+
 
 def joint_probabilities(X, Y):
     """
@@ -12,8 +14,7 @@ def joint_probabilities(X, Y):
     probs = dict()
     for x in set(X):
         for y in set(Y):
-            p_0 = sum([1 for k in range(n_min) if X[k] == x and Y[k] == y])/n_min
-            probs[(x,y)] = p_0
+            probs[(x,y)] = sum([1 for k in range(n_min) if X[k] == x and Y[k] == y])/n_min
     return probs
 
 def _H(probs):
@@ -73,6 +74,8 @@ def IG(x,y):
     return H(x) - H_X_Y(x, y)
 
 
+def IG_fast(x, y, h_x):
+    return h_x - H_X_Y(x,y)
 
 def H_XY(x, y):
     """
@@ -166,10 +169,16 @@ def test():
     print(MI(x,y))
     print(IG(x,y))
 
+    import pandas as pd
+    print('IG_fast')
+    data = pd.DataFrame({'x1':x,'x2':x,'y':y})
+    data = {'x1':x,'x2':x,'y':y}
+    print(data)
+    print(IG_fast(data,'x1','y'))
+
 
 
     print(' == Tests OK ==')
 # test()
-
 
 

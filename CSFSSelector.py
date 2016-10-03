@@ -1,12 +1,13 @@
 from random import shuffle
 import numpy as np
-from infoformulas_listcomp import IG, H, _H, H_cond
+from infoformulas_listcomp import IG, H, _H, H_cond, IG_fast
 import pandas as pd
 
 
 class CSFSSelector:
 
     def __init__(self, df, target, df_crowd = None):
+        self.df = df
         self.target = target
         self.all_features = [f for f in df]
         self.all_predictors = [f for f in df if f != target]
@@ -38,15 +39,16 @@ class CSFSBestActualSelector(CSFSSelector):
 
     def __init__(self, df, target, df_crowd = None):
         super().__init__(df, target)
-        self.dict_ig = self._get_dict_ig(df, self.target)
-        self.ordered_predictors_dsc = self._get_ordered_predictors_dsc(self.dict_ig)
 
     def select(self, n):
         self._check_predictors_length(n)
-        return self.ordered_predictors_dsc[:n]
+        dict_ig = self._get_dict_ig(self.df, self.target)
+        ordered_predictors_dsc = self._get_ordered_predictors_dsc(dict_ig)
+        return ordered_predictors_dsc[:n]
 
-    def _get_dict_ig(self, df, target):
-        return {f: IG(df[target], df[f]) for f in self.all_predictors}
+    def _get_dict_ig(self):
+        h_x = H(self.df[self.target])
+        return {f: IG_fast(self.df[self.target], self.df[f], h_x) for f in self.all_predictors}
 
 class CSFSBestUncertainSelector(CSFSSelector):
 

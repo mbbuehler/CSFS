@@ -26,7 +26,7 @@ class AUCComparator:
             GaussianNB(),
             LogisticRegression(),
             tree.DecisionTreeClassifier(),
-            RandomForestClassifier(),
+            # RandomForestClassifier(),
             # SVC(probability=True), # slows it down a lot
             ]
         self.n_folds = n_folds
