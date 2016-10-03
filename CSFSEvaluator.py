@@ -8,12 +8,13 @@ import matplotlib.pyplot as plt
 
 class CSFSEvaluator:
 
-    def __init__(self, df, target):
+    def __init__(self, df, target, fix_std=None ):
         self.comparator = AUCComparator(df, target, fast=False, n_folds=2)
         self.df = df
         self.target = target
         # this one will return deterministic results -> create here for better performance
         self.best_selector = CSFSBestActualSelector(self.df, self.target)
+        self.fix_std = fix_std
 
     def _get_mean_auc_score(self, features):
         return self.comparator.get_mean_score(features)
@@ -31,7 +32,7 @@ class CSFSEvaluator:
         print('> random selector ok')
         # best_selector = CSFSBestActualSelector(self.df, self.target)
         # print('> best selector ok')
-        best_noisy_selector = CSFSBestUncertainSelector(self.df, self.target)
+        best_noisy_selector = CSFSBestUncertainSelector(self.df, self.target, fix_std=self.fix_std)
         print('> best noisy selector ok')
 
         aucs = {'random': [], 'best': [], 'best_noisy': []}
@@ -73,8 +74,9 @@ class CSFSEvaluator:
         plt.xlabel('# samples (total: {})'.format(scores_count))
         plt.ylabel('AUC')
         fig1 = plt.gcf()
-        fig1.savefig('plots/{}/{}features_{}samples.png'.format(info['dataset'], info['N_features'], scores_count), dpi=100)
-        pickle.dump(auc_scores, open("pickle-dumps/{}_{}features_{}samples.pickle".format(info['dataset'], info['N_features'], scores_count), 'wb'))
+        filepath = '{}/{}features_{}samples_{:.3f}std'.format(info['dataset'], info['N_features'], scores_count, info['std'])
+        fig1.savefig('plots/{}.png'.format(filepath), dpi=100)
+        pickle.dump(auc_scores, open("pickle-dumps/{}.pickle".format(filepath), 'wb'))
 
         if show:
             plt.show()

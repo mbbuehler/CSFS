@@ -46,29 +46,31 @@ class CSFSBestActualSelector(CSFSSelector):
         self._check_predictors_length(n)
         return self.ordered_predictors_dsc[:n]
 
+
     def _get_dict_ig(self):
         h_x = H(self.df[self.target])
+
         return {f: IG_fast(self.df[self.target], self.df[f], h_x) for f in self.all_predictors}
+
 
 class CSFSBestUncertainSelector(CSFSSelector):
 
-    def __init__(self, df, target, df_crowd = None):
+    def __init__(self, df, target, fix_std = None):
         super().__init__(df, target)
         self.df_info = self._get_df_info(df)
         self.df_actual = df
+        self.fix_std = fix_std
 
     def _get_df_info(self, df):
         entropies = [H(df[f]) for f in self.all_features]
         mean = [np.mean(df[f]) for f in self.all_features]
         std = [np.std(df[f]) for f in self.all_features]
 
-        tmp_df = df[df[self.target] == 0]
-        cond_mean_f_0 = [np.mean(tmp_df[f]) for f in self.all_features]
+        cond_mean_target_f0 = [np.mean(df[df[f] == 0][self.target]) for f in self.all_features]
 
-        tmp_df = df[df[self.target] == 1]
-        cond_mean_f_1 = [np.mean(tmp_df[f]) for f in self.all_features]
+        cond_mean_target_f1= [np.mean(df[df[f] == 1][self.target]) for f in self.all_features]
 
-        data = {'H': entropies, 'mean': mean, 'std': std, 'cond_mean_f_0': cond_mean_f_0, 'cond_mean_f_1': cond_mean_f_1}
+        data = {'H': entropies, 'mean': mean, 'std': std, 'cond_mean_target_f0': cond_mean_target_f0, 'cond_mean_target_f1': cond_mean_target_f1}
         df_info = pd.DataFrame(data)
         df_info.index = self.all_features
         return df_info
@@ -79,7 +81,8 @@ class CSFSBestUncertainSelector(CSFSSelector):
         :param pred:
         :return: a single noisy sample for the conditional mean p(x=1|y=1) Can be negative!
         """
-        return np.random.normal(self.df_info['cond_mean_f_1'].loc[pred], self.df_info['std'].loc[pred])
+        std = self.fix_std if self.fix_std is not None else self.df_info['std'].loc[pred]
+        return np.random.normal(self.df_info['cond_mean_target_f1'].loc[pred], std)
 
     def _get_noisy_x1_y1(self):
         """
@@ -96,10 +99,11 @@ class CSFSBestUncertainSelector(CSFSSelector):
 
     def _get_dict_ig(self):
         dict_ig = dict()
-        self.df_info['cond_mean_f_1_noisy'] = self._get_noisy_x1_y1()
+        self.df_info['cond_mean_target_f1noisy'] = self._get_noisy_x1_y1()
+
         h_x = _H([self.df_info['mean'].loc[self.target], 1 - self.df_info['mean'].loc[self.target]])
         for pred in self.all_predictors:
-            h_cond = H_cond(self.df_info['cond_mean_f_0'].loc[pred], self.df_info['cond_mean_f_1_noisy'].loc[pred], self.df_info['mean'].loc[pred])
+            h_cond = H_cond(self.df_info['cond_mean_target_f0'].loc[pred], self.df_info['cond_mean_target_f1noisy'].loc[pred], self.df_info['mean'].loc[pred])
             ig = h_x - h_cond
             dict_ig[pred] = ig
         return dict_ig

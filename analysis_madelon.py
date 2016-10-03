@@ -11,16 +11,18 @@ def main():
     dataset_name = "madelon"
     target = 'target'
     N_features = [2,3,5,7,11,13,16]
-    N_samples = 500
+    N_samples = 100
 
     df = CSFSLoader.load_dataset(path, format='csv')
     df = preprocess(df)
 
-    evaluator = CSFSEvaluator(df, target)
+    std = None
+
+    evaluator = CSFSEvaluator(df, target, fix_std=std)
 
     for n in N_features:
         aucs = evaluator.evaluate(n, N_samples)
-        evaluator.plot(aucs, {'dataset': dataset_name, 'N_features': n, 'N_samples': N_samples})
+        evaluator.plot(aucs, {'dataset': dataset_name, 'N_features': n, 'N_samples': N_samples, 'std': std})
 
 def preprocess(data):
     for f in data:
