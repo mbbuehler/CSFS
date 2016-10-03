@@ -16,7 +16,7 @@ def main():
     df = CSFSLoader.load_dataset(path, format='csv')
     df = preprocess(df)
 
-    std = None
+    std = .05
 
     evaluator = CSFSEvaluator(df, target, fix_std=std)
 
