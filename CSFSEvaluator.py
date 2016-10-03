@@ -12,6 +12,8 @@ class CSFSEvaluator:
         self.comparator = AUCComparator(df, target, fast=False, n_folds=2)
         self.df = df
         self.target = target
+        # this one will return deterministic results -> create here for better performance
+        self.best_selector = CSFSBestActualSelector(self.df, self.target)
 
     def _get_mean_auc_score(self, features):
         return self.comparator.get_mean_score(features)
@@ -27,8 +29,8 @@ class CSFSEvaluator:
         """
         random_selector = CSFSRandomSelector(self.df, self.target)
         print('> random selector ok')
-        best_selector = CSFSBestActualSelector(self.df, self.target)
-        print('> best selector ok')
+        # best_selector = CSFSBestActualSelector(self.df, self.target)
+        # print('> best selector ok')
         best_noisy_selector = CSFSBestUncertainSelector(self.df, self.target)
         print('> best noisy selector ok')
 
@@ -36,7 +38,7 @@ class CSFSEvaluator:
         for i in range(N_samples):
             print('> processing sample {} from {} samples'.format(i, N_samples))
             random_f = random_selector.select(N_features)
-            best_f = best_selector.select(N_features)
+            best_f = self.best_selector.select(N_features)
             best_noisy_f = best_noisy_selector.select(N_features)
 
             aucs['random'].append(self._get_mean_auc_score(random_f))

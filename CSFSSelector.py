@@ -39,12 +39,12 @@ class CSFSBestActualSelector(CSFSSelector):
 
     def __init__(self, df, target, df_crowd = None):
         super().__init__(df, target)
+        dict_ig = self._get_dict_ig()
+        self.ordered_predictors_dsc = self._get_ordered_predictors_dsc(dict_ig)
 
     def select(self, n):
         self._check_predictors_length(n)
-        dict_ig = self._get_dict_ig(self.df, self.target)
-        ordered_predictors_dsc = self._get_ordered_predictors_dsc(dict_ig)
-        return ordered_predictors_dsc[:n]
+        return self.ordered_predictors_dsc[:n]
 
     def _get_dict_ig(self):
         h_x = H(self.df[self.target])
