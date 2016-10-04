@@ -24,7 +24,7 @@ def analysis2():
     df = CSFSLoader.load_dataset(path, format='csv')
     df = preprocess(df)
 
-    for std in np.linspace(0.00001, 0.0001, 1000):
+    for std in np.linspace(0.00001, 0.00011, 1000):
         print('std', std)
         evaluator = CSFSEvaluator(df, target, fix_std=std)
         best_noisy_selector = CSFSBestUncertainSelector(df, target, fix_std=std)
@@ -32,7 +32,7 @@ def analysis2():
             aucs = evaluator.evaluate_noisy(n, N_samples, best_noisy_selector)
 
             filepath = '{}/{}features_{}samples_{}std'.format(dataset_name, n, len(aucs['best_noisy']), std)
-            pickle.dump(aucs, open("pickle-dumps/{}.pickle".format(filepath), 'wb'))
+            pickle.dump(aucs, open("pickle-dumps/{:.9}.pickle".format(filepath), 'wb'))
 
 
 def analysis1():
