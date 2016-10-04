@@ -31,7 +31,7 @@ def analysis2():
         for n in N_features:
             aucs = evaluator.evaluate_noisy(n, N_samples, best_noisy_selector)
 
-            filepath = '{}/{}features_{}samples_{:.5f}std'.format(dataset_name, n, len(aucs['best_noisy']), std)
+            filepath = '{}/{}features_{}samples_{}std'.format(dataset_name, n, len(aucs['best_noisy']), std)
             pickle.dump(aucs, open("pickle-dumps/{}.pickle".format(filepath), 'wb'))
 
 
