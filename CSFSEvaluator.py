@@ -19,6 +19,13 @@ class CSFSEvaluator:
     def _get_mean_auc_score(self, features):
         return self.comparator.get_mean_score(features)
 
+    def evaluate_noisy(self, N_features, N_samples, best_noisy_selector):
+        aucs = {'best_noisy': []}
+        for i in range(N_samples):
+            best_noisy_f = best_noisy_selector.select(N_features)
+            aucs['best_noisy'].append(self._get_mean_auc_score(best_noisy_f))
+        return aucs
+
     def evaluate(self, N_features=5, N_samples=100):
         """
 
