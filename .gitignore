@@ -90,3 +90,6 @@ ENV/
 
 # Project settings
 .idea
+
+# nohup out
+nohup.out
