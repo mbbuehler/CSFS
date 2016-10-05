@@ -24,7 +24,7 @@ def analysis2():
     df = CSFSLoader.load_dataset(path, format='csv')
     df = preprocess(df)
 
-    start_std = 0.000026
+    start_std = 0.000026416
 
     for std in np.linspace(0.00001, 0.00011, 1000):
         if std > start_std:
