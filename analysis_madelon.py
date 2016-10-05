@@ -2,12 +2,27 @@ import numpy as np
 import pickle
 
 import pandas as pd
+import sys
 from sklearn.preprocessing import binarize
 
 from CSFSLoader import CSFSLoader
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestUncertainSelector
 from noise_helper_funcs import structure_data
+
+"""
+Example starting command:
+python3 analysis_madelon.py 0.000026416 0.00005
+"""
+
+try:
+    start_std = float(sys.argv[1])
+    end_std = float(sys.argv[2])
+except:
+    print('please use 2 cmd line arguments:')
+    print('1. start_std (e.g. 0.00003) and 2. end_std (e.g. 0.0001)')
+    exit(-1)
+
 
 
 def analysis2():
@@ -24,10 +39,10 @@ def analysis2():
     df = CSFSLoader.load_dataset(path, format='csv')
     df = preprocess(df)
 
-    start_std = 0.000026416
+    # start_std = 0.000026416
 
     for std in np.linspace(0.00001, 0.00011, 1000):
-        if std > start_std:
+        if start_std < std < end_std:
             print('std', std)
             evaluator = CSFSEvaluator(df, target, fix_std=std)
             best_noisy_selector = CSFSBestUncertainSelector(df, target, fix_std=std)
