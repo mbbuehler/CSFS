@@ -6,7 +6,6 @@ from feature_subset_comparison2 import AUCComparator
 from infoformulas_listcomp import *
 from infoformulas_listcomp import _H
 import matplotlib.pyplot as plt
-from math import log2
 
 
 def structure_data(df, target='target'):
