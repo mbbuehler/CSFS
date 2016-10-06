@@ -27,6 +27,7 @@ def std_analysis():
     pattern = r'(\d+)features_100samples_(.*?)std'
     for f in files:
         match = re.match(pattern, f)
+        # print(f)
         no_features = int(match.group(1))
         std = float(match.group(2))
 
@@ -47,7 +48,9 @@ def std_analysis():
     plt.title('auc scores for different #features with noisy IG')
     plt.xlabel('std')
     plt.ylabel('auc')
+    fig1 = plt.gcf()
     plt.show()
+    fig1.savefig('plots/madelon/std_result.png', dpi=100)
 
 # def analysis2_fix():
 #     try:
@@ -104,7 +107,7 @@ def analysis2():
 
     # start_std = 0.000026416
 
-    for std in np.linspace(0.00001, 0.00011, 1000):
+    for std in np.linspace(0.00011, 0.3, 1000):
         if start_std < std < end_std:
             print('std', std)
             evaluator = CSFSEvaluator(df, target, fix_std=std)
@@ -145,6 +148,6 @@ def preprocess(data):
     return data
 
 if __name__ == "__main__":
-    # analysis2()
-    std_analysis()
+    analysis2()
+    # std_analysis()
     # analysis2_fix()
