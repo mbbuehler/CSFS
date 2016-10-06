@@ -93,3 +93,4 @@ ENV/
 
 # nohup out
 nohup.out
+*.out 
