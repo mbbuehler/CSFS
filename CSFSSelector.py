@@ -111,4 +111,6 @@ class CSFSBestUncertainSelector(CSFSSelector):
     def select(self, n):
         self._check_predictors_length(n)
         dict_ig = self._get_dict_ig()
+        print(dict_ig)
+        print(self._get_ordered_predictors_dsc(dict_ig)[:n])
         return self._get_ordered_predictors_dsc(dict_ig)[:n]
