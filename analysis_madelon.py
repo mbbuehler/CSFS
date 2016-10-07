@@ -70,6 +70,9 @@ def visualize_result():
     def func(x,  w1, p1, w2, p2):
         return w1 * pow(x, p1) + w2 * pow(x, p2)
 
+    # def func(x, w1, p1, w2, p2, w3):
+    #     return w1 * pow(x, p1) + w2 * pow(x, p2) + w3 * np.log10(x)
+
     for n_f in N_features:
         print('== no of features: {}'.format(n_f))
         x,y = extract_x_y(results, n_f, start_lim=0)
