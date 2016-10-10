@@ -24,7 +24,7 @@ def analysis_general():
         dataset_name = sys.argv[3]
     except:
         print('please use 3 cmd line arguments:')
-        print('1. start_std (e.g. 0.00003) and 2. end_std (e.g. 0.0001) 3. Dataset name (e.g. artifical3)')
+        print('1. start_std (e.g. 0.00003) and 2. end_std (e.g. 0.0001) 3. Dataset name (e.g. artificial3)')
         exit(-1)
 
     path = "datasets/artificial/{}.pickle".format(dataset_name)
@@ -47,12 +47,12 @@ def analysis_general():
     sys.stdout.write('analysis with std ranging from {} to {} is finished.'.format(start_std, end_std))
 
 
-def get_result_data(n_features):
+def get_result_data(n_features, dataset_name):
     """
 
     :return: {no_features: {std: auc},...} e.g. {16: {0.200036667: 0.53119531952662713, 0.105176567: 0.57273262130177505
     """
-    path = 'pickle-dumps/artificial1'
+    path = 'pickle-dumps/{}'.format(dataset_name)
     files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
 
     results = dict()
@@ -87,11 +87,9 @@ def extract_x_y(result, n_features, start_lim=0):
     return np.array(x, dtype=float), np.array(y, dtype=float)
 
 def visualize_result():
-    dataset_name = "madelon"
-    target = 'T'
+    dataset_name = 'artificial2'
     N_features = [3,5,7]#,11,13,16]
-    N_samples = 100
-    results = get_result_data(N_features)
+    results = get_result_data(N_features, dataset_name=dataset_name)
     plt.hold(True)
     fit_curve = True
     start_lim = 0.0
