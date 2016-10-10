@@ -11,7 +11,7 @@ from CSFSEvaluator import CSFSEvaluator
 from CSFSLoader import CSFSLoader
 from CSFSSelector import CSFSBestUncertainSelector
 
-def _conduct_analysis(df, target, std, N_features, N_samples):
+def _conduct_analysis(df, target, std, N_features, N_samples, dataset_name):
     sys.stdout.write('std:{}{}'.format(std,'\n'))
     evaluator = CSFSEvaluator(df, target, fix_std=std)
     best_noisy_selector = CSFSBestUncertainSelector(df, target, fix_std=std)
@@ -29,7 +29,7 @@ def analysis_general(dataset_name, N_features, N_samples):
     df = CSFSLoader().load_dataset(path)
     target = "T"
 
-    Parallel(n_jobs=4)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples) for std in np.linspace(0.00001, 0.3, 500))
+    Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, 0.3, 500))
 
 
 if __name__ == "__main__":
