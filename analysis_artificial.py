@@ -129,5 +129,5 @@ def visualize_result():
     plt.show()
     fig1.savefig('plots/artificial1/std_result.png', dpi=100)
 
-#analysis_general()
-visualize_result()
+analysis_general()
+#visualize_result()
