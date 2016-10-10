@@ -93,7 +93,7 @@ def visualize_result():
     N_samples = 100
     results = get_result_data(N_features)
     plt.hold(True)
-    fit_curve = False
+    fit_curve = True
     start_lim = 0.0
     params = dict()
 
@@ -109,16 +109,19 @@ def visualize_result():
         std = np.std(y)
         plt.plot(x, y, alpha=0.5, label='data {} (std={:.3f})'.format(n_f, std))
         if fit_curve:
-            x,y = extract_x_y(results, n_f, start_lim=start_lim)
-            popt, pcov = curve_fit(func, x, y)
-            params[n_f] = popt
-            perr = np.sqrt(np.diag(pcov))
-            avg_err = np.mean(perr)
-            print('params: {} '.format(popt))
-            print('errors: {}'.format(perr))
-            print('avg error: {}'.format(avg_err))
+            try:
+                x,y = extract_x_y(results, n_f, start_lim=start_lim)
+                popt, pcov = curve_fit(func, x, y)
+                params[n_f] = popt
+                perr = np.sqrt(np.diag(pcov))
+                avg_err = np.mean(perr)
+                print('params: {} '.format(popt))
+                print('errors: {}'.format(perr))
+                print('avg error: {}'.format(avg_err))
 
-            plt.plot(x, func(x, *popt), '-k', linewidth=2, label="Fitted {} (avg err: {:.3f})".format(n_f, avg_err))
+                plt.plot(x, func(x, *popt), '-k', linewidth=2, label="Fitted {} (avg err: {:.3f})".format(n_f, avg_err))
+            except:
+                sys.stdout.write('Could not fit curve for {} features'.format(n_f))
 
     plt.legend(loc=1)
     plt.title('auc scores / fitted curves for noisy IG. start fitting at std={}'.format(start_lim))
@@ -129,5 +132,5 @@ def visualize_result():
     plt.show()
     fig1.savefig('plots/artificial1/std_result.png', dpi=100)
 
-analysis_general()
-#visualize_result()
+#analysis_general()
+visualize_result()
