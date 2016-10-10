@@ -33,9 +33,11 @@ def analysis_general(dataset_name, N_features, N_samples):
 
 
 if __name__ == "__main__":
-
-    dataset_name = "artificial10"
     N_features = [3,5,7,10]#,11,13,16]
     N_samples = 100
 
-    analysis_general(dataset_name,N_features, N_samples)
+    analysis_general("artificial10",N_features, N_samples)
+    analysis_general("artificial11",N_features, N_samples)
+    analysis_general("artificial12",N_features, N_samples)
+    analysis_general("artificial13",N_features, N_samples)
+    analysis_general("artificial14",N_features, N_samples)

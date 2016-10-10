@@ -147,12 +147,11 @@ def write_readme(file_path, X, y, y_noisy, std, n_relevant_features, params):
     file.close()
 
 def main():
-    dataset_name = "artificial10"
-    N_features = 50
-    N_samples = 1000
-    std = 0.35
-
-    create_artifical(dataset_name, N_features, N_samples, std)
+    create_artifical("artificial10", N_features=10, N_samples=1000, std=0.35)
+    create_artifical("artificial11", N_features=20, N_samples=1000, std=0.35)
+    create_artifical("artificial12", N_features=50, N_samples=1000, std=0.35)
+    create_artifical("artificial13", N_features=100, N_samples=1000, std=0.35)
+    create_artifical("artificial14", N_features=200, N_samples=1000, std=0.35)
 
 
 if __name__ == "__main__":
