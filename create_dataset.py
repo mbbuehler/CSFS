@@ -3,41 +3,70 @@ import pandas as pd
 from numpy.random import random
 import numpy as np
 from sklearn.preprocessing import binarize
+import pickle
 
-N_features = 100
-N_samples = 1000
+dump_path = 'datasets/artificial/'
 
+def artifical1():
+     N_features = 100
+     N_samples = 1000
 
-N_features = 3
-N_samples = 10
+     def get_bin_random_col(mean, std, n, t):
+          values = np.random.normal(mean, std, n)
+          values = [0 if v < t else 1 for v in values]
+          return values
 
-means = random(N_features)
-stds = random(N_features)/3
-samples = pd.DataFrame()
-for i in range(N_features):
-     values = np.random.normal(means[i], stds[i], N_samples)
-     samples['X{}'.format(i)] = values
+     means = random(N_features)
+     stds = random(N_features)/3
+     samples = pd.DataFrame()
+     for i in range(N_features):
+          t = .5
+          samples['X{}'.format(i)] = get_bin_random_col(means[i], stds[i], N_samples, t)
+     samples['T'] = get_bin_random_col(0.5, 0.2, N_samples, 0.5)
 
+     print(samples.describe())
+     art1_path = dump_path+'/artificial1.pickle'
+     pickle.dump(samples, open(art1_path, 'wb'))
 
-print(samples)
-print(binarize(samples, .5))
-exit()
-print(means)
-print(std)
+def artifical2():
+     N_features = 5
+     N_samples = 1000
 
-means_binned = np.histogram(means, 10)
-print(means_binned)
+     def get_bin_random_col(mean, std, n, t):
+          values = np.random.normal(mean, std, n)
+          values = [0 if v < t else 1 for v in values]
+          return values
 
-mean = 0.7
-std = 0.07
-std = 0.000001
-x1 = np.random.normal(mean, std, N_samples)
-print(x1)
-binned = np.histogram(x1,5)[0]
-print(binned)
-dummies = pd.get_dummies(binned)
-print(dummies)
+     means = random(N_features)
+     stds = random(N_features)/3
+     samples = pd.DataFrame()
+     for i in range(N_features):
+          t = .5
+          samples['X{}'.format(i)] = get_bin_random_col(means[i], stds[i], N_samples, t)
+     samples['T'] = get_bin_random_col(0.5, 0.2, N_samples, 0.5)
 
+     print(samples.describe())
+     art2_path = dump_path+'/artificial2.pickle'
+     pickle.dump(samples, open(art2_path, 'wb'))
 
-# for i in range(N_features):
-#     np.random.normal(mean, std)
+def artifical3():
+     N_features = 20
+     N_samples = 1000
+
+     def get_bin_random_col(mean, std, n, t):
+          values = np.random.normal(mean, std, n)
+          values = [0 if v < t else 1 for v in values]
+          return values
+
+     means = random(N_features)
+     stds = random(N_features)/3
+     samples = pd.DataFrame()
+     for i in range(N_features):
+          t = .5
+          samples['X{}'.format(i)] = get_bin_random_col(means[i], stds[i], N_samples, t)
+     samples['T'] = get_bin_random_col(0.5, 0.2, N_samples, 0.5)
+
+     print(samples.describe())
+     art3_path = dump_path+'/artificial3.pickle'
+     pickle.dump(samples, open(art3_path, 'wb'))
+artifical3()
