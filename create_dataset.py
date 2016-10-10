@@ -29,7 +29,7 @@ def artifical1():
      pickle.dump(samples, open(art1_path, 'wb'))
 
 def artifical2():
-     N_features = 5
+     N_features = 9
      N_samples = 1000
 
      def get_bin_random_col(mean, std, n, t):
@@ -69,4 +69,4 @@ def artifical3():
      print(samples.describe())
      art3_path = dump_path+'/artificial3.pickle'
      pickle.dump(samples, open(art3_path, 'wb'))
-artifical3()
+artifical2()
