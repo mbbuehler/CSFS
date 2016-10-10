@@ -1,21 +1,16 @@
-import math
-import numpy as np
+import os
 import pickle
-
-import pandas as pd
+import re
 import sys
 
-from scipy.optimize import curve_fit
-from sklearn.preprocessing import binarize
 import matplotlib.pyplot as plt
-from CSFSLoader import CSFSLoader
+import numpy as np
+from scipy.optimize import curve_fit
+
 from CSFSEvaluator import CSFSEvaluator
-from CSFSSelector import CSFSBestUncertainSelector
-from noise_helper_funcs import structure_data
-import os
-import re
 from CSFSLoader import CSFSLoader
-from infoformulas_listcomp import IG
+from CSFSSelector import CSFSBestUncertainSelector
+
 
 def analysis_general():
     try:
