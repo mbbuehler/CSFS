@@ -32,11 +32,16 @@ def analysis_general(dataset_name, N_features, N_samples):
     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, 0.3, 500))
 
 def do_analysis():
-    analysis_general("artificial10",N_features, N_samples)
-    analysis_general("artificial11",N_features, N_samples)
-    analysis_general("artificial12",N_features, N_samples)
-    analysis_general("artificial13",N_features, N_samples)
-    analysis_general("artificial14",N_features, N_samples)
+    N_features = [3,5,7,10]#,11,13,16]
+    N_samples = 100
+    analysis_general("artificial20",N_features, N_samples)
+    analysis_general("artificial21",N_features, N_samples)
+    analysis_general("artificial22",N_features, N_samples)
+    analysis_general("artificial23",N_features, N_samples)
+    analysis_general("artificial24",N_features, N_samples)
+    analysis_general("artificial25",N_features, N_samples)
+    analysis_general("artificial26",N_features, N_samples)
+    analysis_general("artificial27",N_features, N_samples)
 
 
 def get_result_data(n_features, dataset_name):
@@ -119,9 +124,11 @@ def visualise_results(dataset_name, show_plot=True):
             os.mkdir('plots/{}/'.format(dataset_name))
     fig1.savefig('plots/{}/std_result.png'.format(dataset_name), dpi=100)
 
-if __name__ == "__main__":
-    N_features = [3,5,7,10]#,11,13,16]
-    N_samples = 100
-
+def evaluate():
     dataset_names = ['artificial10','artificial11','artificial12','artificial13','artificial14']
     [visualise_results(dn, False) for dn in dataset_names]
+
+if __name__ == "__main__":
+
+    do_analysis()
+    # evaluate()

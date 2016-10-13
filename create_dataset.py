@@ -146,12 +146,25 @@ def write_readme(file_path, X, y, y_noisy, std, n_relevant_features, params):
         file.write('{:<30}: {}\n'.format(a,b))
     file.close()
 
-def main():
+def create_artificial1x():
     create_artifical("artificial10", N_features=10, N_samples=1000, std=0.35)
     create_artifical("artificial11", N_features=20, N_samples=1000, std=0.35)
     create_artifical("artificial12", N_features=50, N_samples=1000, std=0.35)
     create_artifical("artificial13", N_features=100, N_samples=1000, std=0.35)
     create_artifical("artificial14", N_features=200, N_samples=1000, std=0.35)
+
+def create_artificial2x():
+    create_artifical("artificial20", N_features=20, N_samples=1000, std=0.1)
+    create_artifical("artificial21", N_features=20, N_samples=1000, std=0.2)
+    create_artifical("artificial22", N_features=20, N_samples=1000, std=0.3)
+    create_artifical("artificial23", N_features=20, N_samples=1000, std=0.4)
+    create_artifical("artificial24", N_features=20, N_samples=1000, std=0.5)
+    create_artifical("artificial25", N_features=20, N_samples=1000, std=0.6)
+    create_artifical("artificial26", N_features=20, N_samples=1000, std=0.7)
+    create_artifical("artificial27", N_features=20, N_samples=1000, std=0.8)
+
+def main():
+    create_artificial2x()
 
 
 if __name__ == "__main__":
