@@ -94,3 +94,6 @@ ENV/
 # nohup out
 nohup.out
 *.out 
+
+# lock files (backup)
+.~lock*

@@ -1,3 +1,5 @@
+import csv
+
 from CSFSLoader import CSFSLoader
 from infoformulas_listcomp import IG
 import math
@@ -36,9 +38,17 @@ def explore():
     ordered.remove(target)
     ordered.remove('id')
     print('best 10:')
-    print(ordered[:10])
+    print(sorted(ordered[:10]))
     print('worst 10:')
-    print(ordered[-10:])
+    print(sorted(ordered[-10:]))
+
+    print(ig_data['population growth rate_(1.541, 2.254]'])
+
+    mean_05_f = [f for f in df if 0.3 < np.mean(df[f]) < 0.7]
+    mean_05 = df[mean_05_f]
+    print(mean_05.describe())
+    for f in mean_05_f:
+        print(f, np.mean(df[f]))
 
 def analysis_std():
     try:
@@ -149,4 +159,15 @@ def visualize_result():
     plt.show()
     fig1.savefig('plots/olympia/std_result.png', dpi=100)
 
-visualize_result()
+def extract_prefix():
+    file_name = "datasets/olympia/featuresOlympia_2_update.csv"
+    reader = csv.reader(open(file_name,'r'), delimiter=",", quotechar='"')
+
+    features = [(re.sub(r'_[\[\(\d].*?$','', row[0])) for row in reader]
+    for f in set(features):
+        print(f)
+
+
+# visualize_result()
+# explore()
+extract_prefix()

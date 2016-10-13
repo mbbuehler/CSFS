@@ -1,0 +1,16 @@
+// features with 0.3 < mean < 0.7:
+// chosen features have ****
+medals 0.35
+ln_gdp_cap_(9.378, 10.157] 0.45
+exports_[13.816, 20.226] 0.45
+gdp per capita_(8.487, 9.259] 0.45
+***inflation rate_[-6.8, 2] 0.45
+unemployment rate_(8.3, 14.6] 0.55
+population growth rate_(0.249, 0.921] 0.4
+life expectancy at birth_(73.484, 77.41] 0.4
+net migration rate_[-33.42, -2.308] 0.45
+education expenditures_[0.6, 3.133] 0.45
+education expenditures_(4.14, 5] 0.4
+***health expenditures_(4.8, 5.9] 0.5
+oil imports_[0.00995, 8.572] 0.4
+internet users_(12.79, 14.15] 0.45
