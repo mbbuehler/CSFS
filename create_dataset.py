@@ -75,7 +75,7 @@ def artifical3():
     pickle.dump(samples, open(art3_path, 'wb'))
 
 
-def create_artifical(dataset_name, N_features, N_samples, std):
+def create_artifical(dataset_name, N_features, N_samples, std, relevant_params=[-10, -5, 1, .5, 50]):
 
     def sigmoid_correct(x, params):
         """
@@ -96,7 +96,6 @@ def create_artifical(dataset_name, N_features, N_samples, std):
         return [1 if a >= threshold else 0 for a in array_data]
 
 
-    relevant_params = [-10, -5, 1, .5, 50]
     zero_params = [0] * (N_features - len(relevant_params))
 
     params = relevant_params + zero_params
@@ -105,9 +104,6 @@ def create_artifical(dataset_name, N_features, N_samples, std):
     X = [binarize([random() for i in range(N_features)]) for j in range(N_samples)]
     y = binarize([sigmoid_correct(X[i], params) for i in range(N_samples)])
     y_noisy = binarize([sigmoid_noisy(X[i], params, std) for i in range(N_samples)])
-    # print(y)
-    # print(y_noisy)
-
 
     file_base_path = 'datasets/artificial/'
     col_names = ['F{}_{}'.format(i, params[i]) for i in range(len(params))]
@@ -116,7 +112,6 @@ def create_artifical(dataset_name, N_features, N_samples, std):
     write_csv(csv_path, X, y, col_names)
     readme_path = file_base_path+dataset_name+'.md'
     write_readme(readme_path, X, y, y_noisy, std, len(relevant_params), params)
-
 
 def write_csv(file_path, X, y, col_names):
     import csv
@@ -163,8 +158,22 @@ def create_artificial2x():
     create_artifical("artificial26", N_features=20, N_samples=1000, std=0.7)
     create_artifical("artificial27", N_features=20, N_samples=1000, std=0.8)
 
+def create_artificial3x():
+    create_artifical("artificial30", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100, 200, -50])
+    create_artifical("artificial31", N_features=20, N_samples=1000, std=0.35, relevant_params=[-2, 5, 7, 1, -1])
+    create_artifical("artificial32", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.21, -.8, .3, .2, .5])
+    create_artifical("artificial33", N_features=20, N_samples=1000, std=0.35, relevant_params=[-1000, 50, -400, 1000, 10000])
+    create_artifical("artificial34", N_features=20, N_samples=1000, std=0.35, relevant_params=[-1, -2, -1, -3, -2])
+
+def create_artificial4x():
+    create_artifical("artificial40", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100])
+    create_artifical("artificial41", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100, 200, -50])
+    create_artifical("artificial42", N_features=20, N_samples=1000, std=0.35, relevant_params=[-1000, 50, -400, 1000, 10000])
+    create_artifical("artificial43", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100, 200, -50, 20, 5])
+    create_artifical("artificial44", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100, 200, -50, 20, 5, 30, 2, 4, 2, 9])
+
 def main():
-    create_artificial2x()
+    create_artificial4x()
 
 
 if __name__ == "__main__":
