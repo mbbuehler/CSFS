@@ -81,8 +81,7 @@ def extract_x_y(result, n_features, start_lim=0):
     y = [result[n_features][std] for std in x]
 
     return np.array(x, dtype=float), np.array(y, dtype=float)
-def visualise_results(dataset_name, show_plot=True):
-    N_features = [3,5,7]#,11,13,16]
+def visualise_results(dataset_name, N_features, show_plot=True):
     results = get_result_data(N_features, dataset_name)
     plt.hold(True)
     start_lim = 0.1
@@ -125,7 +124,7 @@ def visualise_results(dataset_name, show_plot=True):
     fig1.savefig('plots/{}/std_result.png'.format(dataset_name), dpi=100)
 
 def evaluate():
-    dataset_names = ['artificial10','artificial11','artificial12','artificial13','artificial14']
+    dataset_names = ['artificial20','artificial21','artificial22','artificial23','artificial24','artificial25','artificial26','artificial27']
     [visualise_results(dn, False) for dn in dataset_names]
 
 if __name__ == "__main__":
