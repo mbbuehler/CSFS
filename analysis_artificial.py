@@ -83,15 +83,12 @@ def extract_x_y(result, n_features, start_lim=0):
 
     return np.array(x, dtype=float), np.array(y, dtype=float)
 
-def visualise_results(dataset_name, show_plot=True):
-    #todo
-    N_features = [3,5,7,10]
+def visualise_results(dataset_name, N_features, start_lim=0, show_plot=False):
     results = get_result_data(N_features, dataset_name)
     plt.hold(True)
-    start_lim = 0.1
     params = dict()
 
-    def func(x,  w1, p1, w2, p2):
+    def func(x, w1, p1, w2, p2):
         return w1 * pow(x, p1) + w2 * pow(x, p2)
 
     # def func(x, w1, p1, w2, p2, w3):
@@ -124,16 +121,19 @@ def visualise_results(dataset_name, show_plot=True):
         plt.show()
 
 
-    if not os.path.isdir('plots/{}/'.format(dataset_name)):
-            os.mkdir('plots/{}/'.format(dataset_name))
-    fig1.savefig('plots/{}/std_result.png'.format(dataset_name), dpi=100)
+    dataset_class = re.sub(r'\d$', '', dataset_name)
+    dataset_class += 'x'
+    if not os.path.isdir('plots/{}/'.format(dataset_class)):
+            os.mkdir('plots/{}/'.format(dataset_class))
+    fig1.savefig('plots/{}/{}.png'.format(dataset_class, dataset_name), dpi=100)
     plt.hold(False)
     plt.clf()
 
 def evaluate():
-    #todo
+    #todo<
+    N_features = [3,5,7,10]
     dataset_names = ['artificial20','artificial21','artificial22','artificial23','artificial24','artificial25','artificial26','artificial27']
-    Parallel(n_jobs=3)(delayed(visualise_results)(dn, False) for dn in dataset_names)
+    Parallel(n_jobs=3)(delayed(visualise_results)(dn, N_features, False) for dn in dataset_names)
 
 if __name__ == "__main__":
 
