@@ -81,7 +81,9 @@ def extract_x_y(result, n_features, start_lim=0):
     y = [result[n_features][std] for std in x]
 
     return np.array(x, dtype=float), np.array(y, dtype=float)
-def visualise_results(dataset_name, N_features, show_plot=True):
+
+def visualise_results(dataset_name, show_plot=True):
+    N_features = [3,5,7,10]
     results = get_result_data(N_features, dataset_name)
     plt.hold(True)
     start_lim = 0.1
@@ -112,6 +114,7 @@ def visualise_results(dataset_name, N_features, show_plot=True):
     plt.legend(loc=3)
     plt.title('auc scores / fitted curves for noisy IG. start fitting at std={}'.format(start_lim))
     plt.xlim([-.01, 0.31])
+    plt.ylim([0.5, 1.05])
     plt.xlabel('std')
     plt.ylabel('auc')
     fig1 = plt.gcf()
@@ -122,12 +125,14 @@ def visualise_results(dataset_name, N_features, show_plot=True):
     if not os.path.isdir('plots/{}/'.format(dataset_name)):
             os.mkdir('plots/{}/'.format(dataset_name))
     fig1.savefig('plots/{}/std_result.png'.format(dataset_name), dpi=100)
+    plt.hold(False)
+    plt.clf()
 
 def evaluate():
     dataset_names = ['artificial20','artificial21','artificial22','artificial23','artificial24','artificial25','artificial26','artificial27']
-    [visualise_results(dn, False) for dn in dataset_names]
+    Parallel(n_jobs=3)(delayed(visualise_results)(dn, False) for dn in dataset_names)
 
 if __name__ == "__main__":
 
-    do_analysis()
-    # evaluate()
+    # do_analysis()
+    evaluate()
