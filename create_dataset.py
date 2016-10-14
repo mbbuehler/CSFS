@@ -159,7 +159,7 @@ def create_artificial2x():
     create_artifical("artificial27", N_features=20, N_samples=1000, std=0.8)
 
 def create_artificial3x():
-    create_artifical("artificial30", N_features=20, N_samples=1000, std=0.35, relevant_params=[1, 1, 1, 1, 1])
+    create_artifical("artificial30", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.02, -0.01, 0.01, 0.02, 0.03])
     create_artifical("artificial31", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.3, -.2, -.1, .1, .2])
     create_artifical("artificial32", N_features=20, N_samples=1000, std=0.35, relevant_params=[-2, -1, 1, 2, 3])
     create_artifical("artificial33", N_features=20, N_samples=1000, std=0.35, relevant_params=[-20, -10, 10, 20, 30])
