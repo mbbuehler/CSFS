@@ -83,7 +83,7 @@ def extract_x_y(result, n_features, start_lim=0):
 
     return np.array(x, dtype=float), np.array(y, dtype=float)
 
-def visualise_results(dataset_name, N_features, start_lim=0, show_plot=False):
+def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, show_plot=False):
     results = get_result_data(N_features, dataset_name)
     plt.hold(True)
     params = dict()
@@ -100,15 +100,19 @@ def visualise_results(dataset_name, N_features, start_lim=0, show_plot=False):
         std = np.std(y)
         plt.plot(x, y, alpha=0.5, label='data {} (std={:.3f})'.format(n_f, std))
         x,y = extract_x_y(results, n_f, start_lim=start_lim)
-        popt, pcov = curve_fit(func, x, y)
-        params[n_f] = popt
-        perr = np.sqrt(np.diag(pcov))
-        avg_err = np.mean(perr)
-        print('params: {} '.format(popt))
-        print('errors: {}'.format(perr))
-        print('avg error: {}'.format(avg_err))
+        if fit_curve:
+            try:
+                popt, pcov = curve_fit(func, x, y)
+                params[n_f] = popt
+                perr = np.sqrt(np.diag(pcov))
+                avg_err = np.mean(perr)
+                print('params: {} '.format(popt))
+                print('errors: {}'.format(perr))
+                print('avg error: {}'.format(avg_err))
 
-        plt.plot(x, func(x, *popt), '-k', linewidth=2, label="Fitted {} (avg err: {:.3f})".format(n_f, avg_err))
+                plt.plot(x, func(x, *popt), '-k', linewidth=1, label="Fitted {} (avg err: {:.3f})".format(n_f, avg_err))
+            except:
+                print('no matching curve found')
 
     plt.legend(loc=3)
     plt.title('auc scores / fitted curves for noisy IG. start fitting at std={}'.format(start_lim))

@@ -6,7 +6,7 @@ from joblib import Parallel, delayed
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
-
+from analysis_artificial import analysis_general, visualise_results
 from CSFSEvaluator import CSFSEvaluator
 from CSFSLoader import CSFSLoader
 from CSFSSelector import CSFSBestUncertainSelector
@@ -39,7 +39,7 @@ def do_analysis():
     analysis_general("artificial14",N_features, N_samples)
 
 
-def get_result_data(n_features, dataset_name):
+# def get_result_data(n_features, dataset_name):
     """
 
     :return: {no_features: {std: auc},...} e.g. {16: {0.200036667: 0.53119531952662713, 0.105176567: 0.57273262130177505
@@ -62,66 +62,67 @@ def get_result_data(n_features, dataset_name):
     if n_features:
         results = {r:results[r] for r in n_features}
     return results
-def extract_x_y(result, n_features, start_lim=0):
-    """
-    extracts x and y from results for a certain n_features
-    :param result:
-    :param n_features:
-    :return: x,y where x: std and y:auc
-    """
-    if n_features not in result.keys():
-        print('{} not found'.format(n_features))
-        return None
-    x = sorted([std for std in result[n_features].keys() if std > start_lim])
-    y = [result[n_features][std] for std in x]
-
-    return np.array(x, dtype=float), np.array(y, dtype=float)
-def visualise_results(dataset_name, show_plot=True):
-    N_features = [3,5,7]#,11,13,16]
-    results = get_result_data(N_features, dataset_name)
-    plt.hold(True)
-    start_lim = 0.1
-    params = dict()
-
-    def func(x,  w1, p1, w2, p2):
-        return w1 * pow(x, p1) + w2 * pow(x, p2)
-
-    # def func(x, w1, p1, w2, p2, w3):
-    #     return w1 * pow(x, p1) + w2 * pow(x, p2) + w3 * np.log10(x)
-
-    for n_f in N_features:
-        print('== no of features: {}'.format(n_f))
-        x,y = extract_x_y(results, n_f, start_lim=0)
-        std = np.std(y)
-        plt.plot(x, y, alpha=0.5, label='data {} (std={:.3f})'.format(n_f, std))
-        x,y = extract_x_y(results, n_f, start_lim=start_lim)
-        popt, pcov = curve_fit(func, x, y)
-        params[n_f] = popt
-        perr = np.sqrt(np.diag(pcov))
-        avg_err = np.mean(perr)
-        print('params: {} '.format(popt))
-        print('errors: {}'.format(perr))
-        print('avg error: {}'.format(avg_err))
-
-        plt.plot(x, func(x, *popt), '-k', linewidth=2, label="Fitted {} (avg err: {:.3f})".format(n_f, avg_err))
-
-    plt.legend(loc=3)
-    plt.title('auc scores / fitted curves for noisy IG. start fitting at std={}'.format(start_lim))
-    plt.xlim([-.01, 0.31])
-    plt.xlabel('std')
-    plt.ylabel('auc')
-    fig1 = plt.gcf()
-    if show_plot:
-        plt.show()
-
-
-    if not os.path.isdir('plots/{}/'.format(dataset_name)):
-            os.mkdir('plots/{}/'.format(dataset_name))
-    fig1.savefig('plots/{}/std_result.png'.format(dataset_name), dpi=100)
+# def extract_x_y(result, n_features, start_lim=0):
+#     """
+#     extracts x and y from results for a certain n_features
+#     :param result:
+#     :param n_features:
+#     :return: x,y where x: std and y:auc
+#     """
+#     if n_features not in result.keys():
+#         print('{} not found'.format(n_features))
+#         return None
+#     x = sorted([std for std in result[n_features].keys() if std > start_lim])
+#     y = [result[n_features][std] for std in x]
+#
+#     return np.array(x, dtype=float), np.array(y, dtype=float)
+# def visualise_results(dataset_name, show_plot=True):
+#     N_features = [3,5,7]#,11,13,16]
+#     results = get_result_data(N_features, dataset_name)
+#     plt.hold(True)
+#     start_lim = 0.1
+#     params = dict()
+#
+#     def func(x,  w1, p1, w2, p2):
+#         return w1 * pow(x, p1) + w2 * pow(x, p2)
+#
+#     # def func(x, w1, p1, w2, p2, w3):
+#     #     return w1 * pow(x, p1) + w2 * pow(x, p2) + w3 * np.log10(x)
+#
+#     for n_f in N_features:
+#         print('== no of features: {}'.format(n_f))
+#         x,y = extract_x_y(results, n_f, start_lim=0)
+#         std = np.std(y)
+#         plt.plot(x, y, alpha=0.5, label='data {} (std={:.3f})'.format(n_f, std))
+#         x,y = extract_x_y(results, n_f, start_lim=start_lim)
+#         popt, pcov = curve_fit(func, x, y)
+#         params[n_f] = popt
+#         perr = np.sqrt(np.diag(pcov))
+#         avg_err = np.mean(perr)
+#         print('params: {} '.format(popt))
+#         print('errors: {}'.format(perr))
+#         print('avg error: {}'.format(avg_err))
+#
+#         plt.plot(x, func(x, *popt), '-k', linewidth=2, label="Fitted {} (avg err: {:.3f})".format(n_f, avg_err))
+#
+#     plt.legend(loc=3)
+#     plt.title('auc scores / fitted curves for noisy IG. start fitting at std={}'.format(start_lim))
+#     plt.xlim([-.01, 0.31])
+#     plt.xlabel('std')
+#     plt.ylabel('auc')
+#     fig1 = plt.gcf()
+#     if show_plot:
+#         plt.show()
+#
+#
+#     if not os.path.isdir('plots/{}/'.format(dataset_name)):
+#             os.mkdir('plots/{}/'.format(dataset_name))
+#     fig1.savefig('plots/{}/std_result.png'.format(dataset_name), dpi=100)
+def evaluate():
+    N_features = [3,5,7,10]
+    dataset_names = ['artificial10','artificial11','artificial12','artificial13','artificial14']
+    Parallel(n_jobs=4)(delayed(visualise_results)(dn, N_features, fit_curve=False, start_lim=0.1) for dn in dataset_names)
+    # N: #data points
 
 if __name__ == "__main__":
-    N_features = [3,5,7,10]#,11,13,16]
-    N_samples = 100
-
-    dataset_names = ['artificial10','artificial11','artificial12','artificial13','artificial14']
-    [visualise_results(dn, False) for dn in dataset_names]
+    evaluate()

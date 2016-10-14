@@ -1,6 +1,6 @@
 N_samples                     : 1000
 N_features                    : 20
-N_relevant features           : 5
+N_relevant features           : 7
 STD for noise generation      : 0.35
-Noisy y (actual / ratio)      : 108 / 0.108
-Params                        : -1000,50,-400,1000,10000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Noisy y (actual / ratio)      : 73 / 0.073
+Params                        : -0.1,2,100,200,-50,20,5,0,0,0,0,0,0,0,0,0,0,0,0,0
