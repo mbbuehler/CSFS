@@ -98,9 +98,9 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
         print('== no of features: {}'.format(n_f))
         x,y = extract_x_y(results, n_f, start_lim=0)
         std = np.std(y)
-        plt.plot(x, y, alpha=0.5, label='data {} (std={:.3f})'.format(n_f, std))
-        x,y = extract_x_y(results, n_f, start_lim=start_lim)
+        plt.plot(x, y, alpha=0.5, label='data {}'.format(n_f))
         if fit_curve:
+            x,y = extract_x_y(results, n_f, start_lim=start_lim)
             try:
                 popt, pcov = curve_fit(func, x, y)
                 params[n_f] = popt
@@ -115,7 +115,7 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
                 print('no matching curve found')
 
     plt.legend(loc=3)
-    plt.title('auc scores / fitted curves for noisy IG. start fitting at std={}'.format(start_lim))
+    plt.title('{}: AUC for noisy IG'.format(dataset_name))
     plt.xlim([-.01, 0.31])
     plt.ylim([0.5, 1.05])
     plt.xlabel('std')
