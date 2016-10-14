@@ -147,6 +147,8 @@ def create_artificial1x():
     create_artifical("artificial12", N_features=50, N_samples=1000, std=0.35)
     create_artifical("artificial13", N_features=100, N_samples=1000, std=0.35)
     create_artifical("artificial14", N_features=200, N_samples=1000, std=0.35)
+    create_artifical("artificial15", N_features=1000, N_samples=1000, std=0.35)
+    create_artifical("artificial16", N_features=10000, N_samples=1000, std=0.35)
 
 def create_artificial2x():
     create_artifical("artificial20", N_features=20, N_samples=1000, std=0.1)
@@ -174,8 +176,10 @@ def create_artificial4x():
     create_artifical("artificial44", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100, 200, -50, 20, 5, 30, 2, 4, 2, 9, 60, 2, -10, 9, 33, -88, 20, 0.4])
 
 def main():
-    create_artificial3x()
-    create_artificial4x()
+    create_artificial1x()
+    # create_artificial2x()
+    # create_artificial3x()
+    # create_artificial4x()
 
 
 if __name__ == "__main__":
