@@ -1,3 +1,5 @@
+from random import random
+
 import numpy as np
 import pandas as pd
 from math import exp
@@ -119,7 +121,6 @@ def write_csv(file_path, X, y, col_names):
     writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
     data = [col_names]
     data += [X[i]+[y[i]] for i in range(len(y))]
-    print(data)
     writer.writerows(data)
     file.close()
 
@@ -134,6 +135,7 @@ def write_readme(file_path, X, y, y_noisy, std, n_relevant_features, params):
         ('N_features', len(X[0])),
         ('N_relevant features', n_relevant_features),
         ('STD for noise generation', std),
+        ('y pos/neg, ratio', "{}/{} {}".format(sum(y), len(y)-sum(y), (len(y)-sum(y))/len(y))),
         ('Noisy y (actual / ratio)', "{} / {}".format(unequal, unequal_ratio)),
         ('Params', ",".join([str(p) for p in params])),
     )
@@ -175,11 +177,22 @@ def create_artificial4x():
     create_artifical("artificial43", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100, 200, -50, 20, 5, 30, 2, 4, 2, 9])
     create_artifical("artificial44", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100, 200, -50, 20, 5, 30, 2, 4, 2, 9, 60, 2, -10, 9, 33, -88, 20, 0.4])
 
+def create_artificial5x():
+    """
+    50 features with 0.5 std, random params between -100 and 100
+    Check what influence distribution of T has
+    :return:
+    """
+    for i in range(0,10):
+        relevant_params = list(-200 * np.random.random_sample(50) + 100)
+        create_artifical("artificial5{}".format(i), N_features=100, N_samples=1000, std=0.5, relevant_params=relevant_params)
+
 def main():
-    create_artificial1x()
+    # create_artificial1x()
     # create_artificial2x()
     # create_artificial3x()
     # create_artificial4x()
+    create_artificial5x()
 
 
 if __name__ == "__main__":
