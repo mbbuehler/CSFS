@@ -112,8 +112,7 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
         plt.show()
 
 
-    dataset_class = re.sub(r'\d$', '', dataset_name)
-    dataset_class += 'x'
+    dataset_class = dataset_name
     if not os.path.isdir('plots/{}/'.format(dataset_class)):
             os.mkdir('plots/{}/'.format(dataset_class))
     fig1.savefig('plots/{}/{}.png'.format(dataset_class, dataset_name), dpi=100)
