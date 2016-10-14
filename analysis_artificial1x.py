@@ -17,7 +17,6 @@ dataset_names = ['artificial10','artificial11','artificial12','artificial13','ar
 dataset_names = ['artificial15','artificial16']
 
 def do_analysis():
-    N_features = [3,5,7,10]#,11,13,16]
     N_samples = 100
     for dn in dataset_names:
         analysis_general(dn, N_features, N_samples)
