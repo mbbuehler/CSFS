@@ -13,7 +13,7 @@ def do_analysis():
         analysis_general(dn, N_features, N_samples)
 
 def evaluate():
-    Parallel(n_jobs=4)(delayed(visualise_results)(dn, N_features, start_lim=0.035) for dn in dataset_names)
+    Parallel(n_jobs=4)(delayed(visualise_results)(dn, N_features) for dn in dataset_names)
     # N: #data points
     # M: #parameters
 

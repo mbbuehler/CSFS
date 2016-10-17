@@ -202,8 +202,8 @@ def main():
     # create_artificial2x()
     # create_artificial3x()
     # create_artificial4x()
-    # create_artificial5x()
-    create_artificial6x()
+    create_artificial5x()
+    # create_artificial6x()
 
 
 if __name__ == "__main__":
