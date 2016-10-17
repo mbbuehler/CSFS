@@ -187,12 +187,23 @@ def create_artificial5x():
         relevant_params = list(-200 * np.random.random_sample(50) + 100)
         create_artifical("artificial5{}".format(i), N_features=100, N_samples=1000, std=0.5, relevant_params=relevant_params)
 
+def create_artificial6x():
+    """
+    50 features with 0.5 std, random params between -100 and 100
+    Check what influence distribution of T has
+    :return:
+    """
+    for i in range(0,10):
+        relevant_params = list(-200 * np.random.random_sample(50) + 100)
+        create_artifical("artificial6{}".format(i), N_features=100, N_samples=1000, std=0.2, relevant_params=relevant_params)
+
 def main():
     # create_artificial1x()
     # create_artificial2x()
     # create_artificial3x()
     # create_artificial4x()
-    create_artificial5x()
+    # create_artificial5x()
+    create_artificial6x()
 
 
 if __name__ == "__main__":
