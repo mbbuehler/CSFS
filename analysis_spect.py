@@ -11,6 +11,7 @@ dataset_name = 'spect-heart-data'
 def do_analysis():
     path = "datasets/spect-heart-data/{}.csv".format(dataset_name)
     df = CSFSLoader().load_dataset(path)
+    print(df.describe())
     target = "Diagnosis"
 
     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, 0.3, 4))
