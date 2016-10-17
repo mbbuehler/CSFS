@@ -13,7 +13,7 @@ def do_analysis():
     df = CSFSLoader().load_dataset(path)
     target = "Diagnosis"
 
-    Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, 0.3, 4))
+    Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, 0.3, 500))
 
 def evaluate():
     visualise_results(dataset_name, N_features, show_plot=False, N_samples=100)
