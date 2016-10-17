@@ -11,13 +11,12 @@ dataset_name = 'spect-heart-data'
 def do_analysis():
     path = "datasets/spect-heart-data/{}.csv".format(dataset_name)
     df = CSFSLoader().load_dataset(path)
-    print(df.describe())
     target = "Diagnosis"
 
     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, 0.3, 4))
 
 def evaluate():
-    visualise_results(dataset_name, N_features, show_plot=False)
+    visualise_results(dataset_name, N_features, show_plot=False, N_samples=100)
 
 do_analysis()
 evaluate()

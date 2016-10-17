@@ -31,7 +31,7 @@ def analysis_general(dataset_name, N_features, N_samples):
 
     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, 0.3, 500))
 
-def get_result_data(n_features, dataset_name):
+def get_result_data(n_features, dataset_name, N_samples=100):
     """
 
     :return: {no_features: {std: auc},...} e.g. {16: {0.200036667: 0.53119531952662713, 0.105176567: 0.57273262130177505
@@ -40,7 +40,7 @@ def get_result_data(n_features, dataset_name):
     files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
 
     results = dict()
-    pattern = r'(\d+)features_100samples_(.*?)std'
+    pattern = r'(\d+)features_{}samples_(.*?)std'.format(N_samples)
     for f in files:
         match = re.match(pattern, f)
         # print(f)
@@ -70,8 +70,8 @@ def extract_x_y(result, n_features, start_lim=0):
 
     return np.array(x, dtype=float), np.array(y, dtype=float)
 
-def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, show_plot=False):
-    results = get_result_data(N_features, dataset_name)
+def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, show_plot=False, N_samples=100):
+    results = get_result_data(N_features, dataset_name, N_samples)
     plt.hold(True)
     params = dict()
 
