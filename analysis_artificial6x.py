@@ -18,5 +18,5 @@ def evaluate():
     # N: #data points
     # M: #parameters
 
-# do_analysis()
-evaluate()
+do_analysis()
+# evaluate()
