@@ -103,7 +103,7 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
 
     plt.legend(loc=3)
     plt.title('{}: AUC for noisy IG'.format(dataset_name))
-    plt.xlim([-.01, 1])
+    plt.xlim([-.01, .3])
     plt.ylim([0.5, 1.05])
     plt.xlabel('std')
     plt.ylabel('auc')

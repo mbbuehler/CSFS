@@ -1,7 +1,7 @@
 "electricity consumption_[16.0455, 20.243]_1","Among 10 countries *whose electricity consumption is less than 620 million kWh*, how many won one or more medals in the last Olympics?"
 "electricity consumption_[16.0455, 20.243]_0","Among 10 countries *whose electricity consumption is more than 620 million kWh*, how many won one or more medals in the last Olympics?"
 "electricity consumption_(24.87, 29.302]_1","Among 10 countries *whose electricity consumption is more than 63.2 billion kWh*, how many won one or more medals in the last Olympics?"
-"electricity consumption_(24.87, 29.302]_1","Among 10 countries *whose electricity consumption is less than 63.2 billion kWh*, how many won one or more medals in the last Olympics?"
+"electricity consumption_(24.87, 29.302]_0","Among 10 countries *whose electricity consumption is less than 63.2 billion kWh*, how many won one or more medals in the last Olympics?"
 "internet users_[6.909, 11.367]_1","Among 10 countries *with less than 86,000 Internet users*, how many won one or more medals in the last Olympics?"
 "internet users_[6.909, 11.367]_0","Among 10 countries *with more than 86,000 Internet users*, how many won one or more medals in the last Olympics?"
 "exports_(25.0508, 28.424]_1","Among 10 countries *whose exports are higher than $75 billion*, how many won one or more medals in the last Olympics?"

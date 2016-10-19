@@ -60,8 +60,8 @@ def extract_prefix():
     for f in set(features):
         print(f)
 
-do_analysis()
-# evaluate()
+#do_analysis()
+evaluate()
 
 # visualize_result()
 # explore()
