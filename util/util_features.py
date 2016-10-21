@@ -12,5 +12,5 @@ def get_target_ratio(path):
     df = pd.read_csv(path)
     print(df['T'].describe())
 
-path = '../datasets/artificial/artificial44.csv'
+path = '../datasets/artificial/artificial12.csv'
 print(get_target_ratio(path))

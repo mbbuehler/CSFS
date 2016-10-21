@@ -236,8 +236,9 @@ def preprocess(data):
     # data_structured = structure_data(data[:50])
     return data
 
+
 if __name__ == "__main__":
-    visualize_result()
-    # analysis2()
+    # visualize_result()
+    analysis2()
     # plot_result()
     # analysis2_fix()

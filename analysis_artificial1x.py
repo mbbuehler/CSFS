@@ -132,5 +132,5 @@ def evaluate():
     # N: #data points
 
 if __name__ == "__main__":
-    do_analysis()
+    # do_analysis()
     evaluate()
