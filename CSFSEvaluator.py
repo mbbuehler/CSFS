@@ -1,4 +1,5 @@
 import pickle
+from collections import Counter
 
 from CSFSSelector import CSFSRandomSelector, CSFSBestActualSelector, CSFSBestUncertainSelector
 
@@ -21,10 +22,24 @@ class CSFSEvaluator:
 
     def evaluate_noisy(self, N_features, N_samples, best_noisy_selector):
         aucs = {'best_noisy': []}
+        selected_features = list()
         for i in range(N_samples):
             best_noisy_f = best_noisy_selector.select(N_features)
+            selected_features += best_noisy_f
             aucs['best_noisy'].append(self._get_mean_auc_score(best_noisy_f))
+        aucs['best_noisy_features_count'] = Counter(selected_features) # Counter({'blue': 3, 'red': 2, 'yellow': 1})
         return aucs
+
+    def evaluate_best(self, N_features, N_samples, best_selector):
+        aucs = {'best': []}
+        selected_features = list()
+        for i in range(N_samples):
+            best_f = best_selector.select(N_features)
+            selected_features += best_f
+            aucs['best'].append(self._get_mean_auc_score(best_f))
+        aucs['best_features_count'] = Counter(selected_features) # Counter({'blue': 3, 'red': 2, 'yellow': 1})
+        return aucs
+
 
     def evaluate(self, N_features=5, N_samples=100):
         """

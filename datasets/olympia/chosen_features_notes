@@ -35,6 +35,8 @@ gdp per capita_(8.487, 9.259]_1
 gdp per capita_(8.487, 9.259]_0
 region_4_1
 region_4_0
+education expenditures_(3.133, 4.14]_1
+education expenditures_(3.133, 4.14]_0
 
 == Chosen features with mean ~0.5:
 health expenditures_(4.8, 5.9]
@@ -61,8 +63,6 @@ continent
 == removed in favour of 0.5 mean:
 ln_pop_(14.0683, 15.381]_1
 ln_pop_(14.0683, 15.381]_0
-education expenditures_(3.133, 4.14]_1
-education expenditures_(3.133, 4.14]_0
 -
 Among 10 countries *whose population is between 14.0683 and 15.381*, how many won one or more medals in the last Olympics?
 Among 10 countries *whose population is less than 14.0683 or more than 15.381*, how many won one or more medals in the last Olympics?
