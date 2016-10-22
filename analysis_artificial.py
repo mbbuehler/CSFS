@@ -91,10 +91,10 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
         print('== no of features: {}'.format(n_f))
         x,y = extract_x_y(results_noisy, n_f, start_lim=0)
         std = np.std(y)
-        plt.plot(x, y, alpha=0.5, label='noisy {}'.format(n_f))
+        plt.plot(x, y, '.', alpha=0.5, label='noisy {}'.format(n_f))
 
         x_best, y_best = extract_x_y(results_best, n_f, start_lim=0)
-        plt.plot(x_best, y_best, alpha=0.5, label='best {}'.format(n_f))
+        plt.plot(x_best, y_best, '--', alpha=0.5, label='best {}'.format(n_f))
         if fit_curve:
             x,y = extract_x_y(results_noisy, n_f, start_lim=start_lim)
             try:
@@ -121,7 +121,9 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
         plt.show()
 
 
-    dataset_class = re.sub(r'\d$', '', dataset_name)
+    match = re.match(r'artificial(\d)._(\d)_(.*?)')
+    dataset_class = 'artificial{}x{}_{}'.format(match.group(1), match.group(2), match.group(3))
+
     dataset_class += 'x'
     if not os.path.isdir('plots/{}/'.format(dataset_class)):
             os.mkdir('plots/{}/'.format(dataset_class))
