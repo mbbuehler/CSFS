@@ -1,5 +1,8 @@
 import csv
 import re
+
+import pandas as pd
+
 from infoformulas_listcomp import IG
 import numpy as np
 from joblib import Parallel, delayed
@@ -9,11 +12,12 @@ from analysis_std_drop import _conduct_analysis, visualise_results
 N_features = [3,5,7,11,15,20]
 N_samples = 100
 dataset_name = 'Olympia_2_update'
+dataset_name = 'olympia_subset1'
+target = 'medals'
 
 def do_analysis():
     path = "datasets/olympia/{}.csv".format(dataset_name)
     df = CSFSLoader().load_dataset(path)
-    target = "medals"
 
     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, .3, 500))
 
@@ -50,7 +54,16 @@ def explore():
     for f in mean_05_f:
         print(f, np.mean(df[f]))
 
-
+def prepare_selected_dataset():
+    csv_reader = csv.reader(open('datasets/olympia/olympia2_all_questions.csv','r', newline=''))
+    features = [row[0] for row in csv_reader] #['electricity consumption_[16.0455, 20.243]_1', 'electricity consumption_[16.0455, 20.243]_0', 'electricity consumption_(24.87, 29.302]_1',...]
+    for i in range(len(features)):
+        features[i] = re.sub(r'_[01]$', '', features[i])
+    print(features)
+    path = "datasets/olympia/Olympia_2_update.csv"
+    df = CSFSLoader().load_dataset(path)
+    # print(df)
+    df[features].to_csv('datasets/olympia/olympia_subset1.csv', sep=',', index=False)
 
 def extract_prefix():
     file_name = "datasets/olympia/featuresOlympia_2_update.csv"
@@ -60,9 +73,10 @@ def extract_prefix():
     for f in set(features):
         print(f)
 
-#do_analysis()
-evaluate()
+do_analysis()
+# evaluate()
 
 # visualize_result()
 # explore()
 # extract_prefix()
+# prepare_selected_dataset()

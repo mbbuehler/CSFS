@@ -9,12 +9,14 @@ from scipy.optimize import curve_fit
 
 from CSFSEvaluator import CSFSEvaluator
 from CSFSLoader import CSFSLoader
-from CSFSSelector import CSFSBestUncertainSelector
+from CSFSSelector import CSFSBestUncertainSelector, CSFSBestActualSelector
+
 
 def _conduct_analysis(df, target, std, N_features, N_samples, dataset_name):
     sys.stdout.write('std:{}{}'.format(std,'\n'))
     evaluator = CSFSEvaluator(df, target, fix_std=std)
     best_noisy_selector = CSFSBestUncertainSelector(df, target, fix_std=std)
+    best_selector = CSFSBestActualSelector(df, target)
     for n in N_features:
         aucs = evaluator.evaluate_noisy(n, N_samples, best_noisy_selector)
 
@@ -24,10 +26,9 @@ def _conduct_analysis(df, target, std, N_features, N_samples, dataset_name):
 
         pickle.dump(aucs, open("pickle-dumps/{}.pickle".format(filepath), 'wb'))
 
-def analysis_general(dataset_name, N_features, N_samples):
+def analysis_general(dataset_name, N_features, N_samples, target):
     path = "datasets/artificial/{}.csv".format(dataset_name)
     df = CSFSLoader().load_dataset(path)
-    target = "T"
 
     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, 0.3, 500))
 
@@ -71,7 +72,8 @@ def extract_x_y(result, n_features, start_lim=0):
     return np.array(x, dtype=float), np.array(y, dtype=float)
 
 def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, show_plot=False, N_samples=100):
-    results = get_result_data(N_features, dataset_name, N_samples)
+    results_noisy = get_result_data(N_features, dataset_name, key='best_noisy')
+    results_best = get_result_data(N_features, dataset_name, key='best')
     plt.hold(True)
     params = dict()
 
@@ -83,11 +85,15 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
 
     for n_f in N_features:
         print('== no of features: {}'.format(n_f))
-        x,y = extract_x_y(results, n_f, start_lim=0)
+        x,y = extract_x_y(results_noisy, n_f, start_lim=0)
         std = np.std(y)
-        plt.plot(x, y, alpha=0.5, label='data {}'.format(n_f))
+        plt.plot(x, y, '.', alpha=0.5, label='noisy {}'.format(n_f))
+
+        x_best, y_best = extract_x_y(results_best, n_f, start_lim=0)
+        plt.plot(x_best, y_best, '--', alpha=0.5, label='best {}'.format(n_f))
+
         if fit_curve:
-            x,y = extract_x_y(results, n_f, start_lim=start_lim)
+            x,y = extract_x_y(results_noisy, n_f, start_lim=start_lim)
             try:
                 popt, pcov = curve_fit(func, x, y)
                 params[n_f] = popt
