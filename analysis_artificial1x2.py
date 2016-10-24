@@ -46,7 +46,7 @@ def explore_dumps():
     print('mean best:', np.mean(data['best']))
 
 
-do_analysis()
+# do_analysis()
 # evaluate()
-# explore_dumps()
-# explore_dataset()
+explore_dumps()
+explore_dataset()
