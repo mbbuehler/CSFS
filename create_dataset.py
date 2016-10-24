@@ -112,7 +112,7 @@ def create_artifical(dataset_name, N_features, N_samples, std, relevant_params=[
     col_names = ['F{}_{}'.format(i, params[i]) for i in range(len(params))]
     col_names.append('T')
     csv_path = file_base_path+dataset_name+'.csv'
-    write_csv(csv_path, X, y, col_names)
+    write_csv(csv_path, X, y_noisy, col_names) # y should be y_noisy!
     readme_path = file_base_path+dataset_name+'.md'
     write_readme(readme_path, X, y, y_noisy, std, len(relevant_params), params)
 
@@ -150,7 +150,7 @@ def create_artifical2(dataset_name, N_features, N_samples, error_rate, relevant_
         index_flip = sample(range(0, max), n_samples)
         y_noisy = y_true.copy()
         for i in index_flip:
-            y_noisy[i] = mod(y_true[i]+1,2)
+            y_noisy[i] = mod(y_true[i]+1, 2)
         return y_noisy
 
     y_noisy = add_noise(y_true, error_rate)
@@ -161,7 +161,7 @@ def create_artifical2(dataset_name, N_features, N_samples, error_rate, relevant_
 
     def write_files(file_base_path, dataset_name, X, y, error_rate):
         csv_path = file_base_path+dataset_name+'.csv'
-        write_csv(csv_path, X, y_true, col_names)
+        write_csv(csv_path, X, y, col_names)
         readme_path = file_base_path+dataset_name+'.md'
         write_readme2(readme_path, X, y, error_rate, len(relevant_params), params)
 
@@ -291,7 +291,7 @@ def main():
     # create_artificial4x()
     # create_artificial5x()
     # create_artificial6x()
-    # create_artificial1x2()
+    create_artificial1x2()
     create_artificial2x2()
 
 

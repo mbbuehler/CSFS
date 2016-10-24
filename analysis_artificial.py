@@ -120,11 +120,10 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
     if show_plot:
         plt.show()
 
-
-    match = re.match(r'artificial(\d)._(\d)_(.*?)')
+    print(dataset_name)
+    match = re.match(r'artificial(\d)._(\d)_(\w+)', dataset_name)
     dataset_class = 'artificial{}x{}_{}'.format(match.group(1), match.group(2), match.group(3))
 
-    dataset_class += 'x'
     if not os.path.isdir('plots/{}/'.format(dataset_class)):
             os.mkdir('plots/{}/'.format(dataset_class))
     fig1.savefig('plots/{}/{}.png'.format(dataset_class, dataset_name), dpi=100)

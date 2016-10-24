@@ -2,5 +2,5 @@ N_samples                     : 10000
 N_features                    : 10
 N_relevant features           : 5
 Error rate                    : 0.1
-y pos/neg, mean               : 5981/4019 0.5981
+y pos/neg, mean               : 5991/4009 0.5991
 Params                        : -10,-5,1,0.5,50,0,0,0,0,0
