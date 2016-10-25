@@ -4,7 +4,9 @@ from analysis_artificial import analysis_general, visualise_results, create_dn_n
 
 
 dataset_base = ['artificial40_2','artificial41_2','artificial42_2','artificial43_2','artificial44_2']
+# dataset_base = ['artificial43_2','artificial44_2']
 dataset_names = create_dn_names_from_base(dataset_base)
+dataset_names = ['artificial40_2_noisy','artificial41_2_noisy','artificial42_2_noisy',]
 N_features = [3,5,7,10]
 
 def do_analysis():

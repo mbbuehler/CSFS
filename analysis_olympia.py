@@ -11,6 +11,7 @@ from CSFSLoader import CSFSLoader
 from analysis_std_drop import _conduct_analysis, visualise_results
 
 N_features = [3,5,7,11,15,20]
+N_features = [5,11,20]
 N_samples = 100
 dataset_name = 'Olympia_2_update'
 dataset_name = 'olympia_subset1'
@@ -78,8 +79,8 @@ def explore_pickle():
     data = pickle.load(open('pickle-dumps/olympia_subset1/3features_100samples_0.000010000std.pickle','rb'))
     print(data)
 
-do_analysis()
-# evaluate()
+# do_analysis()
+evaluate()
 
 # visualize_result()
 # explore()
