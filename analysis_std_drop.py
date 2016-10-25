@@ -19,7 +19,7 @@ def _conduct_analysis(df, target, std, N_features, N_samples, dataset_name):
     best_selector = CSFSBestActualSelector(df, target)
     for n in N_features:
         aucs = evaluator.evaluate_noisy(n, N_samples, best_noisy_selector)
-
+        aucs.update(evaluator.evaluate_best(n, N_samples, best_selector))
         filepath = '{}/{}features_{}samples_{:.9f}std'.format(dataset_name, n, len(aucs['best_noisy']), std)
         if not os.path.isdir('pickle-dumps/'+dataset_name):
             os.mkdir('pickle-dumps/'+dataset_name)
@@ -27,12 +27,20 @@ def _conduct_analysis(df, target, std, N_features, N_samples, dataset_name):
         pickle.dump(aucs, open("pickle-dumps/{}.pickle".format(filepath), 'wb'))
 
 def analysis_general(dataset_name, N_features, N_samples, target):
+    """
+    sample call
+    :param dataset_name:
+    :param N_features:
+    :param N_samples:
+    :param target:
+    :return:
+    """
     path = "datasets/artificial/{}.csv".format(dataset_name)
     df = CSFSLoader().load_dataset(path)
 
     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, 0.3, 500))
 
-def get_result_data(n_features, dataset_name, N_samples=100):
+def get_result_data(n_features, dataset_name, key, N_samples=100,):
     """
 
     :return: {no_features: {std: auc},...} e.g. {16: {0.200036667: 0.53119531952662713, 0.105176567: 0.57273262130177505
@@ -51,7 +59,7 @@ def get_result_data(n_features, dataset_name, N_samples=100):
         if no_features not in results.keys():
             results[no_features] = dict()
 
-        results[no_features][std] = (np.mean(pickle.load(open(os.path.join(path,f), 'rb'))['best_noisy']))
+        results[no_features][std] = (np.mean(pickle.load(open(os.path.join(path, f), 'rb'))[key]))
     if n_features:
         results = {r:results[r] for r in n_features}
     return results
@@ -127,11 +135,12 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
 
 def evaluate():
     #todo<
+    # example call
     N_features = [3,5,7,10]
     dataset_names = ['artificial20','artificial21','artificial22','artificial23','artificial24','artificial25','artificial26','artificial27']
     Parallel(n_jobs=3)(delayed(visualise_results)(dn, N_features, False) for dn in dataset_names)
 
 if __name__ == "__main__":
-
+    # example call
     # do_analysis()
     evaluate()
