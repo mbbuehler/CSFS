@@ -3,7 +3,7 @@ from joblib import Parallel, delayed
 from analysis_artificial import analysis_general, visualise_results, create_dn_names_from_base
 
 
-dataset_base = ['artificial30_2','artificial31_2','artificial32_2','artificial33_2','artificial34_2','artificial35_2']
+dataset_base = ['artificial40_2','artificial41_2','artificial42_2','artificial43_2','artificial44_2']
 dataset_names = create_dn_names_from_base(dataset_base)
 N_features = [3,5,7,10]
 

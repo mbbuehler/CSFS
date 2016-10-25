@@ -130,6 +130,15 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
     plt.hold(False)
     plt.clf()
 
+def create_dn_names_from_base(dataset_base):
+    """
+    Creates new dataset names from a prefix (base). e.g. artifical10 becomes artifical10_true, artificial10_noisy
+    :param dataset_base: list
+    :return: list
+    """
+    dataset_names = [dn+'_true' for dn in dataset_base] + [dn+'_noisy' for dn in dataset_base]
+    return dataset_names
+
 def evaluate():
     #todo<
     N_features = [3,5,7,10]
