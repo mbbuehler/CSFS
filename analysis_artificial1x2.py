@@ -47,6 +47,6 @@ def explore_dumps():
 
 
 # do_analysis()
-# evaluate()
-explore_dumps()
-explore_dataset()
+evaluate()
+# explore_dumps()
+# explore_dataset()
