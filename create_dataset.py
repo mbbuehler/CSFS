@@ -256,12 +256,29 @@ def create_artificial3x():
     create_artifical("artificial34", N_features=20, N_samples=1000, std=0.35, relevant_params=[-200, -100, 100, 200, 300])
     create_artifical("artificial35", N_features=20, N_samples=1000, std=0.35, relevant_params=[-200, -100, 1, 2, 0.1])
 
+def create_artificial3x2():
+    create_artifical2("artificial30_2", N_features=20, N_samples=1000, error_rate=0.1, relevant_params=[-.02, -0.01, 0.01, 0.02, 0.03])
+    create_artifical2("artificial31_2", N_features=20, N_samples=1000, error_rate=0.1, relevant_params=[-.3, -.2, -.1, .1, .2])
+    create_artifical2("artificial32_2", N_features=20, N_samples=1000, error_rate=0.1, relevant_params=[-2, -1, 1, 2, 3])
+    create_artifical2("artificial33_2", N_features=20, N_samples=1000, error_rate=0.1, relevant_params=[-20, -10, 10, 20, 30])
+    create_artifical2("artificial34_2", N_features=20, N_samples=1000, error_rate=0.1, relevant_params=[-200, -100, 100, 200, 300])
+    create_artifical2("artificial35_2", N_features=20, N_samples=1000, error_rate=0.1, relevant_params=[-200, -100, 1, 2, 0.1])
+
+
 def create_artificial4x():
     create_artifical("artificial40", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100])
     create_artifical("artificial41", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100, 200, -50])
     create_artifical("artificial42", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100, 200, -50, 20, 5])
     create_artifical("artificial43", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100, 200, -50, 20, 5, 30, 2, 4, 2, 9])
     create_artifical("artificial44", N_features=20, N_samples=1000, std=0.35, relevant_params=[-.1, 2, 100, 200, -50, 20, 5, 30, 2, 4, 2, 9, 60, 2, -10, 9, 33, -88, 20, 0.4])
+
+def create_artificial4x2():
+    create_artifical2("artificial40_2", N_features=20, N_samples=1000, error_rate=0.1, relevant_params=[-.1, 2, 100])
+    create_artifical2("artificial41_2", N_features=20, N_samples=1000, error_rate=0.1, relevant_params=[-.1, 2, 100, 200, -50])
+    create_artifical2("artificial42_2", N_features=20, N_samples=1000, error_rate=0.1, relevant_params=[-.1, 2, 100, 200, -50, 20, 5])
+    create_artifical2("artificial43_2", N_features=20, N_samples=1000, error_rate=0.1, relevant_params=[-.1, 2, 100, 200, -50, 20, 5, 30, 2, 4, 2, 9])
+    create_artifical2("artificial44_2", N_features=20, N_samples=1000, error_rate=0.1, relevant_params=[-.1, 2, 100, 200, -50, 20, 5, 30, 2, 4, 2, 9, 60, 2, -10, 9, 33, -88, 20, 0.4])
+
 
 def create_artificial5x():
     """
@@ -291,9 +308,19 @@ def main():
     # create_artificial4x()
     # create_artificial5x()
     # create_artificial6x()
-    create_artificial1x2()
-    create_artificial2x2()
+    # create_artificial1x2()
+    # create_artificial2x2()
+    # create_artificial3x2()
+    # create_artificial4x2()
+    print('done')
+    return
 
+# Check list:
+# N_samples > 50*N_features?
+# create_artificial2()?
+# error_rate instead of std?
+# name of data sets?
+# relevant params given?
 
 if __name__ == "__main__":
     main()
