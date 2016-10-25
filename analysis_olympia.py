@@ -20,7 +20,7 @@ def do_analysis():
     path = "datasets/olympia/{}.csv".format(dataset_name)
     df = CSFSLoader().load_dataset(path)
 
-    Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, .3, 5))
+    Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, .3, 100))
 
 def evaluate():
     visualise_results(dataset_name, N_features, show_plot=False, N_samples=N_samples)
