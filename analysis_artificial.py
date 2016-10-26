@@ -110,7 +110,7 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
             except:
                 print('no matching curve found')
 
-    plt.legend(loc=3)
+    plt.legend(loc=1)
     plt.title('{}: AUC for noisy IG'.format(dataset_name))
     plt.xlim([-.01, 0.31])
     plt.ylim([0.5, 1.05])
