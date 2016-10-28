@@ -42,9 +42,9 @@ def analysis_general(dataset_name, N_features, N_samples, target):
     path = "datasets/artificial/{}.csv".format(dataset_name)
     df = CSFSLoader().load_dataset(path)
 
-    Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, mean_error, N_features, N_samples, dataset_name) for mean_error in np.linspace(0.0, 0.6, 24))
+    Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, mean_error, N_features, N_samples, dataset_name) for mean_error in np.linspace(0.0, 0.6, 200))
 
-def get_result_data(n_features, dataset_name, key, N_samples=100,):
+def get_result_data(n_features, dataset_name, key, N_samples,):
     """
 todo: there is only one best in result data (saving memory). show random and noisy_mean
     :return: {no_features: {error: auc},...} e.g. {16: {0.200036667: 0.53119531952662713, 0.105176567: 0.57273262130177505
@@ -87,9 +87,9 @@ def extract_x_y(result, n_features, start_lim=0):
 
 
 def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, show_plot=False, N_samples=100):
-    results_noisy = get_result_data(N_features, dataset_name, key='best_noisy_mean')
-    results_best = get_result_data(N_features, dataset_name, key='best')
-    results_rand = get_result_data(N_features, dataset_name, key='random')
+    results_noisy = get_result_data(N_features, dataset_name, key='best_noisy_mean', N_samples=1000)
+    results_best = get_result_data(N_features, dataset_name, key='best', N_samples=1000)
+    results_rand = get_result_data(N_features, dataset_name, key='random', N_samples=1000)
     plt.hold(True)
     params = dict()
 
@@ -138,7 +138,7 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
     if show_plot:
         plt.show()
 
-
+    # todo: specify folder structure from name
     dataset_class = dataset_name
     if not os.path.isdir('plots/{}/'.format(dataset_class)):
             os.mkdir('plots/{}/'.format(dataset_class))
