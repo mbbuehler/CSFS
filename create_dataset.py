@@ -320,6 +320,17 @@ def create_artificial6x2():
         relevant_params = list(-200 * np.random.random_sample(50) + 100)
         create_artifical2("artificial6{}_2".format(i), N_features=100, N_samples=5000, error_rate=0.05, relevant_params=relevant_params)
 
+def create_artificial6x3():
+    """
+    50 features with 0.5 std, random params between -100 and 100
+    Check what influence distribution of T has
+    :return:
+    """
+    relevant_params_choices = [1, 5, 10, 25, 50, 75]
+    for i in relevant_params_choices:
+        relevant_params = list(np.random.randint(-100, 100, i))
+        create_artifical2("artificial6-{}_3".format(i), N_features=100, N_samples=5000, error_rate=0.05, relevant_params=relevant_params)# here error rate refers to data set!
+
 
 def main():
     # create_artificial1x()
@@ -334,6 +345,7 @@ def main():
     # create_artificial4x2()
     # create_artificial5x2()
     # create_artificial6x2()
+    # create_artificial6x3()
     print('done')
     return
 

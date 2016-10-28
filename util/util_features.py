@@ -12,5 +12,16 @@ def get_target_ratio(path):
     df = pd.read_csv(path)
     print(df['T'].describe())
 
-path = '../datasets/artificial/artificial12.csv'
-print(get_target_ratio(path))
+
+def create_dn_names_from_base(dataset_base):
+    """
+    Creates new dataset names from a prefix (base). e.g. artifical10 becomes artifical10_true, artificial10_noisy
+    :param dataset_base: list
+    :return: list
+    """
+    dataset_names = [dn+'_true' for dn in dataset_base] + [dn+'_noisy' for dn in dataset_base]
+    return dataset_names
+
+if __name__ == '__main__':
+    path = '../datasets/artificial/artificial12.csv'
+    print(get_target_ratio(path))

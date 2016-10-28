@@ -30,14 +30,31 @@ class CSFSEvaluator:
         aucs['best_noisy_features_count'] = Counter(selected_features) # Counter({'blue': 3, 'red': 2, 'yellow': 1})
         return aucs
 
-    def evaluate_best(self, N_features, N_samples, best_selector):
-        aucs = {'best': []}
+    def evaluate_noisy_mean(self, N_features, N_samples, all_features_noisy_selector):
+        aucs = {'best_noisy_mean': []}
         selected_features = list()
         for i in range(N_samples):
-            best_f = best_selector.select(N_features)
-            selected_features += best_f
-            aucs['best'].append(self._get_mean_auc_score(best_f))
+            best_noisy_f = all_features_noisy_selector.select(N_features)
+            selected_features += best_noisy_f
+            aucs['best_noisy_mean'].append(self._get_mean_auc_score(best_noisy_f))
+        aucs['best_noisy_mean_features_count'] = Counter(selected_features) # Counter({'blue': 3, 'red': 2, 'yellow': 1})
+        return aucs
+
+    def evaluate_best(self, N_features, N_samples, best_selector): # always the same, don't need many samples
+        aucs = {'best': []}
+        selected_features = best_selector.select(N_features)
+        aucs['best'].append(self._get_mean_auc_score(selected_features))
         aucs['best_features_count'] = Counter(selected_features) # Counter({'blue': 3, 'red': 2, 'yellow': 1})
+        return aucs
+
+    def evaluate_random(self, N_features, N_samples, random_selector):
+        aucs = {'random': []}
+        selected_features = list()
+        for i in range(N_samples):
+            best_f = random_selector.select(N_features)
+            selected_features += best_f
+            aucs['random'].append(self._get_mean_auc_score(best_f))
+        aucs['random_features_count'] = Counter(selected_features) # Counter({'blue': 3, 'red': 2, 'yellow': 1})
         return aucs
 
 
