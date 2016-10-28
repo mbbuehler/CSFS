@@ -11,6 +11,8 @@ from CSFSEvaluator import CSFSEvaluator
 from CSFSLoader import CSFSLoader
 from CSFSSelector import CSFSAllFeaturesNoisySelector, CSFSBestActualSelector, CSFSRandomSelector
 
+cmap = plt.get_cmap('jet_r')
+
 
 def _conduct_analysis(df, target, mean_error, N_features, N_samples, dataset_name):
     sys.stdout.write('mean_error:{}{}'.format(mean_error,'\n'))
@@ -45,23 +47,23 @@ def analysis_general(dataset_name, N_features, N_samples, target):
 def get_result_data(n_features, dataset_name, key, N_samples=100,):
     """
 todo: there is only one best in result data (saving memory). show random and noisy_mean
-    :return: {no_features: {std: auc},...} e.g. {16: {0.200036667: 0.53119531952662713, 0.105176567: 0.57273262130177505
+    :return: {no_features: {error: auc},...} e.g. {16: {0.200036667: 0.53119531952662713, 0.105176567: 0.57273262130177505
     """
     path = 'pickle-dumps/{}/'.format(dataset_name)
     files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
 
     results = dict()
-    pattern = r'(\d+)features_{}samples_(.*?)std'.format(N_samples)
+    pattern = r'(\d+)features_{}samples_(.*?)error'.format(N_samples)
     for f in files:
         match = re.match(pattern, f)
-        # print(f)
-        no_features = int(match.group(1))
-        std = float(match.group(2))
+        if match:
+            no_features = int(match.group(1))
+            error = float(match.group(2))
 
-        if no_features not in results.keys():
-            results[no_features] = dict()
+            if no_features not in results.keys():
+                results[no_features] = dict()
 
-        results[no_features][std] = (np.mean(pickle.load(open(os.path.join(path, f), 'rb'))[key]))
+            results[no_features][error] = (np.mean(pickle.load(open(os.path.join(path, f), 'rb'))[key]))
     if n_features:
         results = {r:results[r] for r in n_features}
     return results
@@ -81,9 +83,13 @@ def extract_x_y(result, n_features, start_lim=0):
 
     return np.array(x, dtype=float), np.array(y, dtype=float)
 
+
+
+
 def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, show_plot=False, N_samples=100):
-    results_noisy = get_result_data(N_features, dataset_name, key='best_noisy')
+    results_noisy = get_result_data(N_features, dataset_name, key='best_noisy_mean')
     results_best = get_result_data(N_features, dataset_name, key='best')
+    results_rand = get_result_data(N_features, dataset_name, key='random')
     plt.hold(True)
     params = dict()
 
@@ -93,14 +99,19 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
     # def func(x, w1, p1, w2, p2, w3):
     #     return w1 * pow(x, p1) + w2 * pow(x, p2) + w3 * np.log10(x)
 
-    for n_f in N_features:
+    for i,n_f in enumerate(N_features):
         print('== no of features: {}'.format(n_f))
+        color = cmap(float(i)/len(N_features))
+
         x,y = extract_x_y(results_noisy, n_f, start_lim=0)
         std = np.std(y)
-        plt.plot(x, y, '.', alpha=0.5, label='noisy {}'.format(n_f))
+        plt.plot(x, y, '.', color=color, alpha=0.5, label='noisy mean {}'.format(n_f))
 
         x_best, y_best = extract_x_y(results_best, n_f, start_lim=0)
-        plt.plot(x_best, y_best, '--', alpha=0.5, label='best {}'.format(n_f))
+        plt.plot(x_best, y_best, '--', color=color, alpha=0.5, label='best {}'.format(n_f))
+
+        x_rand, y_rand = extract_x_y(results_rand, n_f, start_lim=0)
+        plt.plot(x_rand, y_rand, ':', color=color, alpha=0.5, label='random {}'.format(n_f))
 
         if fit_curve:
             x,y = extract_x_y(results_noisy, n_f, start_lim=start_lim)
@@ -117,8 +128,8 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
             except:
                 print('no matching curve found')
 
-    plt.legend(loc=3)
-    plt.title('{}: AUC for noisy IG'.format(dataset_name))
+    plt.legend(loc=1)
+    plt.title('{}: AUC'.format(dataset_name))
     plt.xlim([-.01, .3])
     plt.ylim([0.5, 1.05])
     plt.xlabel('std')
@@ -131,7 +142,7 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
     dataset_class = dataset_name
     if not os.path.isdir('plots/{}/'.format(dataset_class)):
             os.mkdir('plots/{}/'.format(dataset_class))
-    fig1.savefig('plots/{}/{}.png'.format(dataset_class, dataset_name), dpi=100)
+    fig1.savefig('plots/{}/noisy_mean_{}.png'.format(dataset_class, dataset_name), dpi=100)
     plt.hold(False)
     plt.clf()
 

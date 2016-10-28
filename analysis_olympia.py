@@ -87,8 +87,8 @@ def explore_pickle():
         print(data['best_noisy_features_count'])
         print()
 
-do_analysis()
-# evaluate()
+# do_analysis()
+evaluate()
 
 # visualize_result()
 # explore()
