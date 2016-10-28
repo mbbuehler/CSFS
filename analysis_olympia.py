@@ -8,7 +8,7 @@ from infoformulas_listcomp import IG
 import numpy as np
 from joblib import Parallel, delayed
 from CSFSLoader import CSFSLoader
-from analysis_std_drop import _conduct_analysis, visualise_results
+from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 
 N_features = [3,5,7,11,15,20]
 N_features = [5,11,20]
@@ -20,7 +20,7 @@ ignore_attributes = ['id']
 
 def do_analysis():
     path = "datasets/olympia/{}.csv".format(dataset_name)
-    df = CSFSLoader().load_dataset(path, ignore_attributes)
+    df = CSFSLoader().load_dataset(path)
 
     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, .3, 100))
 
@@ -87,11 +87,11 @@ def explore_pickle():
         print(data['best_noisy_features_count'])
         print()
 
-# do_analysis()
+do_analysis()
 # evaluate()
 
 # visualize_result()
 # explore()
 # extract_prefix()
 # prepare_selected_dataset()
-explore_pickle()
+# explore_pickle()
