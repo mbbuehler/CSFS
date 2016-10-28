@@ -112,3 +112,78 @@ class CSFSBestUncertainSelector(CSFSSelector):
         self._check_predictors_length(n)
         dict_ig = self._get_dict_ig()
         return self._get_ordered_predictors_dsc(dict_ig)[:n]
+
+class CSFSAllFeaturesNoisySelector(CSFSSelector):
+
+    def __init__(self, df, target, max_error): # max_error: max difference from mean e.g. 0.1
+        super().__init__(df, target)
+        self.df_info = self._get_df_info(df)
+        self.df_actual = df
+        self.max_error = max_error
+
+    def _get_df_info(self, df):
+        entropies = [H(df[f]) for f in self.all_features]
+        mean = [np.mean(df[f]) for f in self.all_features]
+        std = [np.std(df[f]) for f in self.all_features]
+
+        cond_mean_target_f0 = [np.mean(df[df[f] == 0][self.target]) for f in self.all_features]
+
+        cond_mean_target_f1= [np.mean(df[df[f] == 1][self.target]) for f in self.all_features]
+
+        data = {'H': entropies, 'mean': mean, 'std': std, 'cond_mean_target_f0': cond_mean_target_f0, 'cond_mean_target_f1': cond_mean_target_f1}
+        df_info = pd.DataFrame(data)
+        df_info.index = self.all_features
+        print(df_info)
+        return df_info
+
+    def _get_noisy_mean(self, mean, max_error):
+        """
+        Creates a noisy mean from mean within the range +- max_error
+        :param mean: float 0<=mean<=1
+        :param max_error: float 0<=max_error<=1 e.g. 0.1
+        :return: float 0<=noisy_mean<=1
+        """
+        upper_lim = min(mean + max_error, 1)
+        lower_lim = max(mean - max_error, 0)
+        noisy_mean = (upper_lim - lower_lim) * np.random.random_sample() + lower_lim
+        # print('mean', mean)
+        # # print('upper', upper_lim)
+        # # print('lower', lower_lim)
+        # print('noisy mean', noisy_mean)
+        return noisy_mean
+
+    def _get_dict_ig(self):
+        dict_ig = dict()
+        noisy_mean_target = self._get_noisy_mean(self.df_info['mean'].loc[self.target], self.max_error)
+
+        h_x = _H([noisy_mean_target, 1 - noisy_mean_target])
+        for pred in self.all_predictors:
+            h_cond = H_cond(
+                self._get_noisy_mean(self.df_info['cond_mean_target_f0'].loc[pred], self.max_error),
+                self._get_noisy_mean(self.df_info['cond_mean_target_f1'].loc[pred], self.max_error),
+                self._get_noisy_mean(self.df_info['mean'].loc[pred], self.max_error)
+            )
+            ig = h_x - h_cond
+            dict_ig[pred] = ig
+        return dict_ig
+
+    def select(self, n):
+        self._check_predictors_length(n)
+        dict_ig = self._get_dict_ig()
+        return self._get_ordered_predictors_dsc(dict_ig)[:n]
+
+def test():
+    n = 4
+    data = {'F1': [1,1,1,1,0,0,0], 'F2': [1,1,0,0,1,1,1], 'F3': [0,0,0,0,1,1,1], 'F4': [1,1,1,1,1,1,1], 'T': [1,0,1,0,1,0,1]}
+    df = pd.DataFrame(data)
+    target = 'T'
+    bestUncertainSelector = CSFSBestUncertainSelector(df, target, fix_std=0.1)
+    bestNoisyFeatures = bestUncertainSelector.select(n)
+    print(bestNoisyFeatures)
+
+    allFeaturesNoisySelector = CSFSAllFeaturesNoisySelector(df, target, max_error=0.1)
+    allFeaturesNoisy = allFeaturesNoisySelector.select(n)
+    print(allFeaturesNoisy)
+
+if __name__ == '__main__':
+    test()

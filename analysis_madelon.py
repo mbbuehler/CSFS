@@ -14,6 +14,7 @@ from CSFSSelector import CSFSBestUncertainSelector
 from noise_helper_funcs import structure_data
 import os
 import re
+import analysis_std_drop
 """
 Example starting command:
 python3 analysis_madelon.py 0.000026416 0.00005
@@ -59,7 +60,6 @@ def extract_x_y(result, n_features, start_lim=0):
 
 def visualize_result():
     dataset_name = "madelon"
-    target = 'target'
     N_features = [2,3,5,7]#,11,13,16]
     N_samples = 100
     results = get_result_data(N_features)
@@ -237,8 +237,14 @@ def preprocess(data):
     return data
 
 
+
+
 if __name__ == "__main__":
+    path = 'datasets/madelon/madelon_combined.csv'
+    target = 'target'
+    df = CSFSLoader().load_dataset(path)
     # visualize_result()
-    analysis2()
+    # analysis2()
     # plot_result()
     # analysis2_fix()
+    df = analysis_std_drop.explore(df, target)

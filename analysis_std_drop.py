@@ -140,6 +140,9 @@ def evaluate():
     dataset_names = ['artificial20','artificial21','artificial22','artificial23','artificial24','artificial25','artificial26','artificial27']
     Parallel(n_jobs=3)(delayed(visualise_results)(dn, N_features, False) for dn in dataset_names)
 
+def explore(df, target):
+    print(df[target].describe())
+
 if __name__ == "__main__":
     # example call
     # do_analysis()

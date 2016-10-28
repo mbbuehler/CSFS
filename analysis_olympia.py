@@ -16,10 +16,11 @@ N_samples = 100
 dataset_name = 'Olympia_2_update'
 dataset_name = 'olympia_subset1'
 target = 'medals'
+ignore_attributes = ['id']
 
 def do_analysis():
     path = "datasets/olympia/{}.csv".format(dataset_name)
-    df = CSFSLoader().load_dataset(path)
+    df = CSFSLoader().load_dataset(path, ignore_attributes)
 
     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, .3, 100))
 
@@ -29,12 +30,12 @@ def evaluate():
 
 def explore():
     path = "datasets/olympia/Olympia_2_update.csv"
-    df = CSFSLoader().load_dataset(path)
+    df = CSFSLoader().load_dataset(path, ignore_attributes)
     target = "medals"
-
-    print(df.describe())
+    print(df.head())
+    print(df[target].describe())
+    return
     df = df[:20]
-    import pandas as pd
     ig_data = {f:IG(df[target], df[f]) for f in df}
 
     ordered = sorted(ig_data, key=ig_data.__getitem__, reverse=True)
@@ -76,14 +77,21 @@ def extract_prefix():
         print(f)
 
 def explore_pickle():
-    data = pickle.load(open('pickle-dumps/olympia_subset1/3features_100samples_0.000010000std.pickle','rb'))
-    print(data)
+    datasets = [
+        'pickle-dumps/olympia_subset1/11features_100samples_0.000010000std.pickle',
+        'pickle-dumps/olympia_subset1/11features_100samples_0.051523434std.pickle',
+        'pickle-dumps/olympia_subset1/11features_100samples_0.093946263std.pickle'
+    ]
+    for ds in datasets:
+        data = pickle.load(open(ds,'rb'))
+        print(data['best_noisy_features_count'])
+        print()
 
 # do_analysis()
-evaluate()
+# evaluate()
 
 # visualize_result()
 # explore()
 # extract_prefix()
 # prepare_selected_dataset()
-# explore_pickle()
+explore_pickle()
