@@ -122,18 +122,13 @@ class CSFSAllFeaturesNoisySelector(CSFSSelector):
         self.max_error = max_error
 
     def _get_df_info(self, df):
-        entropies = [H(df[f]) for f in self.all_features]
         mean = [np.mean(df[f]) for f in self.all_features]
-        std = [np.std(df[f]) for f in self.all_features]
-
         cond_mean_target_f0 = [np.mean(df[df[f] == 0][self.target]) for f in self.all_features]
-
         cond_mean_target_f1= [np.mean(df[df[f] == 1][self.target]) for f in self.all_features]
 
-        data = {'H': entropies, 'mean': mean, 'std': std, 'cond_mean_target_f0': cond_mean_target_f0, 'cond_mean_target_f1': cond_mean_target_f1}
+        data = {'mean': mean, 'cond_mean_target_f0': cond_mean_target_f0, 'cond_mean_target_f1': cond_mean_target_f1}
         df_info = pd.DataFrame(data)
         df_info.index = self.all_features
-        print(df_info)
         return df_info
 
     def _get_noisy_mean(self, mean, max_error):
