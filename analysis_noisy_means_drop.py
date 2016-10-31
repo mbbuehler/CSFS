@@ -38,11 +38,12 @@ def analysis_general(dataset_name, N_features, N_samples, target):
     :param N_samples:
     :param target:
     :return:
-    """
-    path = "datasets/artificial/{}.csv".format(dataset_name)
-    df = CSFSLoader().load_dataset(path)
-
-    Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, mean_error, N_features, N_samples, dataset_name) for mean_error in np.linspace(0.0, 0.6, 200))
+    # """
+    # path = "datasets/artificial/{}.csv".format(dataset_name)
+    # df = CSFSLoader().load_dataset(path)
+    #
+    # Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, mean_error, N_features, N_samples, dataset_name) for mean_error in np.linspace(0.0, 0.6, 200))
+    pass
 
 def get_result_data(n_features, dataset_name, key, N_samples):
     """
@@ -106,13 +107,13 @@ def visualise_results(dataset_name, dataset_class, N_features, N_samples, fit_cu
         color = cmap(float(i)/len(N_features))
 
         x,y = extract_x_y(results_noisy, n_f, start_lim=0)
-        ax.plot(x, y, '.', color=color, alpha=0.5, label='noisy mean {}'.format(n_f))
+        ax.plot(x, y, '.', color=color, alpha=1, label='noisy mean {}'.format(n_f))
 
         x_best, y_best = extract_x_y(results_best, n_f, start_lim=0)
-        ax.plot(x_best, y_best, '--', color=color, alpha=0.5, label='best {}'.format(n_f))
+        ax.plot(x_best, y_best, '--', color=color, alpha=.5, label='best {}'.format(n_f))
 
         x_rand, y_rand = extract_x_y(results_rand, n_f, start_lim=0)
-        ax.plot(x_rand, y_rand, ':', color=color, alpha=0.5, label='random {}'.format(n_f))
+        ax.plot(x_rand, y_rand, ':', color=color, alpha=1, label='random {}'.format(n_f))
 
         if fit_curve:
             x,y = extract_x_y(results_noisy, n_f, start_lim=start_lim)
@@ -141,7 +142,7 @@ def visualise_results(dataset_name, dataset_class, N_features, N_samples, fit_cu
         return "n.a."
 
     plt.title('{} (target mean: {}): AUC'.format(dataset_name, get_target_mean()))
-    plt.xlim([-.01, .31])
+    plt.xlim([-.01, .61])
     plt.ylim([0.5, 1.05])
     plt.xlabel('max error for each feature')
     plt.ylabel('auc')

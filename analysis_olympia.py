@@ -21,9 +21,10 @@ def do_analysis():
     path = "datasets/olympia/{}.csv".format(dataset_name)
     df = CSFSLoader().load_dataset(path)
 
-    Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, .3, 100))
+    Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, .6, 200))
 
 def evaluate():
+    N_features = [3,5,7,11]
     visualise_results(dataset_name=dataset_name, N_features=N_features, show_plot=False, N_samples=N_samples, dataset_class='olympia', target=target)
 
 
@@ -85,11 +86,11 @@ def explore_pickle():
         print(data['best_noisy_mean_features_count'])
         print()
 
-do_analysis()
-# evaluate()
+# do_analysis()
+evaluate()
 
 # visualize_result()
 # explore()
 # extract_prefix()
 # prepare_selected_dataset()
-# explore_pickle()
+explore_pickle()
