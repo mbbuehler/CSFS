@@ -25,25 +25,19 @@ def do_analysis():
     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, .3, 100))
 
 def evaluate():
-    visualise_results(dataset_name, N_features, show_plot=False, N_samples=N_samples)
+    visualise_results(dataset_name, N_features, show_plot=False, N_samples=N_samples, dataset_class=dataset_name)
 
 
 def explore():
     path = "datasets/olympia/Olympia_2_update.csv"
     df = CSFSLoader().load_dataset(path, ignore_attributes)
     target = "medals"
-    print(df.head())
-    print(df[target].describe())
-    return
-    df = df[:20]
+    # df = df[:20]
     ig_data = {f:IG(df[target], df[f]) for f in df}
 
     ordered = sorted(ig_data, key=ig_data.__getitem__, reverse=True)
     for f in ordered:
         print(f, ig_data[f])
-
-    ordered.remove(target)
-    ordered.remove('id')
     print('best 10:')
     print(sorted(ordered[:10]))
     print('worst 10:')
@@ -62,7 +56,12 @@ def prepare_selected_dataset():
     features = [row[0] for row in csv_reader] #['electricity consumption_[16.0455, 20.243]_1', 'electricity consumption_[16.0455, 20.243]_0', 'electricity consumption_(24.87, 29.302]_1',...]
     for i in range(len(features)):
         features[i] = re.sub(r'_[01]$', '', features[i])
-    print(features)
+    # print(features)
+    # print(len(features))
+    # print(list(set(features)))
+    # print(len(list(set(features))))
+    # return
+    features = list(set(features))
     path = "datasets/olympia/Olympia_2_update.csv"
     df = CSFSLoader().load_dataset(path)
     # print(df)
@@ -87,8 +86,8 @@ def explore_pickle():
         print(data['best_noisy_features_count'])
         print()
 
-# do_analysis()
-evaluate()
+do_analysis()
+# evaluate()
 
 # visualize_result()
 # explore()

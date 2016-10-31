@@ -44,7 +44,7 @@ def analysis_general(dataset_name, N_features, N_samples, target):
 
     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, mean_error, N_features, N_samples, dataset_name) for mean_error in np.linspace(0.0, 0.6, 200))
 
-def get_result_data(n_features, dataset_name, key, N_samples,):
+def get_result_data(n_features, dataset_name, key, N_samples):
     """
 todo: there is only one best in result data (saving memory). show random and noisy_mean
     :return: {no_features: {error: auc},...} e.g. {16: {0.200036667: 0.53119531952662713, 0.105176567: 0.57273262130177505
@@ -86,12 +86,12 @@ def extract_x_y(result, n_features, start_lim=0):
 
 
 
-def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, show_plot=False, N_samples=100):
-    results_noisy = get_result_data(N_features, dataset_name, key='best_noisy_mean', N_samples=1000)
-    results_best = get_result_data(N_features, dataset_name, key='best', N_samples=1000)
-    results_rand = get_result_data(N_features, dataset_name, key='random', N_samples=1000)
+def visualise_results(dataset_name, N_features, N_samples, fit_curve=False, start_lim=0, show_plot=False, dataset_class=""):
+    results_noisy = get_result_data(N_features, dataset_name, key='best_noisy_mean', N_samples=N_samples)
+    results_best = get_result_data(N_features, dataset_name, key='best', N_samples=N_samples)
+    results_rand = get_result_data(N_features, dataset_name, key='random', N_samples=N_samples)
     plt.hold(True)
-    f = plt.figure(figsize=(15,15))
+    f = plt.figure(figsize=(9, 9))
     ax = plt.subplot(111)
     params = dict()
 
@@ -132,9 +132,9 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
     box = ax.get_position()
     ax.set_position([box.x0, box.y0 + box.height*0.1, box.width, box.height*.9])
 
-    ax.legend(loc='lower center', bbox_to_anchor=(.5, -.2), fancybox=True, shadow=True, ncol=4)
+    ax.legend(loc='lower center', bbox_to_anchor=(.5, -.25), fancybox=True, shadow=True, ncol=4)
     plt.title('{}: AUC'.format(dataset_name))
-    plt.xlim([-.01, .61])
+    plt.xlim([-.01, .31])
     plt.ylim([0.5, 1.05])
     plt.xlabel('max error for each feature')
     plt.ylabel('auc')
@@ -145,11 +145,14 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
 
     # todo: specify folder structure from name
     # dataset_class = dataset_name
-    match = re.match(r'artificial(\d)-\d+_(\d)_(.*)$', dataset_name)
-    set_no = match.group(1)
-    version = match.group(2)
-    mode = match.group(3)
-    dataset_class = 'artificial{}x{}_{}'.format(set_no, version, mode)
+
+
+    if dataset_class == "":
+        match = re.match(r'artificial(\d)-\d+_(\d)_(.*)$', dataset_name)
+        set_no = match.group(1)
+        version = match.group(2)
+        mode = match.group(3)
+        dataset_class = 'artificial{}x{}_{}'.format(set_no, version, mode)
 
     if not os.path.isdir('plots/{}/'.format(dataset_class)):
             os.mkdir('plots/{}/'.format(dataset_class))
