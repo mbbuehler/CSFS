@@ -11,7 +11,6 @@ from CSFSLoader import CSFSLoader
 from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 
 N_features = [3,5,7,11,15,20]
-N_features = [5,11,20]
 N_samples = 100
 dataset_name = 'Olympia_2_update'
 dataset_name = 'olympia_subset1'
@@ -25,7 +24,7 @@ def do_analysis():
     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, target, std, N_features, N_samples, dataset_name) for std in np.linspace(0.00001, .3, 100))
 
 def evaluate():
-    visualise_results(dataset_name, N_features, show_plot=False, N_samples=N_samples, dataset_class=dataset_name)
+    visualise_results(dataset_name=dataset_name, N_features=N_features, show_plot=False, N_samples=N_samples, dataset_class='olympia', target=target)
 
 
 def explore():
@@ -77,13 +76,13 @@ def extract_prefix():
 
 def explore_pickle():
     datasets = [
-        'pickle-dumps/olympia_subset1/11features_100samples_0.000010000std.pickle',
-        'pickle-dumps/olympia_subset1/11features_100samples_0.051523434std.pickle',
-        'pickle-dumps/olympia_subset1/11features_100samples_0.093946263std.pickle'
+        'pickle-dumps/olympia_subset1/11features_100samples_0.000error.pickle',
+        'pickle-dumps/olympia_subset1/11features_100samples_0.052error.pickle',
+        'pickle-dumps/olympia_subset1/11features_100samples_0.100error.pickle'
     ]
     for ds in datasets:
         data = pickle.load(open(ds,'rb'))
-        print(data['best_noisy_features_count'])
+        print(data['best_noisy_mean_features_count'])
         print()
 
 do_analysis()

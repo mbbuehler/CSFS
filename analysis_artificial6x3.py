@@ -16,7 +16,7 @@ def do_analysis():
 
 def evaluate():
     N_features = [1, 5, 25, 75]
-    Parallel(n_jobs=4)(delayed(visualise_results)(dn, N_features) for dn in dataset_names)
+    Parallel(n_jobs=4)(delayed(visualise_results)(dn, N_features, N_samples=N_samples, target=target) for dn in dataset_names)
     # N: #data points
     # M: #parameters
 

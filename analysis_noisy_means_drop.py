@@ -86,7 +86,7 @@ def extract_x_y(result, n_features, start_lim=0):
 
 
 
-def visualise_results(dataset_name, N_features, N_samples, fit_curve=False, start_lim=0, show_plot=False, dataset_class=""):
+def visualise_results(dataset_name, dataset_class, N_features, N_samples, fit_curve=False, start_lim=0, show_plot=False, target=""):
     results_noisy = get_result_data(N_features, dataset_name, key='best_noisy_mean', N_samples=N_samples)
     results_best = get_result_data(N_features, dataset_name, key='best', N_samples=N_samples)
     results_rand = get_result_data(N_features, dataset_name, key='random', N_samples=N_samples)
@@ -133,7 +133,14 @@ def visualise_results(dataset_name, N_features, N_samples, fit_curve=False, star
     ax.set_position([box.x0, box.y0 + box.height*0.1, box.width, box.height*.9])
 
     ax.legend(loc='lower center', bbox_to_anchor=(.5, -.25), fancybox=True, shadow=True, ncol=4)
-    plt.title('{}: AUC'.format(dataset_name))
+    def get_target_mean():
+        if target:
+            path = "datasets/{}/{}.csv".format(dataset_class, dataset_name)
+            df = CSFSLoader().load_dataset(path)
+            return round(np.mean(df[target]),2)
+        return "n.a."
+
+    plt.title('{} (target mean: {}): AUC'.format(dataset_name, get_target_mean()))
     plt.xlim([-.01, .31])
     plt.ylim([0.5, 1.05])
     plt.xlabel('max error for each feature')
@@ -147,12 +154,12 @@ def visualise_results(dataset_name, N_features, N_samples, fit_curve=False, star
     # dataset_class = dataset_name
 
 
-    if dataset_class == "":
-        match = re.match(r'artificial(\d)-\d+_(\d)_(.*)$', dataset_name)
-        set_no = match.group(1)
-        version = match.group(2)
-        mode = match.group(3)
-        dataset_class = 'artificial{}x{}_{}'.format(set_no, version, mode)
+    # if dataset_class == "":
+    #     match = re.match(r'artificial(\d)-\d+_(\d)_(.*)$', dataset_name)
+    #     set_no = match.group(1)
+    #     version = match.group(2)
+    #     mode = match.group(3)
+    #     dataset_class = 'artificial{}x{}_{}'.format(set_no, version, mode)
 
     if not os.path.isdir('plots/{}/'.format(dataset_class)):
             os.mkdir('plots/{}/'.format(dataset_class))
@@ -163,9 +170,10 @@ def visualise_results(dataset_name, N_features, N_samples, fit_curve=False, star
 def evaluate():
     #todo<
     # example call
-    N_features = [3,5,7,10]
-    dataset_names = ['artificial20','artificial21','artificial22','artificial23','artificial24','artificial25','artificial26','artificial27']
-    Parallel(n_jobs=3)(delayed(visualise_results)(dn, N_features, False) for dn in dataset_names)
+    # N_features = [3,5,7,10]
+    # dataset_names = ['artificial20','artificial21','artificial22','artificial23','artificial24','artificial25','artificial26','artificial27']
+    # Parallel(n_jobs=3)(delayed(visualise_results)(dn, N_features, False) for dn in dataset_names)
+    pass
 
 def explore(df, target):
     print(df[target].describe())
