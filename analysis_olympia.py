@@ -86,11 +86,11 @@ def explore_pickle():
         print(data['best_noisy_mean_features_count'])
         print()
 
-do_analysis()
-# evaluate()
+# do_analysis()
+evaluate()
+explore_pickle()
 
 # visualize_result()
 # explore()
 # extract_prefix()
 # prepare_selected_dataset()
-# explore_pickle()
