@@ -139,7 +139,13 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
         plt.show()
 
     # todo: specify folder structure from name
-    dataset_class = dataset_name
+    # dataset_class = dataset_name
+    match = re.match(r'artificial(\d)-\d+_(\d)_(.*)$', dataset_name)
+    set_no = match.group(1)
+    version = match.group(2)
+    mode = match.group(3)
+    dataset_class = 'artificial{}x{}_{}'.format(set_no, version, mode)
+
     if not os.path.isdir('plots/{}/'.format(dataset_class)):
             os.mkdir('plots/{}/'.format(dataset_class))
     fig1.savefig('plots/{}/noisy_mean_{}.png'.format(dataset_class, dataset_name), dpi=100)
