@@ -91,6 +91,8 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
     results_best = get_result_data(N_features, dataset_name, key='best', N_samples=1000)
     results_rand = get_result_data(N_features, dataset_name, key='random', N_samples=1000)
     plt.hold(True)
+    f = plt.figure(figsize=(15,15))
+    ax = plt.subplot(111)
     params = dict()
 
     def func(x, w1, p1, w2, p2):
@@ -104,14 +106,13 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
         color = cmap(float(i)/len(N_features))
 
         x,y = extract_x_y(results_noisy, n_f, start_lim=0)
-        std = np.std(y)
-        plt.plot(x, y, '.', color=color, alpha=0.5, label='noisy mean {}'.format(n_f))
+        ax.plot(x, y, '.', color=color, alpha=0.5, label='noisy mean {}'.format(n_f))
 
         x_best, y_best = extract_x_y(results_best, n_f, start_lim=0)
-        plt.plot(x_best, y_best, '--', color=color, alpha=0.5, label='best {}'.format(n_f))
+        ax.plot(x_best, y_best, '--', color=color, alpha=0.5, label='best {}'.format(n_f))
 
         x_rand, y_rand = extract_x_y(results_rand, n_f, start_lim=0)
-        plt.plot(x_rand, y_rand, ':', color=color, alpha=0.5, label='random {}'.format(n_f))
+        ax.plot(x_rand, y_rand, ':', color=color, alpha=0.5, label='random {}'.format(n_f))
 
         if fit_curve:
             x,y = extract_x_y(results_noisy, n_f, start_lim=start_lim)
@@ -124,16 +125,20 @@ def visualise_results(dataset_name, N_features, fit_curve=False, start_lim=0, sh
                 print('errors: {}'.format(perr))
                 print('avg error: {}'.format(avg_err))
 
-                plt.plot(x, func(x, *popt), '-k', linewidth=1, label="Fitted {} (avg err: {:.3f})".format(n_f, avg_err))
+                ax.plot(x, func(x, *popt), '-k', linewidth=1, label="Fitted {} (avg err: {:.3f})".format(n_f, avg_err))
             except:
                 print('no matching curve found')
 
-    plt.legend(loc=1)
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height*0.1, box.width, box.height*.9])
+
+    ax.legend(loc='lower center', bbox_to_anchor=(.5, -.2), fancybox=True, shadow=True, ncol=4)
     plt.title('{}: AUC'.format(dataset_name))
-    plt.xlim([-.01, .3])
+    plt.xlim([-.01, .61])
     plt.ylim([0.5, 1.05])
-    plt.xlabel('std')
+    plt.xlabel('max error for each feature')
     plt.ylabel('auc')
+
     fig1 = plt.gcf()
     if show_plot:
         plt.show()
