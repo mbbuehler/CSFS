@@ -51,6 +51,12 @@ def explore():
     for f in mean_05_f:
         print(f, np.mean(df[f]))
 
+def explore_feature(feature):
+    path = "datasets/olympia/Olympia_2_update.csv"
+    df = CSFSLoader().load_dataset(path, ignore_attributes)
+    print(df[feature].describe())
+
+
 def prepare_selected_dataset():
     csv_reader = csv.reader(open('datasets/olympia/olympia2_all_questions.csv','r', newline=''))
     features = [row[0] for row in csv_reader] #['electricity consumption_[16.0455, 20.243]_1', 'electricity consumption_[16.0455, 20.243]_0', 'electricity consumption_(24.87, 29.302]_1',...]
@@ -87,10 +93,13 @@ def explore_pickle():
         print()
 
 # do_analysis()
-evaluate()
-explore_pickle()
+# evaluate()
+# explore_pickle()
 
 # visualize_result()
 # explore()
 # extract_prefix()
 # prepare_selected_dataset()
+
+feature = 'electricity consumption_[16.0455, 20.243]'
+explore_feature(feature)
