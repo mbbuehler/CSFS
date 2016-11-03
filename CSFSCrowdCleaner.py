@@ -8,10 +8,16 @@ from bs4 import BeautifulSoup
 
 
 # df.set_index(['# answerUser unique', 'answer mean', 'answer std', 'answer count'])
+from tabulate import tabulate
 
-class CSFSCrowdCleaner:
+
+class CSFSCrowdAggregator:
+    """
+    Cleans and aggregates crowd answers
+    """
     def __init__(self, path_questions, path_answers):
-        self.df_questions = pd.read_csv(path_questions)
+        self.df_questions = pd.read_csv(path_questions, header=None)
+        self.df_questions.columns = ['feature', 'question']
         self.df_answers = pd.read_excel(path_answers)
 
     def get_clean_df(self, df_answers):
@@ -41,32 +47,79 @@ class CSFSCrowdCleaner:
         )
         return clean_df
 
+    def _get_feature_metadata(self, f, df):
+        def get_val_or_nan(df, index, column):
+            try:
+                return df.loc[index][column]
+            except:
+                return np.nan
+        p = get_val_or_nan(df, "{}_v0".format(f), 'answer mean')
+        std_p = get_val_or_nan(df, "{}_v0".format(f), 'answer std')
+        n_p = get_val_or_nan(df, "{}_v0".format(f), 'answer count')
+        n_p_unique = get_val_or_nan(df, "{}_v0".format(f), 'answerUser nunique')
+
+        p_0 = get_val_or_nan(df, "{}_0_v0".format(f), 'answer mean')
+        std_p_0 = get_val_or_nan(df, "{}_0_v0".format(f), 'answer std')
+        n_p_0 = get_val_or_nan(df, "{}_0_v0".format(f), 'answer count')
+        n_p_0_unique = get_val_or_nan(df, "{}_0_v0".format(f), 'answerUser nunique')
+
+        p_1 = get_val_or_nan(df, "{}_1_v0".format(f), 'answer mean')
+        std_p_1 = get_val_or_nan(df, "{}_1_v0".format(f), 'answer std')
+        n_p_1 = get_val_or_nan(df, "{}_1_v0".format(f), 'answer count')
+        n_p_1_unique = get_val_or_nan(df, "{}_1_v0".format(f), 'answerUser nunique')
+        metadata = {'p': p, 'std p': std_p, 'n p': n_p, 'n unique p': n_p_unique,
+                   'p|f=0': p_0, 'std p|f=0': std_p_0, 'n p|f=0': n_p_0, 'n unique p|f=0 ': n_p_0_unique,
+                   'p|f=1': p_1, 'std p|f=1': std_p_1, 'n p|f=1': n_p_1, 'n unique p|f=1 ': n_p_1_unique,
+                   }
+        return metadata
+
     def get_metadata(self, df_clean):
+
         f = {'answer': ['mean', 'std', 'count'], 'answerUser': [pd.Series.nunique]}
         # df = df_clean.groupby('question').apply(f)#lambda x: sum(x['answer']))
-        df = df_clean.groupby('question').agg(f)
-
-        # df.columns = ['# answerUser nunique', 'answer mean', 'answer std', 'answer count']
+        df = df_clean.groupby('feature').agg(f)
         df.columns = [' '.join(col).strip() for col in df.columns.values] # flatten hierarchical column names http://stackoverflow.com/questions/14507794/python-pandas-how-to-flatten-a-hierarchical-index-in-columns
 
         df['crowd_mean_all'] = np.mean(df_clean['answer'])
         df['crowd_std_all'] = np.std(df_clean['answer'])
+        # print(df[:3])
+
+        all_features = list()
+        features = sorted(set(df_clean.feature.apply(lambda x: re.sub(r'_[01]_v\d', '', x))))
+        # print(features)
+        data = {}
+        for f in features:
+            data[f] = self._get_feature_metadata(f, df)
 
 
-        # df.to_csv(out_path, sep=',', quotechar='"')
+        result = pd.DataFrame(data).transpose()
+        # print(tabulate(result, headers='keys'))
+        return result
 
-    def work(self):
+    def questions_to_features(self, df_questions, df_clean):
+        # print(df_questions[:3])
+        # print(df_clean[:3])
+        df_merged = df_clean.merge(df_questions, left_on='question', right_on='question')
+        df_merged = df_merged.drop('question', axis='columns')
+        return df_merged
+
+    def get_aggregated_df(self):
         df_clean = self.get_clean_df(self.df_answers)
+        df_clean = self.questions_to_features(self.df_questions, df_clean)
         df_metadata = self.get_metadata(df_clean)
-        print(df_metadata)
+        return df_metadata
 
 
 def test():
-    base_path = '/home/marcello/studies/bachelorarbeit/workspace/github_crowd-sourcing-for-feature-selection/datasets/olympia/cs_experiments/results/'
-    path_answers = base_path+'data_olympia1.xlsx'
-    path_questions = base_path+'Olympic2016_raw_plus_bin_questions_4features_v1.csv'
-    cleaner = CSFSCrowdCleaner(path_questions, path_answers)
-    cleaner.work()
+    experiment = 'experiment1'
+    base_path = 'datasets/olympia/'
+    path_answers = '{}results/{}/answers.xlsx'.format(base_path, experiment)
+    path_questions = '{}questions/{}/questions.csv'.format(base_path, experiment)
+    aggregator = CSFSCrowdAggregator(path_questions, path_answers)
+    df_aggregated = aggregator.get_aggregated_df()
+
+    out_path = '{}results/{}/aggregated.csv'.format(base_path, experiment)
+    df_aggregated.to_csv(out_path, index=True)
 
 if __name__ == '__main__':
     test()
