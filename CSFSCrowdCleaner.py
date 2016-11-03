@@ -10,15 +10,18 @@ from bs4 import BeautifulSoup
 # df.set_index(['# answerUser unique', 'answer mean', 'answer std', 'answer count'])
 from tabulate import tabulate
 
+from infoformulas_listcomp import H_X_Y_from_series, IG_from_series, _H
+
 
 class CSFSCrowdAggregator:
     """
     Cleans and aggregates crowd answers
     """
-    def __init__(self, path_questions, path_answers):
+    def __init__(self, path_questions, path_answers, target):
         self.df_questions = pd.read_csv(path_questions, header=None)
         self.df_questions.columns = ['feature', 'question']
         self.df_answers = pd.read_excel(path_answers)
+        self.target = target
 
     def get_clean_df(self, df_answers):
         def get_question(e):
@@ -52,6 +55,8 @@ class CSFSCrowdAggregator:
             try:
                 return df.loc[index][column]
             except:
+                # remove 0.4 when we have real data
+                return 0.4
                 return np.nan
         p = get_val_or_nan(df, "{}_v0".format(f), 'answer mean')
         std_p = get_val_or_nan(df, "{}_v0".format(f), 'answer std')
@@ -74,7 +79,11 @@ class CSFSCrowdAggregator:
         return metadata
 
     def get_metadata(self, df_clean):
-
+        """
+        Converts dataframe with separate rows for conditional probabilities to aggregated dataframe. adds metadata: mean, std, count and count unique
+        :param df_clean:
+        :return:
+        """
         f = {'answer': ['mean', 'std', 'count'], 'answerUser': [pd.Series.nunique]}
         # df = df_clean.groupby('question').apply(f)#lambda x: sum(x['answer']))
         df = df_clean.groupby('feature').agg(f)
@@ -82,9 +91,7 @@ class CSFSCrowdAggregator:
 
         df['crowd_mean_all'] = np.mean(df_clean['answer'])
         df['crowd_std_all'] = np.std(df_clean['answer'])
-        # print(df[:3])
 
-        all_features = list()
         features = sorted(set(df_clean.feature.apply(lambda x: re.sub(r'_[01]_v\d', '', x))))
         # print(features)
         data = {}
@@ -97,17 +104,27 @@ class CSFSCrowdAggregator:
         return result
 
     def questions_to_features(self, df_questions, df_clean):
-        # print(df_questions[:3])
-        # print(df_clean[:3])
         df_merged = df_clean.merge(df_questions, left_on='question', right_on='question')
         df_merged = df_merged.drop('question', axis='columns')
         return df_merged
+
+    def get_ig_df(self, df, target):
+        h_x = _H([df.loc[target]['p'], 1-df.loc[target]['p']])
+        df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
+        return df
 
     def get_aggregated_df(self):
         df_clean = self.get_clean_df(self.df_answers)
         df_clean = self.questions_to_features(self.df_questions, df_clean)
         df_metadata = self.get_metadata(df_clean)
-        return df_metadata
+
+
+        # only for debuggin till we have real data
+        df_metadata.loc[self.target] = 0.5
+        # stop deleting here
+
+        df_ig = self.get_ig_df(df_metadata, self.target)
+        return df_ig
 
 
 def test():
@@ -115,7 +132,9 @@ def test():
     base_path = 'datasets/olympia/'
     path_answers = '{}results/{}/answers.xlsx'.format(base_path, experiment)
     path_questions = '{}questions/{}/questions.csv'.format(base_path, experiment)
-    aggregator = CSFSCrowdAggregator(path_questions, path_answers)
+    target = 'T'
+
+    aggregator = CSFSCrowdAggregator(path_questions, path_answers, target)
     df_aggregated = aggregator.get_aggregated_df()
 
     out_path = '{}results/{}/aggregated.csv'.format(base_path, experiment)

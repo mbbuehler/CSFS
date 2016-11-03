@@ -44,6 +44,29 @@ def prob(x, xi):
     """
     return sum([1 for x0 in x if x0 == xi])/len(x)
 
+def IG_from_series(instance, h_x):
+    """
+
+    :param instance: series
+    :param h_x: H(x) entropy of target variable
+    :return:
+    """
+
+    cond_h = H_X_Y_from_series(instance)
+    return h_x - cond_h
+
+def H_X_Y_from_series(instance):
+    """
+    Calculates conditional entropy from p and cond_p
+    ONLY FOR BINARY
+    :param x: list, e.g. [ 0.3, 0.7]
+    :param y_cond: conditional probability list, e.g. [0.1, 0.9]
+    :return:
+    """
+    return (1-instance['p']) * _H([instance['p|f=0'], 1-instance['p|f=0']]) \
+           + (instance['p']) * _H([instance['p|f=1'], 1-instance['p|f=1']])
+
+
 def H_X_Y(x, y):
     """
     Calculates conditional entropy without using conditional probability
