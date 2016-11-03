@@ -2,6 +2,7 @@ from math import log
 
 import math
 # Checked with results from http://www.cs.man.ac.uk/~pococka4/MIToolbox.html (7.9.16)
+import pandas as pd
 
 
 def joint_probabilities(X, Y):
@@ -63,6 +64,11 @@ def H_X_Y_from_series(instance):
     :param y_cond: conditional probability list, e.g. [0.1, 0.9]
     :return:
     """
+    print('H f=0:',_H([instance['p|f=0'], 1-instance['p|f=0']]))
+    print('H f=1:',_H([instance['p|f=1'], 1-instance['p|f=1']]))
+    # print((1-instance['p']) * _H([instance['p|f=0'], 1-instance['p|f=0']]))
+    #
+    # print((instance['p']) * _H([instance['p|f=1'], 1-instance['p|f=1']]))
     return (1-instance['p']) * _H([instance['p|f=0'], 1-instance['p|f=0']]) \
            + (instance['p']) * _H([instance['p|f=1'], 1-instance['p|f=1']])
 
@@ -145,14 +151,14 @@ def H_cond(x1_y0, x1_y1, y1):
     return y0 * (_H([x1_y0, x0_y0])) + y1 * (_H([x1_y1, x0_y1]))
 
 def test():
-    print(' == Start Tests ==')
+    # print(' == Start Tests ==')
     y = [1, 1, 1, 0, 0]
     x = [1, 0, 1, 1, 0]
-
+    #
     entropy_x = H(x)
     print('entropy %e' % entropy_x)
     assert round(entropy_x,7) == .9709506
-
+    #
     cond_e = H_X_Y(x, y)
     print('cond_e %e' % cond_e)
     assert round(cond_e,7) == .9509775
@@ -192,16 +198,26 @@ def test():
     print(MI(x,y))
     print(IG(x,y))
 
-    import pandas as pd
-    print('IG_fast')
-    data = pd.DataFrame({'x1':x,'x2':x,'y':y})
-    data = {'x1':x,'x2':x,'y':y}
-    print(data)
-    print(IG_fast(data,'x1','y'))
+
+    instance = pd.Series({'p': 3/5, 'p|f=0': 0.5, 'p|f=1': 2/3})
+    cond_entropy = H_X_Y_from_series(instance)
+    cond_entropy_true = .9509775
+    print(cond_entropy,' == ', cond_entropy_true, '?')
+    assert round(cond_entropy, 5) == round(cond_entropy_true, 5)
+
+
+    h_x = _H([3/5, 1-3/5])
+    ig_true = h_x - cond_entropy_true
+    # print(instance)
+    ig = IG_from_series(instance, h_x)
+    print(ig, ' == ', ig_true, '?')
+    assert round(ig, 5) == round(ig_true, 5)
 
 
 
     print(' == Tests OK ==')
-# test()
+
+if __name__ == '__main__':
+    test()
 
 
