@@ -3,9 +3,9 @@ import numpy as np
 import re
 from bs4 import BeautifulSoup
 
-base_path = '/home/marcello/studies/bachelorarbeit/workspace/github_crowd-sourcing-for-feature-selection/datasets/olympia/cs_experiments/'
+base_path = '/home/marcello/studies/bachelorarbeit/workspace/github_crowd-sourcing-for-feature-selection/datasets/olympia/cs_experiments/results/'
 in_path = base_path+'data_olympia1.xlsx'
-out_path = base_path+'data_olympia1_aggregated.csv'
+out_path = base_path+'data_olympia1_aggregated_cleaned.csv'
 df_raw = pd.read_excel(in_path)
 # print(df_raw[:3])
 df_raw = df_raw[df_raw['answerUser']!='A2BGRGVU9HG0C6']
@@ -51,8 +51,8 @@ df.columns = [' '.join(col).strip() for col in df.columns.values] # flatten hier
 
 df['crowd_mean_all'] = np.mean(df_clean['answer'])
 df['crowd_std_all'] = np.std(df_clean['answer'])
-df['true_mean'] = 0.2
-df['true_std'] = 0.4
+df['true_mean'] = 0.364865
+df['true_std'] = 0.483027
 
 df.to_csv(out_path, sep=',', quotechar='"')
 # df.set_index(['# answerUser unique', 'answer mean', 'answer std', 'answer count'])

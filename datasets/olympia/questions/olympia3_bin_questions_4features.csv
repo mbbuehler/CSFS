@@ -1,0 +1,22 @@
+"oil imports_[0.66, 51496.667]_0","If a country *imports more than 51,000 barrels per year*, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."
+"oil imports_[0.66, 51496.667]_1","If a country *imports less than 51,000 barrels per year*, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."
+"oil imports_[0.66, 51496.667]","What is the chance (or probability) of a *country importing less than 51,000 barrels per year*? Give your best guess (between 0 and 1)."
+"military expenditures_[0, 1.147]_0","If a country *spends more than 1.1% of GDP on military*, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."
+"military expenditures_[0, 1.147]_1","If a country *spends less than 1.1% of GDP on military*, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."
+"military expenditures_[0, 1.147]",What is the chance (or probability) of a *country spending less than 1.1% of GDP*? Give your best guess (between 0 and 1).
+"electricity expenditures per capita_[0, 601.312]_0","If an average person in a country *use more electric power than 600 kWh per year*, what is the chance (or probability) that the country won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."
+"electricity expenditures per capita_[0, 601.312]_1","If an average person in a country *use less electric power than 600 kWh per year*, what is the chance (or probability) that the country won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."
+"electricity expenditures per capita_[0, 601.312]","Picking a random country, what is the chance (or probability) of the average person in that *country using less than 600 kWh per year*? Give your best guess (between 0 and 1)."
+"exports_(29283333333.333, 2210000000000]_0",
+"exports_(29283333333.333, 2210000000000]_1",
+"exports_(29283333333.333, 2210000000000]",
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,"If a country *is Middle East & North Africa region*, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."

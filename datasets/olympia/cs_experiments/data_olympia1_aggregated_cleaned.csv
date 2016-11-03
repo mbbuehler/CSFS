@@ -1,4 +1,0 @@
-question,answerUser nunique,answer mean,answer std,answer count,crowd_mean_all,crowd_std_all,true_mean,true_std
-"Among 10 randomly picked countries *who use less energy per person than Ireland*, estimate how many won one or more medals in the last Olympics.",9,0.30999999999999994,0.15951314818673865,10,0.29729729729729737,0.18378378378378374,0.2,0.4
-"Among 10 randomly picked countries *who use less energy per person than Ireland*, guess (from 0 to 10) how many won at least one medal in the last Olympics?",12,0.3416666666666666,0.19286515936521478,12,0.29729729729729737,0.18378378378378374,0.2,0.4
-"If people in a country *use less energy per person than Ireland*, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1).",13,0.25333333333333335,0.19952324127660873,15,0.29729729729729737,0.18378378378378374,0.2,0.4

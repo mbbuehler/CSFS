@@ -1,0 +1,22 @@
+continent_4_1,"If a country *is in Europe*, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."
+continent_4_0,"If a country *is outside of Europe*, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."
+continent_4,What is the chance (or probability) of a country *being located in Europe*?
+"electricity consumption_(24.87, 29.302]_1","If people in a country *use less energy per person than *, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."
+"electricity consumption_(24.87, 29.302]_0","Among 10 countries *whose electricity consumption is less than 63.2 billion kWh*, how many won one or more medals in the last Olympics?"
+"electricity consumption_(24.87, 29.302]","Among 10 countries, how many have an *electricity consumption of more than 63.2 billion kWh*?"
+region_4_1,"If a country *is in Middle East & North Africa region*, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."
+region_4_0,"If a country *outside of Middle East & North Africa region*, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."
+region_4,What is the chance (or probability) of a country *being located in Middle East & North Africa region*?
+"military expenditures_(3.1, 20.2]_1","Among 10 countries *whose military expenditures are more than 3.1% of GDP*, how many won one or more medals in the last Olympics?"
+"military expenditures_(3.1, 20.2]_0","Among 10 countries *whose military expenditures are less than 3.1% of GDP*, how many won one or more medals in the last Olympics?"
+"military expenditures_(3.1, 20.2]","Among 10 countries, how many have *military expenditures higher than 3.1% of GDP*?"
+medals,What is the chance (or probability) of a country *winning at least one gold medal in the last Olympics*?
+,
+,
+,
+,
+,
+,
+,
+,
+,"If a country *is Middle East & North Africa region*, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1)."

@@ -92,6 +92,28 @@ def explore_pickle():
         print(data['best_noisy_mean_features_count'])
         print()
 
+def explore_olympia_bin_features():
+    features = [
+        'education expenditures_(4.133, 5.6]',
+        'region_3',
+        'internet users_[14400, 1167666.667]',
+        'electricity consumption per capita_(4244.0286, 48501.33]',
+        'medals'
+        ]
+    base_path = '/home/marcello/studies/bachelorarbeit/workspace/github_crowd-sourcing-for-feature-selection/datasets/olympia/raw/olympic2016_raw_plus/'
+    path = base_path+'Olympic2016_raw_plus_bin.csv'
+    df_data = CSFSLoader().load_dataset(path)
+    # df_data = df_data[features]
+    df = pd.DataFrame()
+    df['p'] = np.mean(df_data)
+    df['p|medals=0'] = np.mean(df_data[df_data['medals']==0])
+    df['p|medals=1'] = np.mean(df_data[df_data['medals']==1])
+    df['std'] = np.std(df_data)
+
+    path = base_path+'Olympic2016_raw_plus_bin_metadata.csv'
+    df.to_csv(path, index=True)
+
+
 # do_analysis()
 # evaluate()
 # explore_pickle()
@@ -101,5 +123,6 @@ def explore_pickle():
 # extract_prefix()
 # prepare_selected_dataset()
 
-feature = 'electricity consumption_[16.0455, 20.243]'
-explore_feature(feature)
+# feature = 'electricity consumption_[16.0455, 20.243]'
+# explore_feature(feature)
+explore_olympia_bin_features()
