@@ -5,11 +5,18 @@ from CSFSSelector import CSFSBestActualSelector
 
 def create_0_1(features):
     for f in features:
-        print('"{}_1",'.format(f))
-        print('"{}_0",'.format(f))
+        print('{}_0'.format(f))
+        print('{}_1'.format(f))
+        print('{}'.format(f))
 
 # features = ['electricity consumption_[16.0455, 20.243]', 'electricity consumption_(24.87, 29.302]', 'internet users_[6.909, 11.367]', 'exports_(25.0508, 28.424]', 'internet users_(15.631, 19.779]', 'continent_4', 'exports_[13.816, 20.226]', 'oil imports_[0.00995, 8.572]', 'ln_pop_[9.894, 14.0683]', 'oil imports_(12.591, 16.434]','ln_pop_(15.381, 16.16]', 'education expenditures_(5.9, 17.8]', 'education expenditures_(3.133, 4.14]', 'public debt_(71, 235.7]', 'health expenditures_(4.8, 5.9]', 'military expenditures_(3.1, 20.2]', 'gdp growth rate_(6, 121.9]', 'gdp per capita_(8.487, 9.259]', 'region_4', 'ln_pop_(14.0683, 15.381]']
 # create_0_1(features)
+
+def create_question_templates(n):
+    for i in range(n):
+        print('If a country **, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1).')
+        print('If a country **, what is the chance (or probability) that it won at least one gold medal in the last Olympics? Give your best guess (between 0 and 1).')
+        print('What is the percentage of countries **? Give your best guess (between 0 and 1).')
 
 def get_target_ratio(path):
     df = pd.read_csv(path)
@@ -91,12 +98,25 @@ if __name__ == '__main__':
     # binarise_dataset()
     # get_ranked_features()
 
-    base_path = '/home/marcello/studies/bachelorarbeit/workspace/github_crowd-sourcing-for-feature-selection/datasets/olympia/raw/olympic2016_raw_plus/'
-    path = base_path+'Olympic2016_raw_plus.csv'
-
-    df = pd.read_csv(path)
-    target = 'medals'
-    df['medals'] = df['medals']>0
-    df['medals'] = df['medals'].astype(int)
-    df2 = df[df['electricity consumption per capita']<5612.31]
-    print(df2[target].describe())
+    # base_path = '/home/marcello/studies/bachelorarbeit/workspace/github_crowd-sourcing-for-feature-selection/datasets/olympia/raw/olympic2016_raw_plus/'
+    # path = base_path+'Olympic2016_raw_plus.csv'
+    #
+    # df = pd.read_csv(path)
+    # target = 'medals'
+    # df['medals'] = df['medals']>0
+    # df['medals'] = df['medals'].astype(int)
+    # df2 = df[df['electricity consumption per capita']<5612.31]
+    # print(df2[target].describe())
+    features = ['education expenditures_(4.133, 5.6]',
+                'inflation rate_(1.9, 4.2]',
+                'region_3',
+                'unemployment rate_[0.3, 6.433]',
+                'public debt_(61.733, 226.1]',
+                'electricity consumption_[90210000, 7952000000]',
+                'exports_[1163000, 10071333333.333]',
+                'electricity consumption_(55576666666.667, 3890000000000]',
+                'internet users_(6149000, 245000000]',
+                'exports_(77193333333.333, 1580000000000]',
+                ]
+    create_0_1(features)
+    # create_question_templates(10)

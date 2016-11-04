@@ -2,7 +2,9 @@ import pandas as pd
 import numpy as np
 import re
 from bs4 import BeautifulSoup
-
+import plotly.plotly as py
+import plotly.graph_objs as go
+import cufflinks as cf
 
 
 
@@ -244,7 +246,8 @@ def test():
 
     analyse = CSFSCrowdAnalyser()
     df_combined = analyse.get_combined_df(out_path, true_path)
-    df_combined.to_csv('{}results/{}/combined.csv'.format(base_path, experiment), index=True)
+    df_combined.iplot()
+    # df_combined.to_csv('{}results/{}/combined.csv'.format(base_path, experiment), index=True)
 
 
 if __name__ == '__main__':

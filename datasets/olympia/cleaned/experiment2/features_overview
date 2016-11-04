@@ -1,81 +1,32 @@
 === All Features
 ['antehost', 'continent_1', 'continent_2', 'continent_3', 'continent_4', 'continent_5', 'host', 'medals', 'planned_econ', 'region_1', 'region_2', 'region_3', 'region_4', 'region_5', 'region_6', 'rel_muslim', 'gdp_cap_(12142.774, 29204.352]', 'gdp_cap_(29204.352, 146320.609]', 'gdp_cap_[838.672, 12142.774]', 'pop_(24082668.667, 1326876881]', 'pop_(4675733.333, 24082668.667]', 'pop_[56230, 4675733.333]', 'geographic area_(352014.667, 17098242]', 'geographic area_(65403.333, 352014.667]', 'geographic area_[261, 65403.333]', 'exports_(10071333333.333, 77193333333.333]', 'exports_(77193333333.333, 1580000000000]', 'exports_[1163000, 10071333333.333]', 'gdp growth rate_(1.6, 3.867]', 'gdp growth rate_(3.867, 8.9]', 'gdp growth rate_[-8.7, 1.6]', 'gdp per capita_(10000, 22800]', 'gdp per capita_(22800, 102100]', 'gdp per capita_[700, 10000]', 'inflation rate_(1.9, 4.2]', 'inflation rate_(4.2, 56.2]', 'inflation rate_[-0.8, 1.9]', 'unemployment rate_(13.3, 85]', 'unemployment rate_(6.433, 13.3]', 'unemployment rate_[0.3, 6.433]', 'gross national saving_(17.4, 24.767]', 'gross national saving_(24.767, 61.4]', 'gross national saving_[-36.6, 17.4]', 'public debt_(37.7, 61.733]', 'public debt_(61.733, 226.1]', 'public debt_[3.3, 37.7]', 'population growth rate_(0.33, 1.233]', 'population growth rate_(1.233, 3.58]', 'population growth rate_[-1.02, 0.33]', 'life expectancy at birth_(73.247, 76.77]', 'life expectancy at birth_(76.77, 84.46]', 'life expectancy at birth_[49.56, 73.247]', 'net migration rate_(-0.677, 0.587]', 'net migration rate_(0.587, 27.35]', 'net migration rate_[-9.8, -0.677]', 'obesity_(18, 24.633]', 'obesity_(24.633, 42]', 'obesity_[1.1, 18]', 'education expenditures_(4.133, 5.6]', 'education expenditures_(5.6, 12.8]', 'education expenditures_[0.6, 4.133]', 'health expenditures_(5.367, 7.7]', 'health expenditures_(7.7, 19.5]', 'health expenditures_[1.9, 5.367]', 'electricity consumption_(55576666666.667, 3890000000000]', 'electricity consumption_(7952000000, 55576666666.667]', 'electricity consumption_[90210000, 7952000000]', 'internet users_(1167666.667, 6149000]', 'internet users_(6149000, 245000000]', 'internet users_[14400, 1167666.667]', 'electricity expenditures per capita_(1320.325, 4244.0286]', 'electricity expenditures per capita_(4244.0286, 48501.33]', 'electricity expenditures per capita_[26.757, 1320.325]', 'internet users ratio_(0.242, 0.521]', 'internet users ratio_(0.521, 0.901]', 'internet users ratio_[0.00379, 0.242]', 'exports per capita_(1134.119, 5496.676]', 'exports per capita_(5496.676, 73072.733]', 'exports per capita_[0.134, 1134.119]']
-=== All Features with IG
-education expenditures_(4.133, 5.6] 1.58893722198572e-05
-inflation rate_(1.9, 4.2] 6.728420421842074e-05
-region_3 0.00019434893013381416
-unemployment rate_[0.3, 6.433] 0.0002310662039718414
-public debt_(61.733, 226.1] 0.0002951551211238801
-gdp growth rate_(1.6, 3.867] 0.0006177064779714359
-net migration rate_(-0.677, 0.587] 0.0009324352997462926
-electricity expenditures per capita_(1320.325, 4244.0286] 0.0009324352997462926
-geographic area_(65403.333, 352014.667] 0.0012036865645844719
-exports per capita_(1134.119, 5496.676] 0.0012036865645844719
-pop_(4675733.333, 24082668.667] 0.0012036865645844719
-internet users ratio_(0.242, 0.521] 0.0012036865645844719
-gdp_cap_(12142.774, 29204.352] 0.0012036865645844719
-gdp per capita_(10000, 22800] 0.0012036865645844719
-public debt_[3.3, 37.7] 0.0013041020023377703
-rel_muslim 0.0016150831754686568
-gross national saving_(24.767, 61.4] 0.002447634800950893
-continent_3 0.0024800266611415545
-public debt_(37.7, 61.733] 0.0029749717894492766
-region_4 0.003952355640744254
-life expectancy at birth_(73.247, 76.77] 0.004560515113277153
-gross national saving_[-36.6, 17.4] 0.004648363911539666
-inflation rate_[-0.8, 1.9] 0.005381541501799814
-obesity_(24.633, 42] 0.006462022047033167
-inflation rate_(4.2, 56.2] 0.006677659165896244
-education expenditures_[0.6, 4.133] 0.006677659165896244
-antehost 0.006712456632316344
-host 0.006712456632316344
-education expenditures_(5.6, 12.8] 0.007701808927925602
-health expenditures_(5.367, 7.7] 0.010044112052131515
-exports_(10071333333.333, 77193333333.333] 0.010116412175935174
-electricity consumption_(7952000000, 55576666666.667] 0.010116412175935174
-geographic area_(352014.667, 17098242] 0.012832753873900704
-continent_5 0.013504368798524236
-gross national saving_(17.4, 24.767] 0.014698435640286278
-unemployment rate_(6.433, 13.3] 0.017927873652505588
-internet users_(1167666.667, 6149000] 0.017927873652505588
-health expenditures_[1.9, 5.367] 0.021373244890247833
-net migration rate_[-9.8, -0.677] 0.021373244890247833
-unemployment rate_(13.3, 85] 0.021373244890247833
-geographic area_[261, 65403.333] 0.021373244890247833
-life expectancy at birth_(76.77, 84.46] 0.021446809447502324
-gdp per capita_(22800, 102100] 0.021446809447502324
-population growth rate_(0.33, 1.233] 0.02403698398229126
-population growth rate_[-1.02, 0.33] 0.025251674095376875
-obesity_(18, 24.633] 0.028069016091541887
-continent_2 0.031145718066879713
-gdp per capita_[700, 10000] 0.031862815294598446
-net migration rate_(0.587, 27.35] 0.03238013335940715
-gdp growth rate_(3.867, 8.9] 0.044478210473009705
-life expectancy at birth_[49.56, 73.247] 0.044478210473009705
-region_6 0.045301573655844196
-region_1 0.045361485853030126
-gdp_cap_(29204.352, 146320.609] 0.04573047456976409
-exports per capita_(5496.676, 73072.733] 0.04573047456976409
-internet users ratio_(0.521, 0.901] 0.04573047456976409
-continent_1 0.05398189285447963
-gdp growth rate_[-8.7, 1.6] 0.05673066933677373
-exports per capita_[0.134, 1134.119] 0.059255079395245214
-gdp_cap_[838.672, 12142.774] 0.059255079395245214
-obesity_[1.1, 18] 0.059255079395245214
-internet users ratio_[0.00379, 0.242] 0.059255079395245214
-pop_(24082668.667, 1326876881] 0.06162378427396897
-health expenditures_(7.7, 19.5] 0.06719821847592
-electricity expenditures per capita_[26.757, 1320.325] 0.07623980835008703
-pop_[56230, 4675733.333] 0.07623980835008703
-planned_econ 0.07757385122219829
-region_2 0.0846975070102498
-continent_4 0.08718517278354299
-population growth rate_(1.233, 3.58] 0.09549081230937284
-electricity expenditures per capita_(4244.0286, 48501.33] 0.10174826644664414
-region_5 0.10541412614606716
-exports_(77193333333.333, 1580000000000] 0.12649349487340078
-internet users_(6149000, 245000000] 0.12649349487340078
-electricity consumption_(55576666666.667, 3890000000000] 0.15488339835065468
-exports_[1163000, 10071333333.333] 0.19686981952133542
-electricity consumption_[90210000, 7952000000] 0.2289239601431835
-internet users_[14400, 1167666.667] 0.2289239601431835
+== Sorted all features, min, max
+antehost 0 1
+continent 1 5
+country Albania Zambia
+education expenditures 0.6 12.8
+electricity consumption 90210000 3890000000000
+electricity consumption per capita 26.7568565275 48501.329827
+exports 1163000 1580000000000
+exports per capita 0.1342377627 73072.7333907
+gdp growth rate -8.7 8.9
+gdp per capita 700 102100
+gdp_cap 838.671875 146320.6094
+geographic area 261.0 17098242.0
+gross national saving -36.6 61.4
+health expenditures 1.9 19.5
+host 0 1
+inflation rate -0.8 56.2
+internet users 14400 245000000
+internet users ratio 0.0037890285 0.9012939665
+life expectancy at birth 49.56 84.46
+medals 0 121
+net migration rate -9.8 27.35
+obesity 1.1 42.0
+planned_econ 0 1
+pop 56230 1326876881
+population growth rate -1.02 3.58
+public debt 3.3 226.1
+region 1 6
+rel_muslim 0 1
+unemployment rate 0.3 85.0

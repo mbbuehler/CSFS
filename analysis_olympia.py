@@ -31,27 +31,11 @@ def evaluate():
 
 
 def explore():
-    path = "datasets/olympia/Olympia_2_update.csv"
-    df = CSFSLoader().load_dataset(path, ignore_attributes)
-    target = "medals"
-    # df = df[:20]
-    ig_data = {f:IG(df[target], df[f]) for f in df}
-
-    ordered = sorted(ig_data, key=ig_data.__getitem__, reverse=True)
-    for f in ordered:
-        print(f, ig_data[f])
-    print('best 10:')
-    print(sorted(ordered[:10]))
-    print('worst 10:')
-    print(sorted(ordered[-10:]))
-
-    print(ig_data['population growth rate_(1.541, 2.254]'])
-
-    mean_05_f = [f for f in df if 0.3 < np.mean(df[f]) < 0.7]
-    mean_05 = df[mean_05_f]
-    print(mean_05.describe())
-    for f in mean_05_f:
-        print(f, np.mean(df[f]))
+    path = "datasets/olympia/cleaned/experiment2/Olympic2016_raw_plus.csv"
+    df = pd.read_csv(path)
+    df = df.dropna()
+    for f in sorted([f for f in df]):
+        print(f, min(df[f]), max(df[f]))
 
 def explore_feature(feature):
     path = "datasets/olympia/Olympia_2_update.csv"
@@ -134,10 +118,10 @@ def explore_olympia_bin_features():
 # explore_pickle()
 
 # visualize_result()
-# explore()
+explore()
 # extract_prefix()
 # prepare_selected_dataset()
 
 # feature = 'electricity consumption_[16.0455, 20.243]'
 # explore_feature(feature)
-explore_olympia_bin_features()
+# explore_olympia_bin_features()
