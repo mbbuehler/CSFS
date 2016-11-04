@@ -13,6 +13,37 @@ from tabulate import tabulate
 from infoformulas_listcomp import H_X_Y_from_series, IG_from_series, _H
 
 
+class CSFSCrowdAnalyser:
+
+    def get_combined_df(self, path_crowd_aggregated, path_actual_data):
+        """
+        Combines crowd answers and true data to one dataframe. makes it easier to compare
+        :pre data is already written to csv file
+        :return:
+        """
+        # get the data
+        df_crowd = pd.read_csv(path_crowd_aggregated, index_col=0)
+        df_actual = pd.read_csv(path_actual_data, index_col=0)
+
+        # remove all features we don't have answers for
+        features = df_crowd.index.values
+        df_actual = df_actual.loc[features]
+
+        # remove metadata we do not need.
+        columns = ['p', 'p|f=0', 'p|f=1', 'IG']
+        df_actual = df_actual[columns]
+        df_crowd = df_crowd[columns]
+
+        # calculate how good/bad the crowd was
+        df_diff = abs(df_actual-df_crowd)
+
+        # combine results in a multiindex
+        df_combined = pd.concat(dict(crowd=df_crowd, actual=df_actual, diff=df_diff), axis='columns')
+        return df_combined
+
+
+
+
 class CSFSCrowdAggregator:
     """
     Cleans and aggregates crowd answers
@@ -133,8 +164,6 @@ class CSFSCrowdAggregator:
         :param df_clean:
         :return:
         """
-
-
         f = {'answer': ['mean', 'std', 'count'], 'answerUser': [pd.Series.nunique]}
         # df = df_clean.groupby('question').apply(f)#lambda x: sum(x['answer']))
         df = df_clean.groupby('feature').agg(f)
@@ -186,6 +215,22 @@ class CSFSCrowdAggregator:
         df_ig = self.get_ig_df(df_metadata, self.target)
         return df_ig
 
+    def run(self):
+        """
+        example call
+        :return:
+        """
+        experiment = 'experiment2'
+        base_path = 'datasets/olympia/'
+        path_answers = '{}results/{}/answers.xlsx'.format(base_path, experiment)
+        path_questions = '{}questions/{}/featuresOlympia_hi_lo.csv'.format(base_path, experiment)
+        target = 'medals'
+
+        aggregator = CSFSCrowdAggregator(path_questions, path_answers, target)
+        df_aggregated = aggregator.get_aggregated_df()
+
+        out_path = '{}results/{}/aggregated.csv'.format(base_path, experiment)
+        df_aggregated.to_csv(out_path, index=True)
 
 def test():
     experiment = 'experiment2'
@@ -194,11 +239,13 @@ def test():
     path_questions = '{}questions/{}/featuresOlympia_hi_lo.csv'.format(base_path, experiment)
     target = 'medals'
 
-    aggregator = CSFSCrowdAggregator(path_questions, path_answers, target)
-    df_aggregated = aggregator.get_aggregated_df()
-
     out_path = '{}results/{}/aggregated.csv'.format(base_path, experiment)
-    df_aggregated.to_csv(out_path, index=True)
+    true_path = '{}cleaned/{}/Olympic2016_raw_plus_bin_metadata.csv'.format(base_path, experiment)
+
+    analyse = CSFSCrowdAnalyser()
+    df_combined = analyse.get_combined_df(out_path, true_path)
+    df_combined.to_csv('{}results/{}/combined.csv'.format(base_path, experiment), index=True)
+
 
 if __name__ == '__main__':
     test()
