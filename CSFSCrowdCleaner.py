@@ -56,7 +56,6 @@ class CSFSCrowdAggregator:
                 return df.loc[index][column]
             except:
                 # remove 0.4 when we have real data
-                return 0.4
                 return np.nan
         p = get_val_or_nan(df, "{}_v0".format(f), 'answer mean')
         std_p = get_val_or_nan(df, "{}_v0".format(f), 'answer std')
@@ -118,21 +117,16 @@ class CSFSCrowdAggregator:
         df_clean = self.questions_to_features(self.df_questions, df_clean)
         df_metadata = self.get_metadata(df_clean)
 
-
-        # only for debuggin till we have real data
-        df_metadata.loc[self.target] = 0.5
-        # stop deleting here
-
         df_ig = self.get_ig_df(df_metadata, self.target)
         return df_ig
 
 
 def test():
-    experiment = 'experiment1'
+    experiment = 'experiment2'
     base_path = 'datasets/olympia/'
     path_answers = '{}results/{}/answers.xlsx'.format(base_path, experiment)
-    path_questions = '{}questions/{}/questions.csv'.format(base_path, experiment)
-    target = 'T'
+    path_questions = '{}questions/{}/featuresOlympia_hi_lo.csv'.format(base_path, experiment)
+    target = 'medals'
 
     aggregator = CSFSCrowdAggregator(path_questions, path_answers, target)
     df_aggregated = aggregator.get_aggregated_df()
