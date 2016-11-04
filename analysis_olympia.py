@@ -4,6 +4,8 @@ import re
 import pandas as pd
 import pickle
 
+from tabulate import tabulate
+
 from infoformulas_listcomp import IG
 import numpy as np
 from joblib import Parallel, delayed
@@ -100,14 +102,24 @@ def explore_olympia_bin_features():
         'electricity consumption per capita_(4244.0286, 48501.33]',
         'medals'
         ]
-    base_path = '/home/marcello/studies/bachelorarbeit/workspace/github_crowd-sourcing-for-feature-selection/datasets/olympia/raw/olympic2016_raw_plus/'
+    base_path = '/home/marcello/studies/bachelorarbeit/workspace/github_crowd-sourcing-for-feature-selection/datasets/olympia/cleaned/experiment2/'
     path = base_path+'Olympic2016_raw_plus_bin.csv'
     df_data = CSFSLoader().load_dataset(path)
     # df_data = df_data[features]
     df = pd.DataFrame()
     df['p'] = np.mean(df_data)
-    df['p|medals=0'] = np.mean(df_data[df_data['medals']==0])
-    df['p|medals=1'] = np.mean(df_data[df_data['medals']==1])
+
+    # print(df_data)
+
+    def cond_mean(df, cond_value):
+        result = list()
+        for f in df:
+            tmp_df = df[df[f]==cond_value]
+            result.append(np.mean(tmp_df['medals']))
+        return result
+
+    df['p|f=0'] = cond_mean(df_data, cond_value=0)
+    df['p|f=1'] = cond_mean(df_data, cond_value=1)
     df['std'] = np.std(df_data)
 
     path = base_path+'Olympic2016_raw_plus_bin_metadata.csv'
