@@ -110,20 +110,20 @@ class CSFSCrowdAggregator:
         p = get_val_or_nan(df, "{}".format(f), 'answer mean')
         std_p = get_val_or_nan(df, "{}".format(f), 'answer std')
         n_p = get_val_or_nan(df, "{}".format(f), 'answer count')
-        n_p_unique = get_val_or_nan(df, "{}".format(f), 'answerUser nunique')
+        # n_p_unique = get_val_or_nan(df, "{}".format(f), 'answerUser nunique')
 
         p_0 = get_val_or_nan(df, "{}_0".format(f), 'answer mean')
         std_p_0 = get_val_or_nan(df, "{}_0".format(f), 'answer std')
         n_p_0 = get_val_or_nan(df, "{}_0".format(f), 'answer count')
-        n_p_0_unique = get_val_or_nan(df, "{}_0".format(f), 'answerUser nunique')
+        # n_p_0_unique = get_val_or_nan(df, "{}_0".format(f), 'answerUser nunique')
 
         p_1 = get_val_or_nan(df, "{}_1".format(f), 'answer mean')
         std_p_1 = get_val_or_nan(df, "{}_1".format(f), 'answer std')
         n_p_1 = get_val_or_nan(df, "{}_1".format(f), 'answer count')
-        n_p_1_unique = get_val_or_nan(df, "{}_1".format(f), 'answerUser nunique')
-        metadata = {'p': p, 'std p': std_p, 'n p': n_p, 'n unique p': n_p_unique,
-                   'p|f=0': p_0, 'std p|f=0': std_p_0, 'n p|f=0': n_p_0, 'n unique p|f=0 ': n_p_0_unique,
-                   'p|f=1': p_1, 'std p|f=1': std_p_1, 'n p|f=1': n_p_1, 'n unique p|f=1 ': n_p_1_unique,
+        # n_p_1_unique = get_val_or_nan(df, "{}_1".format(f), 'answerUser nunique')
+        metadata = {'p': p, 'std p': std_p, 'n p': n_p, #'n unique p': n_p_unique,
+                   'p|f=0': p_0, 'std p|f=0': std_p_0, 'n p|f=0': n_p_0, #'n unique p|f=0 ': n_p_0_unique,
+                   'p|f=1': p_1, 'std p|f=1': std_p_1, 'n p|f=1': n_p_1, #'n unique p|f=1 ': n_p_1_unique,
                    }
         return metadata
 
@@ -166,9 +166,19 @@ class CSFSCrowdAggregator:
         df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
         return df
 
+    def get_without_spammers(self, df_clean):
+        answer_users_count = df_clean.groupby('feature').answerUser.apply(lambda x: x.value_counts()).reset_index()
+        spammers = answer_users_count[answer_users_count['answerUser']>1]['level_1']
+        df_without_spammers = df_clean[~df_clean['answerUser'].isin(spammers)]
+        return df_without_spammers
+
     def get_aggregated_df(self):
         df_clean = self.get_clean_df(self.df_answers)
+
         df_clean = self.questions_to_features(self.df_questions, df_clean)
+
+        df_clean = self.get_without_spammers(df_clean)
+
         df_metadata = self.get_metadata(df_clean)
         # print(tabulate(df_metadata))
         # exit()
