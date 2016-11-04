@@ -6,7 +6,7 @@ import pickle
 
 from tabulate import tabulate
 
-from infoformulas_listcomp import IG
+from infoformulas_listcomp import IG, _H, IG_from_series
 import numpy as np
 from joblib import Parallel, delayed
 from CSFSLoader import CSFSLoader
@@ -121,6 +121,9 @@ def explore_olympia_bin_features():
     df['p|f=0'] = cond_mean(df_data, cond_value=0)
     df['p|f=1'] = cond_mean(df_data, cond_value=1)
     df['std'] = np.std(df_data)
+    h_x = _H([df.loc[target]['p'], 1-df.loc[target]['p']])
+    df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
+
 
     path = base_path+'Olympic2016_raw_plus_bin_metadata.csv'
     df.to_csv(path, index=True)
