@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 
 from CSFSSelector import CSFSBestActualSelector
 
@@ -105,3 +106,21 @@ if __name__ == '__main__':
                 'exports_(77193333333.333, 1580000000000]',
                 ]
     # create_question_templates(10)
+
+def get_features_from_questions(path_questions):
+    """
+    Extracts all feature names from questions file and returns list of features as string. Does not remove target
+    :return: list(str)
+    """
+    df_features = pd.read_csv(path_questions, header=None)
+    features = remove_binning_cond_markup(list(df_features[0]))
+    return features
+
+def remove_binning_cond_markup(features):
+    """
+    turns df with index "education expenditures_(4.133, 5.6]_0" into list with "education expenditures"
+    :param features: list(str)
+    :return: list(str)
+    """
+    features = list(set([re.sub(r'[(_\d)(\[\()].*$', '', x) for x in features]))
+    return features

@@ -6,11 +6,13 @@ import pickle
 
 from tabulate import tabulate
 
+from CSFSEvaluator import CSFSEvaluator
 from infoformulas_listcomp import IG, _H, IG_from_series
 import numpy as np
 from joblib import Parallel, delayed
 from CSFSLoader import CSFSLoader
 from analysis_noisy_means_drop import _conduct_analysis, visualise_results
+from util.util_features import get_features_from_questions, remove_binning_cond_markup
 
 N_features = [3,5,7,11,15,20]
 N_samples = 100
@@ -113,6 +115,37 @@ def explore_olympia_bin_features():
     df.to_csv(path, index=True)
 
 
+def get_auc_crowd():
+    """
+    Calculates achieved AUC using crowd answers
+    :return:
+    """
+    target = 'medals'
+
+    path_meta = 'datasets/olympia/results/experiment2/aggregated_combined.csv'
+    df_meta = pd.read_csv(path_meta, index_col=0)
+    df_meta = df_meta.drop(target, axis='index')
+
+    path_questions = 'datasets/olympia/questions/experiment2/featuresOlympia_hi_lo_combined.csv'
+    features = get_features_from_questions(path_questions)
+
+    path_data = 'datasets/olympia/cleaned/experiment2/Olympic2016_raw_plus.csv'
+    df_data = pd.read_csv(path_data)
+    df_data[target] = df_data[target].apply(lambda x: 1 if x>0 else 0)
+    df_data = df_data[features]
+    df_data = df_data.dropna(axis='index')
+
+    evaluator = CSFSEvaluator(df_data, target)
+
+    N_F = [1, 3, 5, 7, 9]
+    for n_feat in N_F:
+        features_nbest = remove_binning_cond_markup(list(df_meta.nlargest(n_feat, 'IG').index)) # takes the rows with highest IG
+        evaluator.evaluate_features(features_nbest)
+        auc = evaluator.evaluate_features(features_nbest)
+        print('number of features:', n_feat, 'AUC:', auc) # 748095238095
+
+
+
 # do_analysis()
 # evaluate()
 # explore_pickle()
@@ -124,4 +157,6 @@ def explore_olympia_bin_features():
 
 # feature = 'electricity consumption_[16.0455, 20.243]'
 # explore_feature(feature)
-explore_olympia_bin_features()
+# explore_olympia_bin_features()
+get_auc_crowd()
+

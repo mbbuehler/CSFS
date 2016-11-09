@@ -22,7 +22,7 @@ def _conduct_analysis(df, target, mean_error, N_features, N_samples, dataset_nam
     random_selector = CSFSRandomSelector(df, target)
     for n in N_features:
         aucs = evaluator.evaluate_noisy_mean(n, N_samples, best_noisy_mean_selector)
-        aucs.update(evaluator.evaluate_best(n, N_samples, best_selector)) # always the same value
+        aucs.update(evaluator.evaluate_best(n, best_selector)) # always the same value
         aucs.update(evaluator.evaluate_random(n, N_samples, random_selector))
         filepath = '{}/{}features_{}samples_{:.3f}error'.format(dataset_name, n, N_samples, mean_error)
         if not os.path.isdir('pickle-dumps/'+dataset_name):
