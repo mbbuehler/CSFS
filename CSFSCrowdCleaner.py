@@ -30,7 +30,6 @@ class CSFSCrowdAnalyser:
         # remove all features we don't have answers for
         features = df_crowd.index.values
         df_actual = df_actual.loc[features]
-
         # remove metadata we do not need.
         columns = ['p', 'p|f=0', 'p|f=1', 'IG']
         df_actual = df_actual[columns]
@@ -69,15 +68,20 @@ class CSFSCrowdAggregator:
             question_clean = re.sub('[\n\t]', '', question_dirty)
             result = [question_clean]
 
-            is_triple = e.count('%')==3
+            is_triple = e.count('::')==3
             if is_triple:
-                index_second_start = e.index('%')+3
+                index_second_start = e.index('::')+10
+                if '100' in e[:index_second_start]: # we have to go one further
+                    index_second_start += 2
+
+                # print('second start')
+                # print(e[index_second_start:])
                 assert e[index_second_start]=='I' # makes sure we do not introduce bugs for other questions
                 index_second_end = index_second_start + e[index_second_start:].index(':')
                 question2 = e[index_second_start:index_second_end]
 
                 index_third_start = index_second_end + e[index_second_end:].index(':')+10
-                index_third_end =  index_third_start + e[index_third_start:].index(':')
+                index_third_end = index_third_start + e[index_third_start:].index(':')
                 question3 = e[index_third_start:index_third_end]
                 result.append(question2)
                 result.append(question3)
@@ -95,20 +99,19 @@ class CSFSCrowdAggregator:
 
         # questions = df_answers.question.apply(get_question())
         questions = df_answers.answer.apply(get_triple_question) # yes, we indeed need to search answer column
-        # print(questions)
         answers = df_answers.answer.apply(get_answers)
-        # print(answers)
         answer_users = df_answers.answerUser.apply(get_answer_user)
 
         final_questions = list()
         final_answers = list()
         final_answer_users = list()
 
-        final_answer_users = list()
         for i in range(len(questions)):
             final_questions.append(questions[i][0])
             final_answers.append(answers[i][0])
             final_answer_users.append(answer_users[i])
+            print(i)
+            print(questions[i])
             if len(answers[i]) > 1:
                 final_questions.append(questions[i][1])
                 final_questions.append(questions[i][2])
@@ -117,10 +120,8 @@ class CSFSCrowdAggregator:
                 final_answers.append(answers[i][2])
                 final_answer_users.append(answer_users[i])
 
-        # print(final_questions)
-        # print(final_answers)
         # exit()
-        answer_users = df_answers.answerUser.apply(get_answer_user)
+        # answer_users = df_answers.answerUser.apply(get_answer_user)
 
         clean_df = pd.DataFrame({
             'question': final_questions,
@@ -205,50 +206,55 @@ class CSFSCrowdAggregator:
 
     def get_aggregated_df(self):
         df_clean = self.get_clean_df(self.df_answers)
+        # print(df_clean)
+        # return
 
         df_clean = self.questions_to_features(self.df_questions, df_clean)
 
         df_clean = self.get_without_spammers(df_clean)
 
         df_metadata = self.get_metadata(df_clean)
-        # print(tabulate(df_metadata))
+        # print(tabulate(df_metadata, headers='keys'))
         # exit()
 
         df_ig = self.get_ig_df(df_metadata, self.target)
         return df_ig
 
-    def run(self):
-        """
-        example call
-        :return:
-        """
-        experiment = 'experiment2'
-        base_path = 'datasets/olympia/'
-        path_answers = '{}results/{}/answers.xlsx'.format(base_path, experiment)
-        path_questions = '{}questions/{}/featuresOlympia_hi_lo.csv'.format(base_path, experiment)
-        target = 'medals'
-
-        aggregator = CSFSCrowdAggregator(path_questions, path_answers, target)
-        df_aggregated = aggregator.get_aggregated_df()
-
-        out_path = '{}results/{}/aggregated.csv'.format(base_path, experiment)
-        df_aggregated.to_csv(out_path, index=True)
-
-def test():
+def run():
+    """
+    example call
+    :return:
+    """
     experiment = 'experiment2'
     base_path = 'datasets/olympia/'
-    path_answers = '{}results/{}/answers.xlsx'.format(base_path, experiment)
-    path_questions = '{}questions/{}/featuresOlympia_hi_lo.csv'.format(base_path, experiment)
+    path_answers = '{}results/{}/answers_combined.xlsx'.format(base_path, experiment)
+    path_questions = '{}questions/{}/featuresOlympia_hi_lo_combined.csv'.format(base_path, experiment)
     target = 'medals'
 
-    out_path = '{}results/{}/aggregated.csv'.format(base_path, experiment)
+    aggregator = CSFSCrowdAggregator(path_questions, path_answers, target)
+    df_aggregated = aggregator.get_aggregated_df()
+
+    out_path = '{}results/{}/aggregated_combined.csv'.format(base_path, experiment)
+    df_aggregated.to_csv(out_path, index=True)
+
     true_path = '{}cleaned/{}/Olympic2016_raw_plus_bin_metadata.csv'.format(base_path, experiment)
 
     analyse = CSFSCrowdAnalyser()
     df_combined = analyse.get_combined_df(out_path, true_path)
-    df_combined.iplot()
-    # df_combined.to_csv('{}results/{}/combined.csv'.format(base_path, experiment), index=True)
+    df_combined.to_csv('{}results/{}/metadata_combined.csv'.format(base_path, experiment), index=True)
+
+
+def test():
+    experiment = 'experiment2'
+    base_path = 'datasets/olympia/'
+    path_answers = '{}results/{}/answers10features.xlsx'.format(base_path, experiment)
+    path_questions = '{}questions/{}/featuresOlympia_hi_lo.csv'.format(base_path, experiment)
+    target = 'medals'
+
+
+    #
 
 
 if __name__ == '__main__':
-    test()
+    run()
+    #test()

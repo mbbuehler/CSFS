@@ -118,10 +118,10 @@ def explore_olympia_bin_features():
 # explore_pickle()
 
 # visualize_result()
-explore()
+# explore()
 # extract_prefix()
 # prepare_selected_dataset()
 
 # feature = 'electricity consumption_[16.0455, 20.243]'
 # explore_feature(feature)
-# explore_olympia_bin_features()
+explore_olympia_bin_features()

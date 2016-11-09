@@ -64,8 +64,8 @@ def H_X_Y_from_series(instance):
     :param y_cond: conditional probability list, e.g. [0.1, 0.9]
     :return:
     """
-    print('H f=0:',_H([instance['p|f=0'], 1-instance['p|f=0']]))
-    print('H f=1:',_H([instance['p|f=1'], 1-instance['p|f=1']]))
+    # print('H f=0:',_H([instance['p|f=0'], 1-instance['p|f=0']]))
+    # print('H f=1:',_H([instance['p|f=1'], 1-instance['p|f=1']]))
     # print((1-instance['p']) * _H([instance['p|f=0'], 1-instance['p|f=0']]))
     #
     # print((instance['p']) * _H([instance['p|f=1'], 1-instance['p|f=1']]))
