@@ -70,7 +70,7 @@ features = list(df_data.columns)
 target = 'medals'
 evaluator = CSFSEvaluator(df_data, target)
 
-R = range(3, len(df_data), 5) # number of samples
+R = range(3, len(df_data), 1) # number of samples
 N_Feat = [3, 5, 7, 9, 11]
 n_samples = 100 # number of repetitions to calculate average auc score for samples
 
@@ -91,7 +91,7 @@ for r in R:
             auc = evaluator.evaluate_features(nbest_features)
             aucs[n_feat].append(auc)
     result.loc[r] = {n_feat: np.mean(aucs[n_feat]) for n_feat in aucs}
-result.to_csv('experiment_flock.csv')
+result.to_csv('flock_crowd.csv')
     # auc = np.mean(aucs)
     # print(r, auc)
 

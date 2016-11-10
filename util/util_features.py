@@ -116,6 +116,7 @@ def get_features_from_questions(path_questions, remove_cond=False, remove_binnin
     """
     df_features = pd.read_csv(path_questions, header=None)
     features = list(df_features[0])
+    # print(features)
     if remove_cond:
         features = remove_cond_markup(features)
     if remove_binning:
@@ -123,8 +124,19 @@ def get_features_from_questions(path_questions, remove_cond=False, remove_binnin
     return features
 
 def remove_cond_markup(features):
-    features = list(set([f[:-2] for f in features if f[-3] in "])"]))
-    return features
+    """
+    Removes _0 or _1 markup from each feature. ALSO REMOVES medals!
+    :param features:
+    :return:
+    """
+    result = list()
+    for f in features:
+        print(f)
+        match = re.match(r'(.*[(\[].*[)\]])', f) or re.match(r'(.*_\d)_\d', f)
+        if match:
+            result.append(match.group(1))
+    result = list(set(result))
+    return result
 
 def remove_binning_cond_markup(features):
     """

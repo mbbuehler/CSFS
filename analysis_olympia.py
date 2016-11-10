@@ -12,7 +12,7 @@ import numpy as np
 from joblib import Parallel, delayed
 from CSFSLoader import CSFSLoader
 from analysis_noisy_means_drop import _conduct_analysis, visualise_results
-from util.util_features import get_features_from_questions, remove_binning_cond_markup
+from util.util_features import get_features_from_questions, remove_binning_cond_markup, remove_cond_markup
 
 N_features = [3,5,7,11,15,20]
 N_samples = 100
@@ -127,21 +127,32 @@ def get_auc_crowd():
     df_meta = df_meta.drop(target, axis='index')
 
     path_questions = 'datasets/olympia/questions/experiment2/featuresOlympia_hi_lo_combined.csv'
-    features = get_features_from_questions(path_questions)
+    features = get_features_from_questions(path_questions, remove_cond=True)
+    features.append(target)
 
-    path_data = 'datasets/olympia/cleaned/experiment2/Olympic2016_raw_plus.csv'
+    path_data = 'datasets/olympia/cleaned/experiment2/Olympic2016_raw_plus_bin.csv'
     df_data = pd.read_csv(path_data)
-    df_data[target] = df_data[target].apply(lambda x: 1 if x>0 else 0)
+    # df_data[target] = df_data[target].apply(lambda x: 1 if x>0 else 0)
     df_data = df_data[features]
-    df_data = df_data.dropna(axis='index')
+    # df_data = df_data.dropna(axis='index')
 
     evaluator = CSFSEvaluator(df_data, target)
 
-    N_F = [1, 3, 5, 7, 9]
-    for n_feat in N_F:
-        features_nbest = remove_binning_cond_markup(list(df_meta.nlargest(n_feat, 'IG').index)) # takes the rows with highest IG
+    N_Feat = [3, 5, 7, 9, 11]
+    R = range(9,26)
+    result = pd.DataFrame(columns=N_Feat, index=R)
+
+    aucs = {n_feat: list() for n_feat in N_Feat}
+    for n_feat in N_Feat:
+        features_nbest = list(df_meta.nlargest(n_feat, 'IG').index) # takes the rows with highest IG
+        print(features_nbest)
+        # exit()
         auc = evaluator.evaluate_features(features_nbest)
-        print('number of features:', n_feat, 'AUC:', auc) # 748095238095
+        aucs[n_feat] = auc
+
+    for r in R:
+        result.loc[r] = aucs
+    result.to_csv('flock/csfs_crowd.csv')
 
 
 
