@@ -13,6 +13,7 @@ def joint_probabilities(X, Y):
     """
     n_min = min([len(X), len(Y)])
     probs = dict()
+
     for x in set(X):
         for y in set(Y):
             probs[(x,y)] = sum([1 for k in range(n_min) if X[k] == x and Y[k] == y])/n_min

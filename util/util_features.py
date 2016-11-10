@@ -107,13 +107,23 @@ if __name__ == '__main__':
                 ]
     # create_question_templates(10)
 
-def get_features_from_questions(path_questions):
+def get_features_from_questions(path_questions, remove_cond=False, remove_binning=False):
     """
     Extracts all feature names from questions file and returns list of features as string. Does not remove target
+    :param: remove_cond: removes _1 and _0 at the end of features
+    :param remove_binning: removes ond and binning (_[..]_3) at the end of features
     :return: list(str)
     """
     df_features = pd.read_csv(path_questions, header=None)
-    features = remove_binning_cond_markup(list(df_features[0]))
+    features = list(df_features[0])
+    if remove_cond:
+        features = remove_cond_markup(features)
+    if remove_binning:
+        features = remove_binning_cond_markup(features)
+    return features
+
+def remove_cond_markup(features):
+    features = list(set([f[:-2] for f in features if f[-3] in "])"]))
     return features
 
 def remove_binning_cond_markup(features):

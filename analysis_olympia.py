@@ -140,7 +140,6 @@ def get_auc_crowd():
     N_F = [1, 3, 5, 7, 9]
     for n_feat in N_F:
         features_nbest = remove_binning_cond_markup(list(df_meta.nlargest(n_feat, 'IG').index)) # takes the rows with highest IG
-        evaluator.evaluate_features(features_nbest)
         auc = evaluator.evaluate_features(features_nbest)
         print('number of features:', n_feat, 'AUC:', auc) # 748095238095
 

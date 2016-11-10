@@ -11,8 +11,6 @@ class CSFSSelector:
         self.target = target
         self.all_features = [f for f in df]
         self.all_predictors = [f for f in df if f != target]
-        if df_crowd:
-            self.df_crowd = df_crowd
 
     def select(self, n):
         raise Exception('Must implement subclass')
