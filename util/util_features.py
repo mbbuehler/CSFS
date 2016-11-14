@@ -82,7 +82,7 @@ def get_ranked_features():
 
 def get_features_from_questions(path_questions, remove_cond=False, remove_binning=False):
     """
-    Extracts all feature names from questions file and returns list of features as string. Does not remove target
+    Extracts all feature names from questions file and returns list of features as string. Does remove target
     :param: remove_cond: removes _1 and _0 at the end of features
     :param remove_binning: removes ond and binning (_[..]_3) at the end of features
     :return: list(str)
@@ -104,7 +104,6 @@ def remove_cond_markup(features):
     """
     result = list()
     for f in features:
-        print(f)
         match = re.match(r'(.*[(\[].*[)\]])', f) or re.match(r'(.*_\d)_\d', f)
         if match:
             result.append(match.group(1))

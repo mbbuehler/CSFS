@@ -28,6 +28,7 @@ def get_dataset():
 
 def get_dataset_bin():
     path_dataset = '../datasets/olympia/cleaned/experiment2/Olympic2016_raw_plus_bin.csv'
+    path_dataset = '../datasets/olympia/cleaned/experiment3/olympic_allyears_plus_bin.csv'
     path_questions = '../datasets/olympia/questions/experiment2/featuresOlympia_hi_lo_combined.csv'
     df_raw = pd.read_csv(path_dataset)
     # kick all features we don't want
@@ -37,33 +38,9 @@ def get_dataset_bin():
     return df
 
 
-def visualize_tree(tree, feature_names):
-    """Create tree png using graphviz.
-    http://chrisstrelioff.ws/sandbox/2015/06/08/decision_trees_in_python_with_scikit_learn_and_pandas.html accessed: 9.11.16
-    Args
-    ----
-    tree -- scikit-learn DecsisionTree.
-    feature_names -- list of feature names.
-    """
-    with open("dt.dot", 'w') as f:
-        export_graphviz(tree, out_file=f,
-                        feature_names=feature_names)
-
-    command = ["dot", "-Tpng", "dt.dot", "-o", "dt.png"]
-    try:
-        subprocess.check_call(command)
-    except:
-        exit("Could not run dot, ie graphviz, to "
-             "produce visualization")
-
-def get_best_features(decision_tree, features, n):
-    assert len(features) >= n
-    data = {features[i]: e for i,e in enumerate(decision_tree.feature_importances_)}
-    ordered = sorted(data, key=data.__getitem__, reverse=True)
-    return ordered[:n]
-
-
 df_data = get_dataset_bin() # use get_dataset() for original dataset
+print(df_data[:3])
+exit()
 features = list(df_data.columns)
 
 # features.remove('medals') 3 is already removed

@@ -1,11 +1,14 @@
 import numpy as np
 import pandas as pd
+import re
 from sklearn.preprocessing import Imputer
 from tabulate import tabulate
 
+from CSFSEvaluator import CSFSEvaluator
+from CSFSSelector import CSFSBestActualSelector
 from abstract_experiment import AbstractExperiment
 from infoformulas_listcomp import _H, IG_from_series
-from util.util_features import get_feature_inf
+from util.util_features import get_feature_inf, get_features_from_questions
 
 
 class ExperimentOlympia(AbstractExperiment):
@@ -16,6 +19,8 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_cleaned = 'datasets/olympia/cleaned/experiment3/olympic_allyears_plus.csv'
         self.path_bin = 'datasets/olympia/cleaned/experiment3/olympic_allyears_plus_bin.csv'
         self.path_meta = 'datasets/olympia/cleaned/experiment3/olympic_allyears_plus_bin_meta.csv'
+        self.path_questions = 'datasets/olympia/questions/experiment2/featuresOlympia_hi_lo_combined.csv' # experiment2
+        self.path_flock_result = 'flock/flock_crowd_all.csv'
         self.target = 'medals'
 
 
@@ -69,6 +74,7 @@ class ExperimentOlympia(AbstractExperiment):
         for f in features_to_bin:
             df = df.combine_first(pd.get_dummies(df[f], prefix=f))
             df = df.drop(f, axis='columns')
+        df.columns = [re.sub(r'\.[01]','',f) for f in df]
 
         feature_inf = get_feature_inf()
         def add_bin_data(df, f, feature_inf):
@@ -123,8 +129,51 @@ class ExperimentOlympia(AbstractExperiment):
 
         df.to_csv(self.path_meta, index=True)
 
+    def _get_dataset_bin(self):
+        """
+        Selects subset of data set we have questions for.
+        """
+        df_raw = pd.read_csv(self.path_bin)
+        # kick all features we don't want
+        features = get_features_from_questions(self.path_questions, remove_cond=True)
+        features.append(self.target)
+        df = df_raw[features]
+        return df
+
+    def evaluate_flock(self):
+        df_data = self._get_dataset_bin() # use get_dataset() for original dataset
+        evaluator = CSFSEvaluator(df_data, self.target)
+
+        R = range(3, len(df_data), 1) # number of samples
+        print('len data:', len(df_data))
+        N_Feat = [3, 5, 7, 9, 11]
+        n_samples = 100 # number of repetitions to calculate average auc score for samples
+
+        result = pd.DataFrame(columns=N_Feat, index=R)
+
+        for r in R:
+            print('processing r =', r)
+            aucs = {n_feat: list() for n_feat in N_Feat}
+            for i in range(n_samples):
+                # get a number of samples
+                df_sample = df_data.sample(n=r, axis='rows')
+                df_sample.index = range(r) # otherwise we have a problem with automatic iteration when calculating conditional probabilities
+                best_selector = CSFSBestActualSelector(df_sample, self.target)
+
+                for n_feat in N_Feat:
+                    nbest_features = best_selector.select(n_feat)
+                    auc = evaluator.evaluate_features(nbest_features)
+                    aucs[n_feat].append(auc)
+            result.loc[r] = {n_feat: np.mean(aucs[n_feat]) for n_feat in aucs}
+        result.to_csv(self.path_flock_result)
+
+
+
+
+
 if __name__ == '__main__':
     experiment = ExperimentOlympia('olympia', 3)
     # experiment.preprocess_raw()
-    experiment.bin_binarise()
-    experiment.get_metadata()
+    # experiment.bin_binarise()
+    # experiment.get_metadata()
+    experiment.evaluate_flock()
