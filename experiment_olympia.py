@@ -1,12 +1,14 @@
 import numpy as np
 import pandas as pd
 import re
+
+import sys
 from sklearn.preprocessing import Imputer
 
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector
 from abstract_experiment import AbstractExperiment
-from infoformulas_listcomp import _H, IG_from_series
+from infoformulas_listcomp import _H, IG_from_series, H
 from util.util_features import get_feature_inf, get_features_from_questions
 
 
@@ -116,16 +118,18 @@ class ExperimentOlympia(AbstractExperiment):
         def cond_mean(df, cond_value, target):
             result = list()
             for f in df:
-                tmp_df = df[df[f]==cond_value]
+                tmp_df = df[df[f] == cond_value]
                 result.append(np.mean(tmp_df[target]))
             return result
 
         df['p|f=0'] = cond_mean(df_data, cond_value=0, target=self.target)
         df['p|f=1'] = cond_mean(df_data, cond_value=1, target=self.target)
         df['std'] = np.std(df_data)
+
+        df['H'] = [H(df_data[x]) for x in df_data]
         h_x = _H([df.loc[self.target]['p'], 1-df.loc[self.target]['p']])
         df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
-
+        df['IG ratio'] = df.apply(lambda x: x['IG']/x['H'], axis='columns') # correct?
         df.to_csv(self.path_meta, index=True)
 
     def _get_dataset_bin(self):
@@ -144,14 +148,13 @@ class ExperimentOlympia(AbstractExperiment):
         evaluator = CSFSEvaluator(df_data, self.target)
 
         R = range(3, len(df_data), 1) # number of samples
-        print('len data:', len(df_data))
         N_Feat = [3, 5, 7, 9, 11]
         n_samples = 100 # number of repetitions to calculate average auc score for samples
 
         result = pd.DataFrame(columns=N_Feat, index=R)
 
         for r in R:
-            print('processing r =', r)
+            sys.stdout.write('processing r =', r, '\n')
             aucs = {n_feat: list() for n_feat in N_Feat}
             for i in range(n_samples):
                 # get a number of samples
@@ -174,5 +177,5 @@ if __name__ == '__main__':
     experiment = ExperimentOlympia('olympia', 3)
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
-    # experiment.get_metadata()
-    experiment.evaluate_flock()
+    experiment.get_metadata()
+    # experiment.evaluate_flock()
