@@ -1,0 +1,1 @@
+- kicking all rows with more than 50% missing values (kicked: 1040-839=201 rows)

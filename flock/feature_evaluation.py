@@ -71,6 +71,7 @@ target = 'medals'
 evaluator = CSFSEvaluator(df_data, target)
 
 R = range(3, len(df_data), 1) # number of samples
+print('len data:',len(df_data))
 N_Feat = [3, 5, 7, 9, 11]
 n_samples = 100 # number of repetitions to calculate average auc score for samples
 

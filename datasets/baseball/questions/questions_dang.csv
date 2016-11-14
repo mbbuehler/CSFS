@@ -1,0 +1,173 @@
+G_(5.841, 37.8], All else equal, will team which has *less than 40 Games played* achieve higher or lower rank compared to previous year?
+G_(37.8, 69.6], All else equal, will team which has *between 40 and 70 Games played* achieve higher or lower rank compared to previous year?
+G_(69.6, 101.4], All else equal, will team which has *between 70 and 100 Games played* achieve higher or lower rank compared to previous year?
+G_(101.4, 133.2], All else equal, will team which has *between 100 and 130 Games played* achieve higher or lower rank compared to previous year?
+G_(133.2, 165], All else equal, will team which has *more than 130 Games played* achieve higher or lower rank compared to previous year?
+Ghome_(43.96, 52], All else equal, will team which has *less than 50 Games played at home* achieve higher or lower rank compared to previous year?
+Ghome_(52, 60], All else equal, will team which has *between 50 and 60 Games played at home* achieve higher or lower rank compared to previous year?
+Ghome_(60, 68], All else equal, will team which has *between 60 and 68 Games played at home* achieve higher or lower rank compared to previous year?
+Ghome_(68, 76], All else equal, will team which has *between 68 and 76 Games played at home* achieve higher or lower rank compared to previous year?
+Ghome_(76, 84], All else equal, will team which has *more than 76 Games played at home* achieve higher or lower rank compared to previous year?
+W_(-0.116, 23.2], All else equal, will team which has *less than 23 Wins* achieve higher or lower rank compared to previous year?
+W_(23.2, 46.4], All else equal, will team which has *between 23 and 45 Wins* achieve higher or lower rank compared to previous year?
+W_(46.4, 69.6], All else equal, will team which has *between 45 and 70 Wins* achieve higher or lower rank compared to previous year?
+W_(69.6, 92.8], All else equal, will team which has *between 70 and 90 Wins* achieve higher or lower rank compared to previous year?
+W_(92.8, 116], All else equal, will team which has *more than 90 Wins* achieve higher or lower rank compared to previous year?
+L_(3.87, 30], All else equal, will team which has *less than 30 Losses* achieve higher or lower rank compared to previous year?
+L_(30, 56], All else equal, will team which has *between 30 and 55 Losses* achieve higher or lower rank compared to previous year?
+L_(56, 82], All else equal, will team which has *between 55 and 80 Losses* achieve higher or lower rank compared to previous year?
+L_(82, 108], All else equal, will team which has *between 80 and 100 Losses* achieve higher or lower rank compared to previous year?
+L_(108, 134], All else equal, will team which has *more than 100 Losses* achieve higher or lower rank compared to previous year?
+DivWin_N, All else equal, will team which *is not the Devision Winner* achieve higher or lower rank compared to previous year?
+DivWin_Y, All else equal, will team which *is the Devision Winner* achieve higher or lower rank compared to previous year?
+WCWin_N, All else equal, will team which *is not the Wild Card Winner* achieve higher or lower rank compared to previous year?
+WCWin_Y, All else equal, will team which *is the Wild Card Winner* achieve higher or lower rank compared to previous year?
+LgWin_N, All else equal, will team which *is not the League Champion Winner* achieve higher or lower rank compared to previous year?
+LgWin_Y, All else equal, will team which *is the League Champion Winner* achieve higher or lower rank compared to previous year?
+WSWin_N, All else equal, will team which *is not the World Series Winner* achieve higher or lower rank compared to previous year?
+WSWin_Y, All else equal, will team which *is the World Series Winner* achieve higher or lower rank compared to previous year?
+R_(22.804, 263.2], All else equal, will team which has *less than 263 Runs scored* achieve higher or lower rank compared to previous year?
+R_(263.2, 502.4], All else equal, will team which has *between 263 and 500 Runs scored* achieve higher or lower rank compared to previous year?
+R_(502.4, 741.6], All else equal, will team which has *between 500 and 740 Runs scored* achieve higher or lower rank compared to previous year?
+R_(741.6, 980.8], All else equal, will team which has *between 740 and 980 Runs scored* achieve higher or lower rank compared to previous year?
+R_(980.8, 1220], All else equal, will team which has *more than 980 Runs scored* achieve higher or lower rank compared to previous year?
+AB_(205.43, 1325], All else equal, will team which has *less than 1325 At bats* achieve higher or lower rank compared to previous year?
+AB_(1325, 2439], All else equal, will team which has *between 1325 and 2440 At bats* achieve higher or lower rank compared to previous year?
+AB_(2439, 3553], All else equal, will team which has *between 2440 and 3550 At bats* achieve higher or lower rank compared to previous year?
+AB_(3553, 4667], All else equal, will team which has *between 3550 and 4667 At bats* achieve higher or lower rank compared to previous year?
+AB_(4667, 5781], All else equal, will team which has *more than 4667 At bats* achieve higher or lower rank compared to previous year?
+H_(31.25, 383], All else equal, will team which has *less than 383 Hits by batters* achieve higher or lower rank compared to previous year?
+H_(383, 733], All else equal, will team which has *between 383 and 733 Hits by batters* achieve higher or lower rank compared to previous year?
+H_(733, 1083], All else equal, will team which has *between 733 and 1083 Hits by batters* achieve higher or lower rank compared to previous year?
+H_(1083, 1433], All else equal, will team which has *between 1083 and 1433 Hits by batters* achieve higher or lower rank compared to previous year?
+H_(1433, 1783], All else equal, will team which has *more than 1433 Hits by batters* achieve higher or lower rank compared to previous year?
+2B_(2.627, 77.6], All else equal, will team which has *less than 80 Doubles* achieve higher or lower rank compared to previous year?
+2B_(77.6, 152.2], All else equal, will team which has *between 80 and 150 Doubles* achieve higher or lower rank compared to previous year?
+2B_(152.2, 226.8], All else equal, will team which has *between 150 and 230 Doubles* achieve higher or lower rank compared to previous year?
+2B_(226.8, 301.4], All else equal, will team which has *between 230 and 300 Doubles* achieve higher or lower rank compared to previous year?
+2B_(301.4, 376], All else equal, will team which has *more than 300 Doubles* achieve higher or lower rank compared to previous year?
+3B_(-0.00502, 1.00346], All else equal, will team which has *less than 2 Triples* achieve higher or lower rank compared to previous year?
+3B_(1.00346, 2.00691], All else equal, will team which has *between 2 and 6 Triples* achieve higher or lower rank compared to previous year?
+3B_(2.00691, 3.0104], All else equal, will team which has *between 6 and 19 Triples* achieve higher or lower rank compared to previous year?
+3B_(3.0104, 4.0138], All else equal, will team which has *between 19 and 54 Triples* achieve higher or lower rank compared to previous year?
+3B_(4.0138, 5.0173], All else equal, will team which has *more than 54 Triples* achieve higher or lower rank compared to previous year?
+HR_(-0.264, 52.8], All else equal, will team which has *less than 50 Homeruns by batters* achieve higher or lower rank compared to previous year?
+HR_(52.8, 105.6], All else equal, will team which has *between 50 and 100 Homeruns by batters* achieve higher or lower rank compared to previous year?
+HR_(105.6, 158.4], All else equal, will team which has *between 100 and 160 Homeruns by batters* achieve higher or lower rank compared to previous year?
+HR_(158.4, 211.2], All else equal, will team which has *between 160 and 210 Homeruns by batters* achieve higher or lower rank compared to previous year?
+HR_(211.2, 264], All else equal, will team which has *more than 210 Homeruns by batters* achieve higher or lower rank compared to previous year?
+BB_(-0.835, 167], All else equal, will team which has *less than 167 Walks by batters* achieve higher or lower rank compared to previous year?
+BB_(167, 334], All else equal, will team which has *between 167 and 334 Walks by batters* achieve higher or lower rank compared to previous year?
+BB_(334, 501], All else equal, will team which has *between 334 and 500 Walks by batters* achieve higher or lower rank compared to previous year?
+BB_(501, 668], All else equal, will team which has *between 500 and 668 Walks by batters* achieve higher or lower rank compared to previous year?
+BB_(668, 835], All else equal, will team which has *more than 668 Walks by batters* achieve higher or lower rank compared to previous year?
+SO_(-1.535, 307], All else equal, will team which has *less than 307 Strikeouts by batters* achieve higher or lower rank compared to previous year?
+SO_(307, 614], All else equal, will team which has *between 307 and 614 Strikeouts by batters* achieve higher or lower rank compared to previous year?
+SO_(614, 921], All else equal, will team which has *between 614 and 920 Strikeouts by batters* achieve higher or lower rank compared to previous year?
+SO_(921, 1228], All else equal, will team which has *between 920 and 1230 Strikeouts by batters* achieve higher or lower rank compared to previous year?
+SO_(1228, 1535], All else equal, will team which has *more than 1230 Strikeouts by batters* achieve higher or lower rank compared to previous year?
+SB_(-0.00637, 1.273], All else equal, will team which has *less than 3 Stolen bases* achieve higher or lower rank compared to previous year?
+SB_(1.273, 2.547], All else equal, will team which has *between 3 and 12 Stolen bases* achieve higher or lower rank compared to previous year?
+SB_(2.547, 3.82], All else equal, will team which has *between 12 and 45 Stolen bases* achieve higher or lower rank compared to previous year?
+SB_(3.82, 5.0932], All else equal, will team which has *between 45 and 160 Stolen bases* achieve higher or lower rank compared to previous year?
+SB_(5.0932, 6.366], All else equal, will team which has *more than 160 Stolen bases* achieve higher or lower rank compared to previous year?
+CS_(-0.00526, 1.0515], All else equal, will team which has *less than 2 Caught stealing* achieve higher or lower rank compared to previous year?
+CS_(1.0515, 2.103], All else equal, will team which has *between 2 and 7 Caught stealing* achieve higher or lower rank compared to previous year?
+CS_(2.103, 3.154], All else equal, will team which has *between 7 and 22 Caught stealing* achieve higher or lower rank compared to previous year?
+CS_(3.154, 4.206], All else equal, will team which has *between 22 and 66 Caught stealing* achieve higher or lower rank compared to previous year?
+CS_(4.206, 5.257], All else equal, will team which has *more than 66 Caught stealing* achieve higher or lower rank compared to previous year?
+HBP_(25.923, 41.4], All else equal, will team which has *less than 40 Batters hit by pitch* achieve higher or lower rank compared to previous year?
+HBP_(41.4, 56.8], All else equal, will team which has *between 40 and 55 Batters hit by pitch* achieve higher or lower rank compared to previous year?
+HBP_(56.8, 72.2], All else equal, will team which has *between 55 and 70 Batters hit by pitch* achieve higher or lower rank compared to previous year?
+HBP_(72.2, 87.6], All else equal, will team which has *between 70 and 85 Batters hit by pitch* achieve higher or lower rank compared to previous year?
+HBP_(87.6, 103], All else equal, will team which has *more than 85 Batters hit by pitch* achieve higher or lower rank compared to previous year?
+SF_(23.949, 34.2], All else equal, will team which has *less than 35 Sacrifice flies* achieve higher or lower rank compared to previous year?
+SF_(34.2, 44.4], All else equal, will team which has *between 35 and 45 Sacrifice flies* achieve higher or lower rank compared to previous year?
+SF_(44.4, 54.6], All else equal, will team which has *between 45 and 55 Sacrifice flies* achieve higher or lower rank compared to previous year?
+SF_(54.6, 64.8], All else equal, will team which has *between 55 and 65 Sacrifice flies* achieve higher or lower rank compared to previous year?
+SF_(64.8, 75], All else equal, will team which has *more than 65 Sacrifice flies* achieve higher or lower rank compared to previous year?
+RA_(32.782, 277.6], All else equal, will team which has *less than 280 Opponents runs scored* achieve higher or lower rank compared to previous year?
+RA_(277.6, 521.2], All else equal, will team which has *between 280 and 520 Opponents runs scored* achieve higher or lower rank compared to previous year?
+RA_(521.2, 764.8], All else equal, will team which has *between 520 and 765 Opponents runs scored* achieve higher or lower rank compared to previous year?
+RA_(764.8, 1008.4], All else equal, will team which has *between 765 and 1010 Opponents runs scored* achieve higher or lower rank compared to previous year?
+RA_(1008.4, 1252], All else equal, will team which has *more than 1010 Opponents runs scored* achieve higher or lower rank compared to previous year?
+ER_(24.002, 224.6], All else equal, will team which has *less than 225 Earned runs allowed* achieve higher or lower rank compared to previous year?
+ER_(224.6, 424.2], All else equal, will team which has *between 225 and 425 Earned runs allowed* achieve higher or lower rank compared to previous year?
+ER_(424.2, 623.8], All else equal, will team which has *between 425 and 625 Earned runs allowed* achieve higher or lower rank compared to previous year?
+ER_(623.8, 823.4], All else equal, will team which has *between 625 and 825 Earned runs allowed* achieve higher or lower rank compared to previous year?
+ER_(823.4, 1023], All else equal, will team which has *more than 825 Earned runs allowed* achieve higher or lower rank compared to previous year?
+ERA_(1.213, 2.576], All else equal, will team which has *less than 3 Earned run average* achieve higher or lower rank compared to previous year?
+ERA_(2.576, 3.932], All else equal, will team which has *between 3 and 4 Earned run average* achieve higher or lower rank compared to previous year?
+ERA_(3.932, 5.288], All else equal, will team which has *between 4 and 5 Earned run average* achieve higher or lower rank compared to previous year?
+ERA_(5.288, 6.644], All else equal, will team which has *between 5 and 6 Earned run average* achieve higher or lower rank compared to previous year?
+ERA_(6.644, 8], All else equal, will team which has *more than 6 Earned run average* achieve higher or lower rank compared to previous year?
+CG_(-0.148, 29.6], All else equal, will team which has *less than 30 Complete games* achieve higher or lower rank compared to previous year?
+CG_(29.6, 59.2], All else equal, will team which has *between 30 and 60 Complete games* achieve higher or lower rank compared to previous year?
+CG_(59.2, 88.8], All else equal, will team which has *between 60 and 90 Complete games* achieve higher or lower rank compared to previous year?
+CG_(88.8, 118.4], All else equal, will team which has *between 90 and 120 Complete games* achieve higher or lower rank compared to previous year?
+CG_(118.4, 148], All else equal, will team which has *more than 120 Complete games* achieve higher or lower rank compared to previous year?
+SHO_(-0.032, 6.4], All else equal, will team which has *less than 7 Shutouts* achieve higher or lower rank compared to previous year?
+SHO_(6.4, 12.8], All else equal, will team which has *between 7 and 13 Shutouts* achieve higher or lower rank compared to previous year?
+SHO_(12.8, 19.2], All else equal, will team which has *between 13 and 19 Shutouts* achieve higher or lower rank compared to previous year?
+SHO_(19.2, 25.6], All else equal, will team which has *between 19 and 25 Shutouts* achieve higher or lower rank compared to previous year?
+SHO_(25.6, 32], All else equal, will team which has *more than 25 Shutouts* achieve higher or lower rank compared to previous year?
+SV_(-0.068, 13.6], All else equal, will team which has *less than 14 Saves* achieve higher or lower rank compared to previous year?
+SV_(13.6, 27.2], All else equal, will team which has *between 14 and 27 Saves* achieve higher or lower rank compared to previous year?
+SV_(27.2, 40.8], All else equal, will team which has *between 27 and 40 Saves* achieve higher or lower rank compared to previous year?
+SV_(40.8, 54.4], All else equal, will team which has *between 40 and 54 Saves* achieve higher or lower rank compared to previous year?
+SV_(54.4, 68], All else equal, will team which has *more than 54 Saves* achieve higher or lower rank compared to previous year?
+IPouts_(157.644, 1033.2], All else equal, will team which has *less than 1033 Outs Pitched* achieve higher or lower rank compared to previous year?
+IPouts_(1033.2, 1904.4], All else equal, will team which has *between 1033 and 1900 Outs Pitched* achieve higher or lower rank compared to previous year?
+IPouts_(1904.4, 2775.6], All else equal, will team which has *between 1900 and 2775 Outs Pitched* achieve higher or lower rank compared to previous year?
+IPouts_(2775.6, 3646.8], All else equal, will team which has *between 2775 and 3645 Outs Pitched* achieve higher or lower rank compared to previous year?
+IPouts_(3646.8, 4518], All else equal, will team which has *more than 3645 Outs Pitched* achieve higher or lower rank compared to previous year?
+HA_(47.056, 437.8], All else equal, will team which has *less than 438 Hits allowed* achieve higher or lower rank compared to previous year?
+HA_(437.8, 826.6], All else equal, will team which has *between 438 and 827 Hits allowed* achieve higher or lower rank compared to previous year?
+HA_(826.6, 1215.4], All else equal, will team which has *between 827 and 1215 Hits allowed* achieve higher or lower rank compared to previous year?
+HA_(1215.4, 1604.2], All else equal, will team which has *between 1215 and 1600 Hits allowed* achieve higher or lower rank compared to previous year?
+HA_(1604.2, 1993], All else equal, will team which has *more than 1600 Hits allowed* achieve higher or lower rank compared to previous year?
+HRA_(-0.241, 48.2], All else equal, will team which has *less than 50 Homeruns allowed* achieve higher or lower rank compared to previous year?
+HRA_(48.2, 96.4], All else equal, will team which has *between 50 and 95 Homeruns allowed* achieve higher or lower rank compared to previous year?
+HRA_(96.4, 144.6], All else equal, will team which has *between 95 and 145 Homeruns allowed* achieve higher or lower rank compared to previous year?
+HRA_(144.6, 192.8], All else equal, will team which has *between 145 and 190 Homeruns allowed* achieve higher or lower rank compared to previous year?
+HRA_(192.8, 241], All else equal, will team which has *more than 190 Homeruns allowed* achieve higher or lower rank compared to previous year?
+BBA_(-0.827, 165.4], All else equal, will team which has *less than 165 Walks allowed* achieve higher or lower rank compared to previous year?
+BBA_(165.4, 330.8], All else equal, will team which has *between 165 and 330 Walks allowed* achieve higher or lower rank compared to previous year?
+BBA_(330.8, 496.2], All else equal, will team which has *between 330 and 500 Walks allowed* achieve higher or lower rank compared to previous year?
+BBA_(496.2, 661.6], All else equal, will team which has *between 500 and 660 Walks allowed* achieve higher or lower rank compared to previous year?
+BBA_(661.6, 827], All else equal, will team which has *more than 660 Walks allowed* achieve higher or lower rank compared to previous year?
+SOA_(-1.45, 290], All else equal, will team which has *less than 290 Strikeouts by pitchers* achieve higher or lower rank compared to previous year?
+SOA_(290, 580], All else equal, will team which has *between 290 and 580 Strikeouts by pitchers* achieve higher or lower rank compared to previous year?
+SOA_(580, 870], All else equal, will team which has *between 580 and 870 Strikeouts by pitchers* achieve higher or lower rank compared to previous year?
+SOA_(870, 1160], All else equal, will team which has *between 870 and 1160 Strikeouts by pitchers* achieve higher or lower rank compared to previous year?
+SOA_(1160, 1450], All else equal, will team which has *more than 1160 Strikeouts by pitchers* achieve higher or lower rank compared to previous year?
+E_(3.869, 4.389], All else equal, will team which has *less than 80 Errors* achieve higher or lower rank compared to previous year?
+E_(4.389, 4.907], All else equal, will team which has *between 80 and 135 Errors* achieve higher or lower rank compared to previous year?
+E_(4.907, 5.425], All else equal, will team which has *between 135 and 226 Errors* achieve higher or lower rank compared to previous year?
+E_(5.425, 5.943], All else equal, will team which has *between 226 and 380 Errors* achieve higher or lower rank compared to previous year?
+E_(5.943, 6.461], All else equal, will team which has *more than 380 Errors* achieve higher or lower rank compared to previous year?
+DP_(17.801, 57.8], All else equal, will team which has *less than 58 Double Plays* achieve higher or lower rank compared to previous year?
+DP_(57.8, 97.6], All else equal, will team which has *between 58 and 98 Double Plays* achieve higher or lower rank compared to previous year?
+DP_(97.6, 137.4], All else equal, will team which has *between 98 and 137 Double Plays* achieve higher or lower rank compared to previous year?
+DP_(137.4, 177.2], All else equal, will team which has *between 137 and 177 Double Plays* achieve higher or lower rank compared to previous year?
+DP_(177.2, 217], All else equal, will team which has *more than 177 Double Plays* achieve higher or lower rank compared to previous year?
+FP_(0.76, 0.806], All else equal, will team *whose the Fielding percentage is less than 80%* achieve higher or lower rank compared to previous year?
+FP_(0.806, 0.852], All else equal, will team *whose the Fielding percentage is between 80% and 85%* achieve higher or lower rank compared to previous year?
+FP_(0.852, 0.899], All else equal, will team *whose the Fielding percentage is between 85% and 90%* achieve higher or lower rank compared to previous year?
+FP_(0.899, 0.945], All else equal, will team *whose the Fielding percentage is between 90% and 95%* achieve higher or lower rank compared to previous year?
+FP_(0.945, 0.991], All else equal, will team *whose the Fielding percentage is more than 95%* achieve higher or lower rank compared to previous year?
+attendance_(1610.738, 901540.4], All else equal, will team *whose the Home attendance total is less than 900,000* achieve higher or lower rank compared to previous year?
+attendance_(901540.4, 1796992.8], All else equal, will team *whose the Home attendance total is between 900,00 and 1.8 million* achieve higher or lower rank compared to previous year?
+attendance_(1796992.8, 2692445.2], All else equal, will team *whose the Home attendance total is between 1.8 million and 2.7 million* achieve higher or lower rank compared to previous year?
+attendance_(2692445.2, 3587897.6], All else equal, will team *whose the Home attendance total is between 2.7 million and 3.6 milliom* achieve higher or lower rank compared to previous year?
+attendance_(3587897.6, 4483350], All else equal, will team *whose the Home attendance total is more than 3.6 million* achieve higher or lower rank compared to previous year?
+BPF_(59.931, 73.8], All else equal, will team *whose the Three-year park factor for batters is less than 74* achieve higher or lower rank compared to previous year?
+BPF_(73.8, 87.6], All else equal, will team *whose the Three-year park factor for batters is between 74 and 88* achieve higher or lower rank compared to previous year?
+BPF_(87.6, 101.4], All else equal, will team *whose the Three-year park factor for batters is between 88 and 100* achieve higher or lower rank compared to previous year?
+BPF_(101.4, 115.2], All else equal, will team *whose the Three-year park factor for batters is between 100 and 115* achieve higher or lower rank compared to previous year?
+BPF_(115.2, 129], All else equal, will team *whose the Three-year park factor for batters is more than 115* achieve higher or lower rank compared to previous year?
+PPF_(59.919, 76.2], All else equal, will team *whose the Three-year park factor for pitchers is less than 76* achieve higher or lower rank compared to previous year?
+PPF_(76.2, 92.4], All else equal, will team *whose the Three-year park factor for pitchers is between 76 and 92* achieve higher or lower rank compared to previous year?
+PPF_(92.4, 108.6], All else equal, will team *whose the Three-year park factor for pitchers is between 92 and 108* achieve higher or lower rank compared to previous year?
+PPF_(108.6, 124.8], All else equal, will team *whose the Three-year park factor for pitchers is between 108 and 125* achieve higher or lower rank compared to previous year?
+PPF_(124.8, 141], All else equal, will team *whose the Three-year park factor for pitchers is more than 125* achieve higher or lower rank compared to previous year?

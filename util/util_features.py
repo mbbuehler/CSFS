@@ -78,34 +78,7 @@ def get_ranked_features():
     for f in ordered_features:
         print(f, dict_ig[f])
 
-if __name__ == '__main__':
-    # path = '../datasets/artificial/artificial12.csv'
-    # print(get_target_ratio(path))
-    # path = '../datasets/olympia/raw/Opympic_0_extra_2016.csv'
-    # binarise_dataset()
-    # get_ranked_features()
 
-    # base_path = '/home/marcello/studies/bachelorarbeit/workspace/github_crowd-sourcing-for-feature-selection/datasets/olympia/raw/olympic2016_raw_plus/'
-    # path = base_path+'Olympic2016_raw_plus.csv'
-    #
-    # df = pd.read_csv(path)
-    # target = 'medals'
-    # df['medals'] = df['medals']>0
-    # df['medals'] = df['medals'].astype(int)
-    # df2 = df[df['electricity consumption per capita']<5612.31]
-    # print(df2[target].describe())
-    features = ['education expenditures_(4.133, 5.6]',
-                'inflation rate_(1.9, 4.2]',
-                'region_3',
-                'unemployment rate_[0.3, 6.433]',
-                'public debt_(61.733, 226.1]',
-                'electricity consumption_[90210000, 7952000000]',
-                'exports_[1163000, 10071333333.333]',
-                'electricity consumption_(55576666666.667, 3890000000000]',
-                'internet users_(6149000, 245000000]',
-                'exports_(77193333333.333, 1580000000000]',
-                ]
-    # create_question_templates(10)
 
 def get_features_from_questions(path_questions, remove_cond=False, remove_binning=False):
     """
@@ -146,3 +119,60 @@ def remove_binning_cond_markup(features):
     """
     features = list(set([re.sub(r'[(_\d)(\[\()].*$', '', x) for x in features]))
     return features
+
+def get_feature_inf():
+    df = pd.read_csv('datasets/olympia/cleaned/experiment2/Olympic2016_raw_plus_bin.csv')
+    features = list(df.columns)
+    # print(features)
+    features_base = remove_binning_cond_markup(features)
+    def extract_bins(f):
+        match = re.search(r'(-?\d+\.?\d*), (-?\d+\.?\d*)', f)
+        if match:
+            thresholds = match.group().split(', ')
+            return {f: [float(t) for t in thresholds]}
+        return {}
+
+    result = dict()
+    for f in features:
+        result.update(extract_bins(f))
+
+    structured = dict()
+    for f_base in features_base:
+        structured[f_base] = {}
+        for f in result:
+            if f.startswith(f_base+'_'):
+                structured[f_base][f] = result[f]
+    print(structured)
+    return structured
+
+
+
+if __name__ == '__main__':
+    # path = '../datasets/artificial/artificial12.csv'
+    # print(get_target_ratio(path))
+    # path = '../datasets/olympia/raw/Opympic_0_extra_2016.csv'
+    # binarise_dataset()
+    # get_ranked_features()
+
+    # base_path = '/home/marcello/studies/bachelorarbeit/workspace/github_crowd-sourcing-for-feature-selection/datasets/olympia/raw/olympic2016_raw_plus/'
+    # path = base_path+'Olympic2016_raw_plus.csv'
+    #
+    # df = pd.read_csv(path)
+    # target = 'medals'
+    # df['medals'] = df['medals']>0
+    # df['medals'] = df['medals'].astype(int)
+    # df2 = df[df['electricity consumption per capita']<5612.31]
+    # print(df2[target].describe())
+    features = ['education expenditures_(4.133, 5.6]',
+                'inflation rate_(1.9, 4.2]',
+                'region_3',
+                'unemployment rate_[0.3, 6.433]',
+                'public debt_(61.733, 226.1]',
+                'electricity consumption_[90210000, 7952000000]',
+                'exports_[1163000, 10071333333.333]',
+                'electricity consumption_(55576666666.667, 3890000000000]',
+                'internet users_(6149000, 245000000]',
+                'exports_(77193333333.333, 1580000000000]',
+                ]
+    # create_question_templates(10)
+    get_feature_inf()
