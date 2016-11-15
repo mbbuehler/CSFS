@@ -12,6 +12,7 @@ from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector
 from abstract_experiment import AbstractExperiment
 from analysis_noisy_means_drop import _conduct_analysis
+from imputer import CategoricalImputer
 from infoformulas_listcomp import _H, IG_from_series, H
 from util.util_features import get_feature_inf, get_features_from_questions
 
@@ -21,7 +22,7 @@ class ExperimentBaseball(AbstractExperiment):
     def __init__(self, dataset_name, experiment_number):
         super().__init__(dataset_name, experiment_number)
         self.path_raw = "datasets/baseball/raw/Baseball_original.csv"
-        self.path_cleaned = "datasets/baseball/cleaned/experiment1/baseball.csv"
+        self.path_cleaned = "datasets/baseball/cleaned/experiment1/baseball_plus.csv"
         self.path_bin = ""
         self.path_meta = ""
         self.path_questions = ""
@@ -39,6 +40,7 @@ class ExperimentBaseball(AbstractExperiment):
 
         features_to_remove = ['DivWin',
                               'WCWin',
+                              'HBP',
                               'SF',
                               'name',
                               'park'
@@ -48,12 +50,26 @@ class ExperimentBaseball(AbstractExperiment):
         df_raw = df_raw.drop(features_to_remove, axis='columns')
 
         # impute means, medians, default values according to notebook
+        imputer_mean = Imputer(strategy='mean')
+        imputer_most_frequent = CategoricalImputer()
 
+        cols_imp_mean = ['Ghome', 'SO', 'SB', 'CS', 'DP', 'attendance'] # maybe improve DP and attendance by using neighbouring rows
+        cols_imp_most_freq = ['lgID', 'LgWin', 'WSWin']
 
-        # fill missing values
-        imputer = Imputer()
-        vals = imputer.fit_transform(df_raw)
-        df_raw = pd.DataFrame(vals, columns=df_raw.columns, index=df_raw.index)
+        def insert_values(df, columns, imputer):
+            values = imputer.fit_transform(df[columns])
+            df[columns] = values
+            return df
+
+        df_raw = insert_values(df_raw, cols_imp_mean, imputer_mean)
+        # use integer values
+        cols_int = ['Ghome', 'SO', 'SB', 'CS', 'attendance']
+        df_raw[cols_int] = df_raw[cols_int].astype('int')
+
+        df_raw = insert_values(df_raw, cols_imp_most_freq, imputer_most_frequent)
+
+        # divID: encode na as own category: U (Unknown)
+        df_raw.loc[df_raw['divID'].isnull(), 'divID'] = 'U'
 
         # output
         df_raw.to_csv(self.path_cleaned, index=False)
