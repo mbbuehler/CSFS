@@ -6,6 +6,7 @@ import sys
 
 from joblib import Parallel, delayed
 from sklearn.preprocessing import Imputer
+from tabulate import tabulate
 
 import CSFSLoader
 from CSFSEvaluator import CSFSEvaluator
@@ -27,7 +28,7 @@ class ExperimentBaseball(AbstractExperiment):
         self.path_meta = ""
         self.path_questions = ""
         self.path_flock_result = ""
-        self.target = ""
+        self.target = "Rank_rel"
 
 
     def preprocess_raw(self):
@@ -81,6 +82,44 @@ class ExperimentBaseball(AbstractExperiment):
         :return:
         """
         df = pd.read_csv(self.path_cleaned)
+
+        def binarise_rank(row):
+            df_prev = df[(df['yearID'] < row['yearID']) & (df['teamID'] == row['teamID'])]
+            rank_rel = -1
+            if len(df_prev) > 0:
+                # print(df_prev[['yearID', 'teamID', 'Rank']])
+                year_prev = max(df_prev['yearID'])
+                rank_prev = df_prev[df_prev['yearID'] == year_prev]['Rank']
+                rank_curr = row['Rank']
+                # print(year_prev)
+                # print(rank_prev)
+                # print(rank_curr)
+                rank_rel = rank_curr / rank_prev
+            row['Rank_rel'] = float(rank_rel)
+            return row
+        df[self.target] = -1
+        df = df[:200]
+        df = df.apply(binarise_rank, axis='columns')
+        print(tabulate(df[:5], headers='keys'))
+        print(df.describe(include='all'))
+        # exit()
+        print('remove rows:',len(df[df['Rank_rel'] == -1]))
+        print('non changing:',len(df[df['Rank_rel'] == 1]))
+        print('higher:',len(df[df['Rank_rel']>1]))
+        print('lower:',len(df[df['Rank_rel']<1]))
+        print('all:',len(df))
+
+        df[self.target] = df[self.target].apply(lambda x: 1 if x >= 1 else 0)
+
+
+        def encode_binary(x):
+            print(x.dtype)
+            exit()
+
+        # next: writw encode binary function that binns and binarises or just binarises or onehotenocodes column according to type
+        df = df.apply(encode_binary)
+
+
         # df['medals'] = df['medals'] > 0
         # df['medals'] = df['medals'].astype(int)
         #
@@ -196,7 +235,7 @@ class ExperimentBaseball(AbstractExperiment):
 
 if __name__ == '__main__':
     experiment = ExperimentBaseball('baseball', 1)
-    experiment.preprocess_raw()
-    # experiment.bin_binarise()
+    # experiment.preprocess_raw()
+    experiment.bin_binarise()
     # experiment.get_metadata()
     # experiment.evaluate_flock()
