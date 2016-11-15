@@ -81,6 +81,7 @@ def explore_pickle():
         print()
 
 def explore_olympia_bin_features():
+    # get_metadata()
     features = [
         'education expenditures_(4.133, 5.6]',
         'region_3',

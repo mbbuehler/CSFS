@@ -214,7 +214,7 @@ def test():
     print(ig, ' == ', ig_true, '?')
     assert round(ig, 5) == round(ig_true, 5)
 
-
+    print(_H([5/14, 5/14, 4/14]))
 
     print(' == Tests OK ==')
 
