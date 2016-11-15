@@ -3,11 +3,15 @@ import pandas as pd
 import re
 
 import sys
+
+from joblib import Parallel, delayed
 from sklearn.preprocessing import Imputer
 
+import CSFSLoader
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector
 from abstract_experiment import AbstractExperiment
+from analysis_noisy_means_drop import _conduct_analysis
 from infoformulas_listcomp import _H, IG_from_series, H
 from util.util_features import get_feature_inf, get_features_from_questions
 
@@ -169,7 +173,11 @@ class ExperimentOlympia(AbstractExperiment):
             result.loc[r] = {n_feat: np.mean(aucs[n_feat]) for n_feat in aucs}
         result.to_csv(self.path_flock_result)
 
-
+    # def evaluate_noisy_means_drop(self):
+    #     N_features = []
+    #     N_samples = 100
+    #     df = CSFSLoader.CSFSLoader().load_dataset(self.path_bin, )
+    #     Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, self.target, mean_error, N_features, N_samples, self.dataset_name) for mean_error in np.linspace(0.0, 0.6, 200))
 
 
 
