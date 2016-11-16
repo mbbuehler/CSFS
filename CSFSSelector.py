@@ -165,6 +165,24 @@ class CSFSAllFeaturesNoisySelector(CSFSSelector):
         dict_ig = self._get_dict_ig()
         return self._get_ordered_predictors_dsc(dict_ig)[:n]
 
+
+class CSFSBestFromMetaSelector(CSFSSelector):
+        def __init__(self, df, target=None): # max_error: max difference from mean e.g. 0.1
+            """
+
+            :param df: aggregated crowd answers. must contain a column 'IG' with IG values. index: features
+            :param target: not needed
+            :return:
+            """
+            super().__init__(df, target)
+            self.ranking_column = 'IG'
+
+        def select(self, n):
+            nlargest = self.df.nlargest(n, self.ranking_column)
+            selected_features = list(nlargest.index)
+            return selected_features
+
+
 def test():
     n = 4
     data = {'F1': [1,1,1,1,0,0,0], 'F2': [1,1,0,0,1,1,1], 'F3': [0,0,0,0,1,1,1], 'F4': [1,1,1,1,1,1,1], 'T': [1,0,1,0,1,0,1]}
