@@ -190,6 +190,6 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    # experiment.drop_analysis()
-    experiment.drop_evaluation()
+    experiment.drop_analysis()
+    # experiment.drop_evaluation()
     # experiment.evaluate_flock()
