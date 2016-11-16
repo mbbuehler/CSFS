@@ -5,7 +5,7 @@ import re
 import sys
 
 from joblib import Parallel, delayed
-from sklearn.preprocessing import Imputer
+from sklearn.preprocessing import Imputer, OneHotEncoder
 from tabulate import tabulate
 
 import CSFSLoader
@@ -24,7 +24,7 @@ class ExperimentBaseball(AbstractExperiment):
         super().__init__(dataset_name, experiment_number)
         self.path_raw = "datasets/baseball/raw/Baseball_original.csv"
         self.path_cleaned = "datasets/baseball/cleaned/experiment1/baseball_plus.csv"
-        self.path_bin = ""
+        self.path_bin = "datasets/baseball/cleaned/experiment1/baseball_plus_bin.csv"
         self.path_meta = ""
         self.path_questions = ""
         self.path_flock_result = ""
@@ -64,7 +64,7 @@ class ExperimentBaseball(AbstractExperiment):
 
         df_raw = insert_values(df_raw, cols_imp_mean, imputer_mean)
         # use integer values
-        cols_int = ['Ghome', 'SO', 'SB', 'CS', 'attendance']
+        cols_int = ['Ghome', 'SO', 'SB', 'CS', 'DP', 'attendance']
         df_raw[cols_int] = df_raw[cols_int].astype('int')
 
         df_raw = insert_values(df_raw, cols_imp_most_freq, imputer_most_frequent)
@@ -98,10 +98,10 @@ class ExperimentBaseball(AbstractExperiment):
             row['Rank_rel'] = float(rank_rel)
             return row
         df[self.target] = -1
-        df = df[:200]
+        # df = df[:200]
         df = df.apply(binarise_rank, axis='columns')
-        print(tabulate(df[:5], headers='keys'))
-        print(df.describe(include='all'))
+        df = df.drop('Rank', axis='columns')
+        df = df[df['Rank_rel'] != -1]
         # exit()
         print('remove rows:',len(df[df['Rank_rel'] == -1]))
         print('non changing:',len(df[df['Rank_rel'] == 1]))
@@ -111,55 +111,24 @@ class ExperimentBaseball(AbstractExperiment):
 
         df[self.target] = df[self.target].apply(lambda x: 1 if x >= 1 else 0)
 
+        cols_binning = ['yearID', 'G', 'Ghome',
+            'W', 'L', 'R', 'AB', 'H', '2B', '3B', 'HR', 'BB',
+            'SO', 'SB', 'CS', 'RA', 'ER', 'ERA', 'CG', 'SHO', 'SV', 'IPouts', 'HA',
+            'HRA', 'BBA', 'SOA', 'E', 'DP', 'FP', 'attendance', 'BPF', 'PPF',
+            ]
 
-        def encode_binary(x):
-            print(x.dtype)
-            exit()
+        for col in cols_binning:
+            df[col] = pd.cut(df[col], 3)
 
-        # next: writw encode binary function that binns and binarises or just binarises or onehotenocodes column according to type
-        df = df.apply(encode_binary)
+        features = list(df.columns)
+        features.remove(self.target) # do not bin target variable
+        for col in features:
+            dummies = pd.get_dummies(df[col], prefix='{}_'.format(col))
+            df = df.join(dummies)
+            df = df.drop(col, axis='columns')
+        # print(tabulate(df[:100], headers='keys'))
 
-
-        # df['medals'] = df['medals'] > 0
-        # df['medals'] = df['medals'].astype(int)
-        #
-        # binary_features = ['medals']
-        # features_to_bin = ['region']
-        #
-        # features_to_do = [f for f in df if f not in binary_features and f not in features_to_bin]
-        # # binarise
-        # for f in features_to_bin:
-        #     df = df.combine_first(pd.get_dummies(df[f], prefix=f))
-        #     df = df.drop(f, axis='columns')
-        # df.columns = [re.sub(r'\.[01]','',f) for f in df]
-        #
-        # feature_inf = get_feature_inf()
-        # def add_bin_data(df, f, feature_inf):
-        #     """
-        #     converts numerical to binary for given categories
-        #     :param df:
-        #     :param f:
-        #     :param feature_inf:
-        #     :return:
-        #     """
-        #     for bin in feature_inf[f]:
-        #         print(bin)
-        #         df[bin] = 0
-        #
-        #     for bin in feature_inf[f]:
-        #         lim_lower = feature_inf[f][bin][0]
-        #         lim_upper = feature_inf[f][bin][1]
-        #
-        #         # print(lim_lower, '< x <=', lim_upper, '?')
-        #         selected_index = df[(df[f] > lim_lower) & (df[f] < lim_upper)].index#  & (df_tmp[f] <= lim_upper)
-        #         df.loc[selected_index, bin] = 1
-        #     df = df.drop(f, axis='columns')
-        #     return df
-        #
-        # for f in features_to_do:
-        #     df = add_bin_data(df, f, feature_inf)
-        #
-        # df.to_csv(self.path_bin, index=False)
+        df.to_csv(self.path_bin, index=False)
 
     def get_metadata(self):
         """
