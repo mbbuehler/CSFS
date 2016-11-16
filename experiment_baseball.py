@@ -148,7 +148,7 @@ class ExperimentBaseball(AbstractExperiment):
          # example call
         N_features = [3, 5, 7, 10, 20, 30, 50, 70, 90]
         N_samples = 100
-        visualise_results(dataset_name=self.dataset_name, N_features=N_features, show_plot=False, N_samples=N_samples, dataset_class='baseball', target=self.target)
+        visualise_results(dataset_name=self.dataset_name, N_features=N_features, show_plot=False, N_samples=N_samples, dataset_class='baseball')
 
 
     def evaluate_flock(self):
@@ -187,8 +187,9 @@ class ExperimentBaseball(AbstractExperiment):
 
 if __name__ == '__main__':
     experiment = ExperimentBaseball('baseball', 1)
-    experiment.preprocess_raw()
-    experiment.bin_binarise()
-    experiment.get_metadata()
+    # experiment.preprocess_raw()
+    # experiment.bin_binarise()
+    # experiment.get_metadata()
     # experiment.drop_analysis()
+    experiment.drop_evaluation()
     # experiment.evaluate_flock()
