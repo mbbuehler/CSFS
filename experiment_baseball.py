@@ -12,7 +12,7 @@ import CSFSLoader
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector
 from abstract_experiment import AbstractExperiment
-from analysis_noisy_means_drop import _conduct_analysis
+from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 from imputer import CategoricalImputer
 from infoformulas_listcomp import _H, IG_from_series, H
 from util.util_features import get_feature_inf, get_features_from_questions
@@ -138,32 +138,18 @@ class ExperimentBaseball(AbstractExperiment):
 
         df.to_csv(self.path_bin, index=False)
 
-    def get_metadata(self):
-        """
-        Outputs a csv with p, p|f=0, p|f=1, H, Ig, Ig ratio in "cleaned" folder
-        :return:
-        """
-        df_data = pd.read_csv(self.path_bin)
+    def drop_analysis(self):
+        N_features = [3, 5, 7, 10, 20, 30, 50, 70, 90]
+        N_samples = 100
+        df = CSFSLoader.CSFSLoader().load_dataset(self.path_bin)
+        Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, self.target, mean_error, N_features, N_samples, self.dataset_name) for mean_error in np.linspace(0.0, 0.6, 200))
 
-        df = pd.DataFrame()
-        df['p'] = np.mean(df_data)
+    def drop_evaluation(self):
+         # example call
+        N_features = [3, 5, 7, 10, 20, 30, 50, 70, 90]
+        N_samples = 100
+        visualise_results(dataset_name=self.dataset_name, N_features=N_features, show_plot=False, N_samples=N_samples, dataset_class='baseball', target=self.target)
 
-        def cond_mean(df, cond_value, target):
-            result = list()
-            for f in df:
-                tmp_df = df[df[f] == cond_value]
-                result.append(np.mean(tmp_df[target]))
-            return result
-
-        df['p|f=0'] = cond_mean(df_data, cond_value=0, target=self.target)
-        df['p|f=1'] = cond_mean(df_data, cond_value=1, target=self.target)
-        df['std'] = np.std(df_data)
-
-        df['H'] = [H(df_data[x]) for x in df_data]
-        h_x = _H([df.loc[self.target]['p'], 1-df.loc[self.target]['p']])
-        df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
-        df['IG ratio'] = df.apply(lambda x: x['IG']/x['H'], axis='columns') # correct?
-        df.to_csv(self.path_meta, index=True)
 
     def evaluate_flock(self):
         df_data = self._get_dataset_bin() # use get_dataset() for original dataset
@@ -203,5 +189,6 @@ if __name__ == '__main__':
     experiment = ExperimentBaseball('baseball', 1)
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
-    experiment.get_metadata()
+    # experiment.get_metadata()
+    experiment.drop_analysis()
     # experiment.evaluate_flock()

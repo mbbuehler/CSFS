@@ -1,4 +1,7 @@
+import numpy as np
 import pandas as pd
+
+from infoformulas_listcomp import H, _H, IG_from_series
 
 
 class AbstractExperiment():
@@ -35,7 +38,27 @@ class AbstractExperiment():
         Outputs a csv with p, p|f=0, p|f=1, H, Ig, Ig ratio in "cleaned" folder
         :return:
         """
-        pass
+        df_data = pd.read_csv(self.path_bin)
+
+        df = pd.DataFrame()
+        df['p'] = np.mean(df_data)
+
+        def cond_mean(df, cond_value, target):
+            result = list()
+            for f in df:
+                tmp_df = df[df[f] == cond_value]
+                result.append(np.mean(tmp_df[target]))
+            return result
+
+        df['p|f=0'] = cond_mean(df_data, cond_value=0, target=self.target)
+        df['p|f=1'] = cond_mean(df_data, cond_value=1, target=self.target)
+        df['std'] = np.std(df_data)
+
+        df['H'] = [H(df_data[x]) for x in df_data]
+        h_x = _H([df.loc[self.target]['p'], 1-df.loc[self.target]['p']])
+        df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
+        df['IG ratio'] = df.apply(lambda x: x['IG']/x['H'], axis='columns') # correct?
+        df.to_csv(self.path_meta, index=True)
 
     def _remove_non_informative_rows(self, df, threshold):
         """
