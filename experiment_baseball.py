@@ -28,7 +28,7 @@ class ExperimentBaseball(AbstractExperiment):
         self.path_meta = ""
         self.path_questions = ""
         self.path_flock_result = ""
-        self.target = "Rank_rel"
+        self.target = "Rank"
 
 
     def preprocess_raw(self):
@@ -44,7 +44,13 @@ class ExperimentBaseball(AbstractExperiment):
                               'HBP',
                               'SF',
                               'name',
-                              'park'
+                              'park',
+
+                                # we have no feature descriptions for these features:
+                              'franchID',
+                              'teamIDBR',
+                              'teamIDlahman45',
+                              'teamIDretro'
                               ]
 
         # remove features that are for sure useless (like park) or have too many missing values (e.g. SF)
@@ -91,25 +97,27 @@ class ExperimentBaseball(AbstractExperiment):
                 year_prev = max(df_prev['yearID'])
                 rank_prev = df_prev[df_prev['yearID'] == year_prev]['Rank']
                 rank_curr = row['Rank']
-                # print(year_prev)
-                # print(rank_prev)
-                # print(rank_curr)
                 rank_rel = rank_curr / rank_prev
             row['Rank_rel'] = float(rank_rel)
             return row
-        df[self.target] = -1
+        df['Rank_rel'] = -1
         # df = df[:200]
         df = df.apply(binarise_rank, axis='columns')
-        df = df.drop('Rank', axis='columns')
+        # filter out where we have no values
         df = df[df['Rank_rel'] != -1]
+        # binarise target
+        df[self.target] = df['Rank_rel'].apply(lambda x: 1 if x >= 1 else 0)
+        # drop columns we dont need any more
+        df = df.drop('Rank_rel', axis='columns')
+        df = df.drop('teamID', axis='columns')
         # exit()
-        print('remove rows:',len(df[df['Rank_rel'] == -1]))
-        print('non changing:',len(df[df['Rank_rel'] == 1]))
-        print('higher:',len(df[df['Rank_rel']>1]))
-        print('lower:',len(df[df['Rank_rel']<1]))
-        print('all:',len(df))
+        # print('remove rows:',len(df[df['Rank_rel'] == -1]))
+        # print('non changing:',len(df[df['Rank_rel'] == 1]))
+        # print('higher:',len(df[df['Rank_rel']>1]))
+        # print('lower:',len(df[df['Rank_rel']<1]))
+        # print('all:',len(df))
 
-        df[self.target] = df[self.target].apply(lambda x: 1 if x >= 1 else 0)
+
 
         cols_binning = ['yearID', 'G', 'Ghome',
             'W', 'L', 'R', 'AB', 'H', '2B', '3B', 'HR', 'BB',
@@ -123,7 +131,7 @@ class ExperimentBaseball(AbstractExperiment):
         features = list(df.columns)
         features.remove(self.target) # do not bin target variable
         for col in features:
-            dummies = pd.get_dummies(df[col], prefix='{}_'.format(col))
+            dummies = pd.get_dummies(df[col], prefix='{}'.format(col))
             df = df.join(dummies)
             df = df.drop(col, axis='columns')
         # print(tabulate(df[:100], headers='keys'))
@@ -204,7 +212,7 @@ class ExperimentBaseball(AbstractExperiment):
 
 if __name__ == '__main__':
     experiment = ExperimentBaseball('baseball', 1)
-    # experiment.preprocess_raw()
+    experiment.preprocess_raw()
     experiment.bin_binarise()
     # experiment.get_metadata()
     # experiment.evaluate_flock()
