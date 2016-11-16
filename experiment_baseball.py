@@ -25,7 +25,7 @@ class ExperimentBaseball(AbstractExperiment):
         self.path_raw = "datasets/baseball/raw/Baseball_original.csv"
         self.path_cleaned = "datasets/baseball/cleaned/experiment1/baseball_plus.csv"
         self.path_bin = "datasets/baseball/cleaned/experiment1/baseball_plus_bin.csv"
-        self.path_meta = ""
+        self.path_meta = "datasets/baseball/cleaned/experiment1/baseball_plus_bin_meta.csv"
         self.path_questions = ""
         self.path_flock_result = ""
         self.target = "Rank"
@@ -145,36 +145,25 @@ class ExperimentBaseball(AbstractExperiment):
         """
         df_data = pd.read_csv(self.path_bin)
 
-        # df = pd.DataFrame()
-        # df['p'] = np.mean(df_data)
-        #
-        # def cond_mean(df, cond_value, target):
-        #     result = list()
-        #     for f in df:
-        #         tmp_df = df[df[f] == cond_value]
-        #         result.append(np.mean(tmp_df[target]))
-        #     return result
-        #
-        # df['p|f=0'] = cond_mean(df_data, cond_value=0, target=self.target)
-        # df['p|f=1'] = cond_mean(df_data, cond_value=1, target=self.target)
-        # df['std'] = np.std(df_data)
-        #
-        # df['H'] = [H(df_data[x]) for x in df_data]
-        # h_x = _H([df.loc[self.target]['p'], 1-df.loc[self.target]['p']])
-        # df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
-        # df['IG ratio'] = df.apply(lambda x: x['IG']/x['H'], axis='columns') # correct?
-        # df.to_csv(self.path_meta, index=True)
+        df = pd.DataFrame()
+        df['p'] = np.mean(df_data)
 
-    def _get_dataset_bin(self):
-        """
-        Selects subset of data set we have questions for.
-        """
-        df_raw = pd.read_csv(self.path_bin)
-        # # kick all features we don't want
-        # features = get_features_from_questions(self.path_questions, remove_cond=True)
-        # features.append(self.target)
-        # df = df_raw[features]
-        # return df
+        def cond_mean(df, cond_value, target):
+            result = list()
+            for f in df:
+                tmp_df = df[df[f] == cond_value]
+                result.append(np.mean(tmp_df[target]))
+            return result
+
+        df['p|f=0'] = cond_mean(df_data, cond_value=0, target=self.target)
+        df['p|f=1'] = cond_mean(df_data, cond_value=1, target=self.target)
+        df['std'] = np.std(df_data)
+
+        df['H'] = [H(df_data[x]) for x in df_data]
+        h_x = _H([df.loc[self.target]['p'], 1-df.loc[self.target]['p']])
+        df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
+        df['IG ratio'] = df.apply(lambda x: x['IG']/x['H'], axis='columns') # correct?
+        df.to_csv(self.path_meta, index=True)
 
     def evaluate_flock(self):
         df_data = self._get_dataset_bin() # use get_dataset() for original dataset
@@ -212,7 +201,7 @@ class ExperimentBaseball(AbstractExperiment):
 
 if __name__ == '__main__':
     experiment = ExperimentBaseball('baseball', 1)
-    experiment.preprocess_raw()
-    experiment.bin_binarise()
-    # experiment.get_metadata()
+    # experiment.preprocess_raw()
+    # experiment.bin_binarise()
+    experiment.get_metadata()
     # experiment.evaluate_flock()
