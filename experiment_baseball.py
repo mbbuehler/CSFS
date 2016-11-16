@@ -24,8 +24,8 @@ class ExperimentBaseball(AbstractExperiment):
         super().__init__(dataset_name, experiment_number)
         self.path_raw = "datasets/baseball/raw/Baseball_original.csv"
         self.path_cleaned = "datasets/baseball/cleaned/experiment1/baseball_plus.csv"
-        self.path_bin = "datasets/baseball/cleaned/experiment1/baseball_plus_bin.csv"
-        self.path_meta = "datasets/baseball/cleaned/experiment1/baseball_plus_bin_meta.csv"
+        self.path_bin = "datasets/baseball/cleaned/experiment1/baseball_plus_bin_v2.csv"
+        self.path_meta = "datasets/baseball/cleaned/experiment1/baseball_plus_bin_meta_v2.csv"
         self.path_questions = ""
         self.path_flock_result = ""
         self.target = "Rank"
@@ -106,7 +106,7 @@ class ExperimentBaseball(AbstractExperiment):
         # filter out where we have no values
         df = df[df['Rank_rel'] != -1]
         # binarise target
-        df[self.target] = df['Rank_rel'].apply(lambda x: 1 if x >= 1 else 0)
+        df[self.target] = df['Rank_rel'].apply(lambda x: 1 if x > 1 else 0)
         # drop columns we dont need any more
         df = df.drop('Rank_rel', axis='columns')
         df = df.drop('teamID', axis='columns')
@@ -187,8 +187,8 @@ class ExperimentBaseball(AbstractExperiment):
 
 if __name__ == '__main__':
     experiment = ExperimentBaseball('baseball', 1)
-    # experiment.preprocess_raw()
-    # experiment.bin_binarise()
-    # experiment.get_metadata()
-    experiment.drop_analysis()
+    experiment.preprocess_raw()
+    experiment.bin_binarise()
+    experiment.get_metadata()
+    # experiment.drop_analysis()
     # experiment.evaluate_flock()

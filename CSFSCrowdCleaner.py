@@ -2,17 +2,9 @@ import pandas as pd
 import numpy as np
 import re
 from bs4 import BeautifulSoup
-import plotly.plotly as py
-import plotly.graph_objs as go
-import cufflinks as cf
 
 
-
-
-# df.set_index(['# answerUser unique', 'answer mean', 'answer std', 'answer count'])
-from tabulate import tabulate
-
-from infoformulas_listcomp import H_X_Y_from_series, IG_from_series, _H
+from infoformulas_listcomp import IG_from_series, _H
 
 
 class CSFSCrowdAnalyser:
@@ -56,6 +48,11 @@ class CSFSCrowdAggregator:
         self.target = target
 
     def get_clean_df(self, df_answers):
+        """
+        Extracts questions and answers from raw answer data
+        :param df_answers:
+        :return:
+        """
         def get_question(e):
             soup = BeautifulSoup(e, 'lxml')
             question_dirty = soup.find('i').contents[0]
@@ -110,8 +107,8 @@ class CSFSCrowdAggregator:
             final_questions.append(questions[i][0])
             final_answers.append(answers[i][0])
             final_answer_users.append(answer_users[i])
-            print(i)
-            print(questions[i])
+            # print(i)
+            # print(questions[i])
             if len(answers[i]) > 1:
                 final_questions.append(questions[i][1])
                 final_questions.append(questions[i][2])
@@ -200,7 +197,7 @@ class CSFSCrowdAggregator:
 
     def get_without_spammers(self, df_clean):
         answer_users_count = df_clean.groupby('feature').answerUser.apply(lambda x: x.value_counts()).reset_index()
-        spammers = answer_users_count[answer_users_count['answerUser']>1]['level_1']
+        spammers = answer_users_count[answer_users_count['answerUser'] > 1]['level_1']
         df_without_spammers = df_clean[~df_clean['answerUser'].isin(spammers)]
         return df_without_spammers
 

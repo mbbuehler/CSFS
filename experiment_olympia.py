@@ -8,6 +8,7 @@ from joblib import Parallel, delayed
 from sklearn.preprocessing import Imputer
 
 import CSFSLoader
+from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdAnalyser
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector
 from abstract_experiment import AbstractExperiment
@@ -24,6 +25,9 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_cleaned = 'datasets/olympia/cleaned/experiment3/olympic_allyears_plus.csv'
         self.path_bin = 'datasets/olympia/cleaned/experiment3/olympic_allyears_plus_bin.csv'
         self.path_meta = 'datasets/olympia/cleaned/experiment3/olympic_allyears_plus_bin_meta.csv'
+        self.path_answers_raw = 'datasets/olympia/results/experiment3/answers_raw.xlsx'
+        self.path_answers_aggregated = 'datasets/olympia/results/experiment3/answers_aggregated.csv'
+        self.path_answers_metadata = 'datasets/olympia/results/experiment3/answers_metadata.csv'
         self.path_questions = 'datasets/olympia/questions/experiment2/featuresOlympia_hi_lo_combined.csv' # experiment2
         self.path_flock_result = 'flock/flock_crowd_all.csv'
         self.target = 'medals'
@@ -147,6 +151,17 @@ class ExperimentOlympia(AbstractExperiment):
         df = df_raw[features]
         return df
 
+    def evaluate_crowd(self):
+        aggregator = CSFSCrowdAggregator(self.path_questions, self.path_answers_raw, self.target)
+        df_aggregated = aggregator.get_aggregated_df()
+        print('done aggregation')
+        df_aggregated.to_csv(self.path_answers_aggregated, index=True)
+
+        analyse = CSFSCrowdAnalyser()
+        df_combined = analyse.get_combined_df(self.path_answers_aggregated, self.path_meta)
+
+        df_combined.to_csv(self.path_answers_metadata, index=True)
+
     def evaluate_flock(self):
         df_data = self._get_dataset_bin() # use get_dataset() for original dataset
         evaluator = CSFSEvaluator(df_data, self.target)
@@ -185,5 +200,6 @@ if __name__ == '__main__':
     experiment = ExperimentOlympia('olympia', 3)
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
-    experiment.get_metadata()
+    # experiment.get_metadata()
+    experiment.evaluate_crowd()
     # experiment.evaluate_flock()
