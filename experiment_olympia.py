@@ -10,7 +10,7 @@ from sklearn.preprocessing import Imputer
 import CSFSLoader
 from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdAnalyser
 from CSFSEvaluator import CSFSEvaluator
-from CSFSSelector import CSFSBestActualSelector
+from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from abstract_experiment import AbstractExperiment
 from analysis_noisy_means_drop import _conduct_analysis
 from infoformulas_listcomp import _H, IG_from_series, H
@@ -28,8 +28,9 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_answers_raw = 'datasets/olympia/results/experiment3/answers_raw.xlsx'
         self.path_answers_aggregated = 'datasets/olympia/results/experiment3/answers_aggregated.csv'
         self.path_answers_metadata = 'datasets/olympia/results/experiment3/answers_metadata.csv'
+        self.path_csfs_auc = 'datasets/olympia/results/experiment3/csfs_auc.csv'
         self.path_questions = 'datasets/olympia/questions/experiment2/featuresOlympia_hi_lo_combined.csv' # experiment2
-        self.path_flock_result = 'flock/flock_crowd_all.csv'
+        self.path_flock_result = 'datasets/olympia/questions/experiment3/flock_auc.csv'
         self.target = 'medals'
 
 
@@ -151,7 +152,11 @@ class ExperimentOlympia(AbstractExperiment):
         df = df_raw[features]
         return df
 
-    def evaluate_crowd(self):
+    def evaluate_crowd_all_answers(self):
+        """
+        Aggregates crowd answers and evaluates for all crowd answers
+        :return:
+        """
         aggregator = CSFSCrowdAggregator(self.path_questions, self.path_answers_raw, self.target)
         df_aggregated = aggregator.get_aggregated_df()
         print('done aggregation')
@@ -162,8 +167,35 @@ class ExperimentOlympia(AbstractExperiment):
 
         df_combined.to_csv(self.path_answers_metadata, index=True)
 
+
+    def evaluate_crowd_auc(self):
+        df_data = self._get_dataset_bin()
+        evaluator = CSFSEvaluator(df_data, self.target)
+        R = range(3, len(df_data), 1) # number of samples
+        N_Feat = [3, 5, 7, 9, 11]
+        result = pd.DataFrame(columns=N_Feat, index=R)
+
+        df_aggregated = pd.read_csv(self.path_answers_aggregated, index_col=0)
+        selector = CSFSBestFromMetaSelector(df_aggregated)
+
+        aucs = dict()
+
+        for n_feat in N_Feat:
+            nbest_features = selector.select(n_feat)
+            auc = evaluator.evaluate_features(nbest_features)
+            aucs[n_feat] = auc
+
+        # we are not sure how many answers we have for each feature. -> fill a dataframe with constant values.
+        answer_count_min = df_aggregated['n p'].min().astype('int')
+        answer_count_max = df_aggregated['n p'].max().astype('int')
+
+        df_csfs_auc = pd.DataFrame(aucs, index=range(answer_count_min, answer_count_max))
+
+        df_csfs_auc.to_csv(self.path_csfs_auc)
+
+
     def evaluate_flock(self):
-        df_data = self._get_dataset_bin() # use get_dataset() for original dataset
+        df_data = self._get_dataset_bin()
         evaluator = CSFSEvaluator(df_data, self.target)
 
         R = range(3, len(df_data), 1) # number of samples
@@ -201,5 +233,6 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    experiment.evaluate_crowd()
+    # experiment.evaluate_crowd()
     # experiment.evaluate_flock()
+    experiment.evaluate_crowd_auc()

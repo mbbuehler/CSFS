@@ -19,48 +19,6 @@ def create_dn_names_from_base(dataset_base):
     dataset_names = [dn+'_true' for dn in dataset_base] + [dn+'_noisy' for dn in dataset_base]
     return dataset_names
 
-def kick_non_2016(path):
-    df_all = pd.read_csv(path)
-    df_2016 = df_all[df_all['year']==2016]
-    print(len(df_all))
-    print(df_all[:10])
-    all_countries = set(df_all.country.values)
-    print(len(set(all_countries)))
-    # print(df_2016)
-    countries = set(df_2016.country.values)
-    print([c for c in all_countries if c not in countries])# ['Serbia and Montenegro'] is missing
-    df_2016.to_csv('../datasets/olympia/raw/Olympic2016_raw.csv', index=False)
-
-def binarise_dataset():
-    base_path = '/home/marcello/studies/bachelorarbeit/workspace/github_crowd-sourcing-for-feature-selection/datasets/olympia/raw/olympic2016_raw_plus/'
-    path = base_path+'Olympic2016_raw_plus.csv'
-    df = pd.read_csv(path)
-    df = df.drop('country', axis=1)
-    df = df.dropna(axis='index')
-    df['medals'] = df['medals']>0
-    df['medals'] = df['medals'].astype(int)
-
-    binary_features = ['medals', 'host', 'antehost', 'planned_econ', 'rel_muslim']
-    features_to_bin = ['continent', 'region']
-    features_to_do = [f for f in df if f not in binary_features and f not in features_to_bin]
-    # binarise
-    for f in features_to_bin:
-        df = df.combine_first(pd.get_dummies(df[f], prefix=f))
-        df = df.drop(f, axis='columns')
-    # bin an binarise
-
-    for f in features_to_do:
-        print(f)
-        bins = pd.qcut(df[f], 3)
-        for b in sorted(set(bins)):
-            df['{}_{}'.format(f, b)] = 0
-        for i,b in enumerate(bins):
-            df['{}_{}'.format(f, b)].iloc[i] = 1
-        df = df.drop(f, axis='columns')
-
-
-    df.to_csv(base_path+'Olympic2016_raw_plus_bin.csv', index=False)
-
 
 def get_ranked_features():
     base_path = '/home/marcello/studies/bachelorarbeit/workspace/github_crowd-sourcing-for-feature-selection/datasets/olympia/raw/olympic2016_raw_plus/'
