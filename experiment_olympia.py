@@ -8,7 +8,7 @@ from joblib import Parallel, delayed
 from sklearn.preprocessing import Imputer
 
 import CSFSLoader
-from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdAnalyser
+from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdAnalyser, CSFSCrowdCleaner
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from abstract_experiment import AbstractExperiment
@@ -26,6 +26,7 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_bin = 'datasets/olympia/cleaned/experiment3/olympic_allyears_plus_bin.csv'
         self.path_meta = 'datasets/olympia/cleaned/experiment3/olympic_allyears_plus_bin_meta.csv'
         self.path_answers_raw = 'datasets/olympia/results/experiment3/answers_raw.xlsx'
+        self.path_answers_clean = 'datasets/olympia/results/experiment3/answers_clean.csv'
         self.path_answers_aggregated = 'datasets/olympia/results/experiment3/answers_aggregated.csv'
         self.path_answers_metadata = 'datasets/olympia/results/experiment3/answers_metadata.csv'
         self.path_csfs_auc = 'datasets/olympia/results/experiment3/csfs_auc.csv'
@@ -157,14 +158,13 @@ class ExperimentOlympia(AbstractExperiment):
         Aggregates crowd answers and evaluates for all crowd answers
         :return:
         """
-        aggregator = CSFSCrowdAggregator(self.path_questions, self.path_answers_raw, self.target)
-        df_aggregated = aggregator.get_aggregated_df()
-        print('done aggregation')
+        df_clean = CSFSCrowdCleaner(self.path_questions, self.path_answers_raw, self.target).clean()
+        df_clean.to_csv(self.path_answers_clean, index=True)
+
+        df_aggregated = CSFSCrowdAggregator(df_clean, self.target).aggregate()
         df_aggregated.to_csv(self.path_answers_aggregated, index=True)
 
-        analyse = CSFSCrowdAnalyser()
-        df_combined = analyse.get_combined_df(self.path_answers_aggregated, self.path_meta)
-
+        df_combined = CSFSCrowdAnalyser().get_combined_df(self.path_answers_aggregated, self.path_meta)
         df_combined.to_csv(self.path_answers_metadata, index=True)
 
 
@@ -233,6 +233,6 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    # experiment.evaluate_crowd()
+    experiment.evaluate_crowd_all_answers()
     # experiment.evaluate_flock()
-    experiment.evaluate_csfs_auc()
+    # experiment.evaluate_csfs_auc()
