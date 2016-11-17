@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import re
+
+from tabulate import tabulate
 from bs4 import BeautifulSoup
 
 
@@ -34,31 +36,40 @@ class CSFSCrowdAnalyser:
         df_combined = pd.concat(dict(crowd=df_crowd, actual=df_actual, diff=df_diff), axis='columns')
         return df_combined
 
+class CSFSCrowdCleaner:
 
-
-
-class CSFSCrowdAggregator:
-    """
-    Cleans and aggregates crowd answers
-    """
     def __init__(self, path_questions, path_answers, target):
         self.df_questions = pd.read_csv(path_questions, header=None)
-        self.df_questions.columns = ['feature', 'question']
+        self.df_questions.columns = ['feature', 'question'] # as column names are missing, we add them here. (internal use only)
         self.df_answers = pd.read_excel(path_answers)
         self.target = target
 
-    def get_clean_df(self, df_answers):
+    def questions_to_features(self):
+        """
+        Returns the cleaned crowd answers with the corresponding features
+        :return:
+        """
+        df_clean = self.get_clean_df(self.df_answers)
+        df = self.questions_to_features(self.df_questions, df_clean)
+        return df
+
+    def remove_spammers(self, df_clean):
+        """
+        For each question, removes all answers from users who answered the question more than once
+        :param df_clean:
+        :return:
+        """
+        answer_users_count = df_clean.groupby('feature').answerUser.apply(lambda x: x.value_counts()).reset_index()
+        spammers = answer_users_count[answer_users_count['answerUser'] > 1]['level_1']
+        df_without_spammers = df_clean[~df_clean['answerUser'].isin(spammers)]
+        return df_without_spammers
+
+    def raw_to_clean(self, df_answers):
         """
         Extracts questions and answers from raw answer data
         :param df_answers:
         :return:
         """
-        def get_question(e):
-            soup = BeautifulSoup(e, 'lxml')
-            question_dirty = soup.find('i').contents[0]
-            question_clean = re.sub('[\n\t]', '', question_dirty)
-            return question_clean
-
         def get_triple_question(e):
             soup = BeautifulSoup(e, 'lxml')
             question_dirty = soup.find('i').contents[0]
@@ -71,8 +82,6 @@ class CSFSCrowdAggregator:
                 if '100' in e[:index_second_start]: # we have to go one further
                     index_second_start += 2
 
-                # print('second start')
-                # print(e[index_second_start:])
                 assert e[index_second_start]=='I' # makes sure we do not introduce bugs for other questions
                 index_second_end = index_second_start + e[index_second_start:].index(':')
                 question2 = e[index_second_start:index_second_end]
@@ -83,7 +92,6 @@ class CSFSCrowdAggregator:
                 result.append(question2)
                 result.append(question3)
             return result
-
 
         def get_answers(e):
             r = re.findall(r'::(\d+).\(\d+%\)', e)
@@ -107,8 +115,6 @@ class CSFSCrowdAggregator:
             final_questions.append(questions[i][0])
             final_answers.append(answers[i][0])
             final_answer_users.append(answer_users[i])
-            # print(i)
-            # print(questions[i])
             if len(answers[i]) > 1:
                 final_questions.append(questions[i][1])
                 final_questions.append(questions[i][2])
@@ -116,9 +122,6 @@ class CSFSCrowdAggregator:
                 final_answers.append(answers[i][1])
                 final_answers.append(answers[i][2])
                 final_answer_users.append(answer_users[i])
-
-        # exit()
-        # answer_users = df_answers.answerUser.apply(get_answer_user)
 
         clean_df = pd.DataFrame({
             'question': final_questions,
@@ -128,6 +131,36 @@ class CSFSCrowdAggregator:
         )
 
         return clean_df
+
+    def questions_to_features(self, df_questions, df_clean):
+        """
+        Turns question column into features
+        :param df_questions:
+        :param df_clean:
+        :return:
+        """
+        df_merged = df_clean.merge(df_questions, left_on='question', right_on='question')
+        df_merged = df_merged.drop('question', axis='columns')
+        return df_merged
+
+    def clean(self):
+        """
+        Extracts questions and answers from raw result data. Replaces questions with feature names.
+        :return: pd.DataFrame
+        """
+        df_clean = self.raw_to_clean(self.df_answers)
+        df_clean = self.questions_to_features(self.df_questions, df_clean)
+        df_clean = self.remove_spammers(df_clean)
+        return df_clean
+
+
+class CSFSCrowdAggregator:
+    """
+    Cleans and aggregates crowd answers
+    """
+    def __init__(self, df_clean, target):
+        self.df_clean = df_clean
+        self.target = target
 
     def _get_feature_metadata(self, f, df):
         def get_val_or_nan(df, index, column):
@@ -185,35 +218,13 @@ class CSFSCrowdAggregator:
         # print(tabulate(result, headers='keys'))
         return result
 
-    def questions_to_features(self, df_questions, df_clean):
-        df_merged = df_clean.merge(df_questions, left_on='question', right_on='question')
-        df_merged = df_merged.drop('question', axis='columns')
-        return df_merged
-
     def get_ig_df(self, df, target):
         h_x = _H([df.loc[target]['p'], 1-df.loc[target]['p']])
         df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
         return df
 
-    def get_without_spammers(self, df_clean):
-        answer_users_count = df_clean.groupby('feature').answerUser.apply(lambda x: x.value_counts()).reset_index()
-        spammers = answer_users_count[answer_users_count['answerUser'] > 1]['level_1']
-        df_without_spammers = df_clean[~df_clean['answerUser'].isin(spammers)]
-        return df_without_spammers
-
-    def get_aggregated_df(self):
-        df_clean = self.get_clean_df(self.df_answers)
-        # print(df_clean)
-        # return
-
-        df_clean = self.questions_to_features(self.df_questions, df_clean)
-
-        df_clean = self.get_without_spammers(df_clean)
-
-        df_metadata = self.get_metadata(df_clean)
-        # print(tabulate(df_metadata, headers='keys'))
-        # exit()
-
+    def aggregate(self):
+        df_metadata = self.get_metadata(self.df_clean)
         df_ig = self.get_ig_df(df_metadata, self.target)
         return df_ig
 
@@ -242,16 +253,18 @@ def run():
 
 
 def test():
-    experiment = 'experiment2'
-    base_path = 'datasets/olympia/'
-    path_answers = '{}results/{}/answers10features.xlsx'.format(base_path, experiment)
-    path_questions = '{}questions/{}/featuresOlympia_hi_lo.csv'.format(base_path, experiment)
+    path_questions = 'datasets/olympia/questions/experiment2/featuresOlympia_hi_lo_combined.csv'
+    path_answers = 'datasets/olympia/results/experiment3/answers_raw.xlsx'
     target = 'medals'
+    df_clean = CSFSCrowdCleaner(path_questions, path_answers, target).clean()
+    df_aggregated = CSFSCrowdAggregator(df_clean, target).aggregate()
+    print(tabulate(df_aggregated, headers='keys'))
+
 
 
     #
 
 
 if __name__ == '__main__':
-    run()
-    #test()
+    # run()
+    test()
