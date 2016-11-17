@@ -24,8 +24,8 @@ class ExperimentBaseball(AbstractExperiment):
         super().__init__(dataset_name, experiment_number)
         self.path_raw = "datasets/baseball/raw/Baseball_original.csv"
         self.path_cleaned = "datasets/baseball/cleaned/experiment1/baseball_plus.csv"
-        self.path_bin = "datasets/baseball/cleaned/experiment1/baseball_plus_bin_v2.csv"
-        self.path_meta = "datasets/baseball/cleaned/experiment1/baseball_plus_bin_meta_v2.csv"
+        self.path_bin = "datasets/baseball/cleaned/experiment1/baseball_plus_bin_v1.csv"
+        self.path_meta = "datasets/baseball/cleaned/experiment1/baseball_plus_bin_meta_v1.csv"
         self.path_questions = ""
         self.path_flock_result = ""
         self.target = "Rank"
@@ -150,6 +150,19 @@ class ExperimentBaseball(AbstractExperiment):
         N_samples = 100
         visualise_results(dataset_name=self.dataset_name, N_features=N_features, show_plot=False, N_samples=N_samples, dataset_class='baseball')
 
+    def print_precision_recall(self):
+        """
+        Prints precision, recall, f-score for real data set
+        :return:
+        """
+        df = CSFSLoader.CSFSLoader().load_dataset(self.path_bin)
+        N_features = [3, 5, 7, 10, 20, 30, 50, 70, 90]
+        evaluator = CSFSEvaluator(df, self.target)
+        best_selector = CSFSBestActualSelector(df, self.target)
+        for n in N_features:
+            print('n features: ',n)
+            evaluator.evaluate_best(n, best_selector)
+
 
     def evaluate_flock(self):
         df_data = self._get_dataset_bin() # use get_dataset() for original dataset
@@ -190,6 +203,7 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    experiment.drop_analysis()
+    # experiment.drop_analysis()
     # experiment.drop_evaluation()
     # experiment.evaluate_flock()
+    experiment.print_precision_recall()

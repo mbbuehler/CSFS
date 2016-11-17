@@ -8,7 +8,7 @@ import pandas as pd
 from sklearn.cross_validation import train_test_split, StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import roc_curve, auc, roc_auc_score
+from sklearn.metrics import roc_curve, auc, roc_auc_score, precision_recall_fscore_support
 import matplotlib.pyplot as plt
 # https://datamize.wordpress.com/2015/01/24/how-to-plot-a-roc-curve-in-scikit-learn/
 # http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
@@ -81,6 +81,19 @@ class AUCCalculator:
             probas_ = classifier.fit(X[train], y[train]).predict_proba(X[test])
             fpr, tpr, thresholds = roc_curve(y[test], probas_[:,1])
             roc_aucs.append(auc(fpr, tpr))
+
+        with_p_r_f = False # with precision, recall, f-score
+        if with_p_r_f:
+            metadata = dict(Precision=list(), Recall=list(), FScore=list())
+            for i, (train,test) in enumerate(cv):
+                predicted = classifier.fit(X[train], y[train]).predict(X[test])
+
+                p, r, f, support = precision_recall_fscore_support(y[test], predicted, average='binary')
+                metadata['Precision'].append(p)
+                metadata['Recall'].append(r)
+                metadata['FScore'].append(f)
+            for p in sorted(metadata):
+                print('{}: {}'.format(p, np.mean(metadata[p])))
         auc_mean = np.mean(roc_aucs)
         return auc_mean
 

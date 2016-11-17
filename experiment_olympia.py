@@ -168,7 +168,7 @@ class ExperimentOlympia(AbstractExperiment):
         df_combined.to_csv(self.path_answers_metadata, index=True)
 
 
-    def evaluate_crowd_auc(self):
+    def evaluate_csfs_auc(self):
         df_data = self._get_dataset_bin()
         evaluator = CSFSEvaluator(df_data, self.target)
         R = range(3, len(df_data), 1) # number of samples
@@ -235,4 +235,4 @@ if __name__ == '__main__':
     # experiment.get_metadata()
     # experiment.evaluate_crowd()
     # experiment.evaluate_flock()
-    experiment.evaluate_crowd_auc()
+    experiment.evaluate_csfs_auc()
