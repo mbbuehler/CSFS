@@ -23,4 +23,9 @@ def display_questions():
         input()
 
 if __name__ == '__main__':
-    display_questions()
+    # display_questions()
+    features = ['electricity consumption per person_[26.757, 1320.325]',
+                'electricity consumption_(55576666666.667, 3890000000000]',
+                'region_5']
+    create_0_1(features)
+    create_question_templates(len(features))
