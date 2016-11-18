@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
@@ -9,6 +12,30 @@ class AbstractExperiment():
     def __init__(self, dataset_name, experiment_number):
         self.dataset_name = dataset_name
         self.number = experiment_number
+        self.base_path = 'datasets/{}/'.format(self.dataset_name)
+
+    def _create_if_nonexisting(self, path, folder):
+            if folder not in os.listdir(path):
+                os.mkdir('{}{}'.format(path, folder))
+
+    def set_up_basic_folder_structure(self):
+        default_folders = ['cleaned', 'raw', 'questions', 'results']
+
+        for folder in default_folders:
+            self._create_if_nonexisting(self.base_path, folder)
+
+    def set_up_experiment_folder_structure(self, experiment_name):
+        default_folders = ['cleaned', 'raw', 'questions', 'results']
+
+        folder_name = experiment_name
+
+        for folder in default_folders:
+            path = '{}{}/'.format(self.base_path, folder)
+            self._create_if_nonexisting(path, folder_name)
+
+        self._create_if_nonexisting('{}raw/'.format(self.base_path), 'default')
+
+
 
     def explore_original(self):
         """

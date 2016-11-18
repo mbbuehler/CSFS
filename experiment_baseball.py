@@ -110,14 +110,6 @@ class ExperimentBaseball(AbstractExperiment):
         # drop columns we dont need any more
         df = df.drop('Rank_rel', axis='columns')
         df = df.drop('teamID', axis='columns')
-        # exit()
-        # print('remove rows:',len(df[df['Rank_rel'] == -1]))
-        # print('non changing:',len(df[df['Rank_rel'] == 1]))
-        # print('higher:',len(df[df['Rank_rel']>1]))
-        # print('lower:',len(df[df['Rank_rel']<1]))
-        # print('all:',len(df))
-
-
 
         cols_binning = ['yearID', 'G', 'Ghome',
             'W', 'L', 'R', 'AB', 'H', '2B', '3B', 'HR', 'BB',
