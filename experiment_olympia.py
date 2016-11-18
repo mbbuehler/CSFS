@@ -19,6 +19,7 @@ class ExperimentOlympia(AbstractExperiment):
         super().__init__(dataset_name, experiment_number)
         experiment_name = 'experiment3'
         experiment_name = 'experiment4_extreme-cond-means'
+        experiment_name = 'experiment2-4_all'
 
         self.path_raw = 'datasets/olympia/raw/{}/Olympic2016_raw_allyears.csv'.format(experiment_name)
         self.path_cleaned = 'datasets/olympia/cleaned/{}/olympic_allyears_plus.csv'.format(experiment_name)
