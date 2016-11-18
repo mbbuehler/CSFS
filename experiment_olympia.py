@@ -4,15 +4,11 @@ import re
 
 import sys
 
-from joblib import Parallel, delayed
 from sklearn.preprocessing import Imputer
-
-import CSFSLoader
 from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdAnalyser, CSFSCrowdCleaner
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from abstract_experiment import AbstractExperiment
-from analysis_noisy_means_drop import _conduct_analysis
 from infoformulas_listcomp import _H, IG_from_series, H
 from util.util_features import get_feature_inf, get_features_from_questions
 
@@ -21,17 +17,20 @@ class ExperimentOlympia(AbstractExperiment):
 
     def __init__(self, dataset_name, experiment_number):
         super().__init__(dataset_name, experiment_number)
-        self.path_raw = 'datasets/olympia/raw/experiment3/Olympic2016_raw_allyears.csv'
-        self.path_cleaned = 'datasets/olympia/cleaned/experiment3/olympic_allyears_plus.csv'
-        self.path_bin = 'datasets/olympia/cleaned/experiment3/olympic_allyears_plus_bin.csv'
-        self.path_meta = 'datasets/olympia/cleaned/experiment3/olympic_allyears_plus_bin_meta.csv'
-        self.path_answers_raw = 'datasets/olympia/results/experiment3/answers_raw.xlsx'
-        self.path_answers_clean = 'datasets/olympia/results/experiment3/answers_clean.csv'
-        self.path_answers_aggregated = 'datasets/olympia/results/experiment3/answers_aggregated.csv'
-        self.path_answers_metadata = 'datasets/olympia/results/experiment3/answers_metadata.csv'
-        self.path_csfs_auc = 'datasets/olympia/results/experiment3/csfs_auc.csv'
-        self.path_questions = 'datasets/olympia/questions/experiment2/featuresOlympia_hi_lo_combined.csv' # experiment2
-        self.path_flock_result = 'datasets/olympia/questions/experiment3/flock_auc.csv'
+        experiment_name = 'experiment3'
+        experiment_name = 'experiment4_extreme-cond-means'
+
+        self.path_raw = 'datasets/olympia/raw/{}/Olympic2016_raw_allyears.csv'.format(experiment_name)
+        self.path_cleaned = 'datasets/olympia/cleaned/{}/olympic_allyears_plus.csv'.format(experiment_name)
+        self.path_bin = 'datasets/olympia/cleaned/{}/olympic_allyears_plus_bin.csv'.format(experiment_name)
+        self.path_meta = 'datasets/olympia/cleaned/{}/olympic_allyears_plus_bin_meta.csv'.format(experiment_name)
+        self.path_answers_raw = 'datasets/olympia/results/{}/answers_raw.xlsx'.format(experiment_name)
+        self.path_answers_clean = 'datasets/olympia/results/{}/answers_clean.csv'.format(experiment_name)
+        self.path_answers_aggregated = 'datasets/olympia/results/{}/answers_aggregated.csv'.format(experiment_name)
+        self.path_answers_metadata = 'datasets/olympia/results/{}/answers_metadata.csv'.format(experiment_name)
+        self.path_csfs_auc = 'datasets/olympia/results/{}/csfs_auc.csv'.format(experiment_name)
+        self.path_questions = 'datasets/olympia/questions/{}/questions.csv'.format(experiment_name) # experiment2 for experiment3
+        self.path_flock_result = 'datasets/olympia/questions/{}/flock_auc.csv'.format(experiment_name)
         self.target = 'medals'
 
 
@@ -161,7 +160,7 @@ class ExperimentOlympia(AbstractExperiment):
         df_clean = CSFSCrowdCleaner(self.path_questions, self.path_answers_raw, self.target).clean()
         df_clean.to_csv(self.path_answers_clean, index=True)
 
-        df_aggregated = CSFSCrowdAggregator(df_clean, self.target).aggregate()
+        df_aggregated = CSFSCrowdAggregator(df_clean).aggregate()
         df_aggregated.to_csv(self.path_answers_aggregated, index=True)
 
         df_combined = CSFSCrowdAnalyser().get_combined_df(self.path_answers_aggregated, self.path_meta)
@@ -229,7 +228,7 @@ class ExperimentOlympia(AbstractExperiment):
 
 
 if __name__ == '__main__':
-    experiment = ExperimentOlympia('olympia', 3)
+    experiment = ExperimentOlympia('olympia', 4)
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()

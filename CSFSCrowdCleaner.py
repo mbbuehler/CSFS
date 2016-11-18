@@ -24,8 +24,13 @@ class CSFSCrowdAnalyser:
         # remove all features we don't have answers for
         features = df_crowd.index.values
         df_actual = df_actual.loc[features]
+
         # remove metadata we do not need.
-        columns = ['p', 'p|f=0', 'p|f=1', 'IG']
+        if 'IG' in df_crowd.columns:
+            columns = ['p', 'p|f=0', 'p|f=1', 'IG']
+        else:
+            # We did not ask for the target variable
+            columns = ['p', 'p|f=0', 'p|f=1']
         df_actual = df_actual[columns]
         df_crowd = df_crowd[columns]
 
@@ -158,7 +163,12 @@ class CSFSCrowdAggregator:
     """
     Cleans and aggregates crowd answers
     """
-    def __init__(self, df_clean, target):
+    def __init__(self, df_clean, target=""):
+        """
+        :param df_clean:
+        :param target: can be None -> does not calculate IG
+        :return:
+        """
         self.df_clean = df_clean
         self.target = target
 
@@ -225,8 +235,10 @@ class CSFSCrowdAggregator:
 
     def aggregate(self):
         df_metadata = self.get_metadata(self.df_clean)
-        df_ig = self.get_ig_df(df_metadata, self.target)
-        return df_ig
+        df_result = df_metadata
+        if self.target != "":
+            df_result = self.get_ig_df(df_metadata, self.target)
+        return df_result
 
 def run():
     """

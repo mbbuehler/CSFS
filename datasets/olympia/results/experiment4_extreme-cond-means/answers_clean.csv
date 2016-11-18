@@ -1,0 +1,197 @@
+,answer,answerUser,feature
+0,0.8,AOPG07J95DDJT,"electricity consumption per person_[26.757, 1320.325]_0"
+1,0.6,A2OVMADBMBNWFK,"electricity consumption per person_[26.757, 1320.325]_0"
+2,0.6,A273EH17NSJRH0,"electricity consumption per person_[26.757, 1320.325]_0"
+3,0.7,AU849EHZNGV2Z,"electricity consumption per person_[26.757, 1320.325]_0"
+4,0.6,AVDF9O70MW7X8,"electricity consumption per person_[26.757, 1320.325]_0"
+5,0.1,A1RWNYJA5X25YH,"electricity consumption per person_[26.757, 1320.325]_0"
+6,0.9,A3U7TRQS729GNW,"electricity consumption per person_[26.757, 1320.325]_0"
+7,0.8,A2AG45K4ULNBHF,"electricity consumption per person_[26.757, 1320.325]_0"
+8,0.8,A2OJ5XOEKTKRR9,"electricity consumption per person_[26.757, 1320.325]_0"
+17,0.2,AJ3F5RR0P8LZR,"electricity consumption per person_[26.757, 1320.325]_0"
+20,0.4,A3JT22BLG866CK,"electricity consumption per person_[26.757, 1320.325]_0"
+23,0.5,A1BAEFJ2OG7NJ0,"electricity consumption per person_[26.757, 1320.325]_0"
+24,0.8,A26U4IKXMXT0ZA,"electricity consumption per person_[26.757, 1320.325]_0"
+25,0.8,A1M8GE34UYSUCB,"electricity consumption per person_[26.757, 1320.325]_0"
+26,0.7,ANMXMEB55AGM6,"electricity consumption per person_[26.757, 1320.325]_0"
+27,0.7,A1A98K2NOI1QEC,"electricity consumption per person_[26.757, 1320.325]_0"
+28,0.1,A3NHJPE6326P9V,"electricity consumption per person_[26.757, 1320.325]_0"
+29,0.6,A1NKBXOTZAI1YK,"electricity consumption per person_[26.757, 1320.325]_0"
+30,0.2,AOPG07J95DDJT,"electricity consumption per person_[26.757, 1320.325]_1"
+31,0.4,A2OVMADBMBNWFK,"electricity consumption per person_[26.757, 1320.325]_1"
+32,0.7,A273EH17NSJRH0,"electricity consumption per person_[26.757, 1320.325]_1"
+33,0.3,AU849EHZNGV2Z,"electricity consumption per person_[26.757, 1320.325]_1"
+34,0.2,AVDF9O70MW7X8,"electricity consumption per person_[26.757, 1320.325]_1"
+35,0.1,A1RWNYJA5X25YH,"electricity consumption per person_[26.757, 1320.325]_1"
+36,0.4,A3U7TRQS729GNW,"electricity consumption per person_[26.757, 1320.325]_1"
+37,0.4,A2AG45K4ULNBHF,"electricity consumption per person_[26.757, 1320.325]_1"
+38,0.3,A2OJ5XOEKTKRR9,"electricity consumption per person_[26.757, 1320.325]_1"
+47,0.8,AJ3F5RR0P8LZR,"electricity consumption per person_[26.757, 1320.325]_1"
+50,0.2,A3JT22BLG866CK,"electricity consumption per person_[26.757, 1320.325]_1"
+53,0.3,A1BAEFJ2OG7NJ0,"electricity consumption per person_[26.757, 1320.325]_1"
+54,0.1,A26U4IKXMXT0ZA,"electricity consumption per person_[26.757, 1320.325]_1"
+55,0.3,A1M8GE34UYSUCB,"electricity consumption per person_[26.757, 1320.325]_1"
+56,0.3,ANMXMEB55AGM6,"electricity consumption per person_[26.757, 1320.325]_1"
+57,0.5,A1A98K2NOI1QEC,"electricity consumption per person_[26.757, 1320.325]_1"
+58,0.7,A3NHJPE6326P9V,"electricity consumption per person_[26.757, 1320.325]_1"
+59,0.2,A1NKBXOTZAI1YK,"electricity consumption per person_[26.757, 1320.325]_1"
+60,0.3,AOPG07J95DDJT,"electricity consumption per person_[26.757, 1320.325]"
+61,0.4,A2OVMADBMBNWFK,"electricity consumption per person_[26.757, 1320.325]"
+62,0.2,A273EH17NSJRH0,"electricity consumption per person_[26.757, 1320.325]"
+63,0.3,AU849EHZNGV2Z,"electricity consumption per person_[26.757, 1320.325]"
+64,0.2,AVDF9O70MW7X8,"electricity consumption per person_[26.757, 1320.325]"
+65,0.7,A1RWNYJA5X25YH,"electricity consumption per person_[26.757, 1320.325]"
+66,0.6,A3U7TRQS729GNW,"electricity consumption per person_[26.757, 1320.325]"
+67,0.1,A2AG45K4ULNBHF,"electricity consumption per person_[26.757, 1320.325]"
+68,0.4,A2OJ5XOEKTKRR9,"electricity consumption per person_[26.757, 1320.325]"
+76,0.5,AJ3F5RR0P8LZR,"electricity consumption per person_[26.757, 1320.325]"
+79,0.6,A3JT22BLG866CK,"electricity consumption per person_[26.757, 1320.325]"
+82,0.4,A1BAEFJ2OG7NJ0,"electricity consumption per person_[26.757, 1320.325]"
+83,0.8,A26U4IKXMXT0ZA,"electricity consumption per person_[26.757, 1320.325]"
+84,0.6,A1M8GE34UYSUCB,"electricity consumption per person_[26.757, 1320.325]"
+85,0.6,ANMXMEB55AGM6,"electricity consumption per person_[26.757, 1320.325]"
+86,0.1,A1A98K2NOI1QEC,"electricity consumption per person_[26.757, 1320.325]"
+87,0.2,A3NHJPE6326P9V,"electricity consumption per person_[26.757, 1320.325]"
+88,0.8,A1NKBXOTZAI1YK,"electricity consumption per person_[26.757, 1320.325]"
+89,0.3,A1R0689JPSQ3OF,"electricity consumption_(55576666666.667, 3890000000000]_0"
+90,0.2,A1EUK516LU9118,"electricity consumption_(55576666666.667, 3890000000000]_0"
+94,0.4,A10DCC73F2CKHC,"electricity consumption_(55576666666.667, 3890000000000]_0"
+95,0.1,A1F2YZD2VD1CTM,"electricity consumption_(55576666666.667, 3890000000000]_0"
+98,0.3,A3959BXDXZLWX2,"electricity consumption_(55576666666.667, 3890000000000]_0"
+101,0.2,AOQCHCD338WQE,"electricity consumption_(55576666666.667, 3890000000000]_0"
+102,0.6,A1NITMHYG5YL3H,"electricity consumption_(55576666666.667, 3890000000000]_0"
+103,0.3,A15FXHC1CVNW31,"electricity consumption_(55576666666.667, 3890000000000]_0"
+104,0.3,A3IUIBMPBYHAF4,"electricity consumption_(55576666666.667, 3890000000000]_0"
+105,0.3,A1Q6IR9E7MW3BM,"electricity consumption_(55576666666.667, 3890000000000]_0"
+106,0.2,A3LE78DP9ZK2R7,"electricity consumption_(55576666666.667, 3890000000000]_0"
+107,0.3,A2WC2NO555XU3J,"electricity consumption_(55576666666.667, 3890000000000]_0"
+108,0.5,A3MKZ4HSQKNNOO,"electricity consumption_(55576666666.667, 3890000000000]_0"
+109,0.2,A1ZIFC5AFQCDZT,"electricity consumption_(55576666666.667, 3890000000000]_0"
+110,0.2,A3L2UB07EZJAMD,"electricity consumption_(55576666666.667, 3890000000000]_0"
+111,0.2,AVHZJ2HQJG3NB,"electricity consumption_(55576666666.667, 3890000000000]_0"
+112,0.2,A1JQJAWQ9YWTC3,"electricity consumption_(55576666666.667, 3890000000000]_0"
+113,0.1,AMA18W8F60Y2J,"electricity consumption_(55576666666.667, 3890000000000]_0"
+114,0.4,ADEMAGRRRGSPT,"electricity consumption_(55576666666.667, 3890000000000]_0"
+115,0.1,A2YRYS17DU3A8R,"electricity consumption_(55576666666.667, 3890000000000]_0"
+116,0.5,A1GF29TP5AVQ49,"electricity consumption_(55576666666.667, 3890000000000]_0"
+117,0.7,ATJFUHXPYHISH,"electricity consumption_(55576666666.667, 3890000000000]_0"
+118,0.2,A1743ZO14I4NFO,"electricity consumption_(55576666666.667, 3890000000000]_0"
+119,0.8,A1R0689JPSQ3OF,"electricity consumption_(55576666666.667, 3890000000000]_1"
+120,0.7,A1EUK516LU9118,"electricity consumption_(55576666666.667, 3890000000000]_1"
+124,0.8,A10DCC73F2CKHC,"electricity consumption_(55576666666.667, 3890000000000]_1"
+125,0.5,A1F2YZD2VD1CTM,"electricity consumption_(55576666666.667, 3890000000000]_1"
+128,0.8,A3959BXDXZLWX2,"electricity consumption_(55576666666.667, 3890000000000]_1"
+131,0.4,AOQCHCD338WQE,"electricity consumption_(55576666666.667, 3890000000000]_1"
+132,0.1,A1NITMHYG5YL3H,"electricity consumption_(55576666666.667, 3890000000000]_1"
+133,0.1,A15FXHC1CVNW31,"electricity consumption_(55576666666.667, 3890000000000]_1"
+134,0.9,A3IUIBMPBYHAF4,"electricity consumption_(55576666666.667, 3890000000000]_1"
+135,0.5,A1Q6IR9E7MW3BM,"electricity consumption_(55576666666.667, 3890000000000]_1"
+136,0.9,A3LE78DP9ZK2R7,"electricity consumption_(55576666666.667, 3890000000000]_1"
+137,0.8,A2WC2NO555XU3J,"electricity consumption_(55576666666.667, 3890000000000]_1"
+138,0.7,A3MKZ4HSQKNNOO,"electricity consumption_(55576666666.667, 3890000000000]_1"
+139,0.1,A1ZIFC5AFQCDZT,"electricity consumption_(55576666666.667, 3890000000000]_1"
+140,0.9,A3L2UB07EZJAMD,"electricity consumption_(55576666666.667, 3890000000000]_1"
+141,0.7,AVHZJ2HQJG3NB,"electricity consumption_(55576666666.667, 3890000000000]_1"
+142,0.7,A1JQJAWQ9YWTC3,"electricity consumption_(55576666666.667, 3890000000000]_1"
+143,0.8,AMA18W8F60Y2J,"electricity consumption_(55576666666.667, 3890000000000]_1"
+144,0.7,ADEMAGRRRGSPT,"electricity consumption_(55576666666.667, 3890000000000]_1"
+145,0.1,A2YRYS17DU3A8R,"electricity consumption_(55576666666.667, 3890000000000]_1"
+146,0.7,A1GF29TP5AVQ49,"electricity consumption_(55576666666.667, 3890000000000]_1"
+147,0.9,ATJFUHXPYHISH,"electricity consumption_(55576666666.667, 3890000000000]_1"
+148,0.9,A1743ZO14I4NFO,"electricity consumption_(55576666666.667, 3890000000000]_1"
+149,0.6,A1R0689JPSQ3OF,"electricity consumption_(55576666666.667, 3890000000000]"
+150,0.4,A1EUK516LU9118,"electricity consumption_(55576666666.667, 3890000000000]"
+154,0.7,A10DCC73F2CKHC,"electricity consumption_(55576666666.667, 3890000000000]"
+155,0.5,A1F2YZD2VD1CTM,"electricity consumption_(55576666666.667, 3890000000000]"
+157,0.6,A3959BXDXZLWX2,"electricity consumption_(55576666666.667, 3890000000000]"
+160,0.6,AOQCHCD338WQE,"electricity consumption_(55576666666.667, 3890000000000]"
+161,0.6,A15FXHC1CVNW31,"electricity consumption_(55576666666.667, 3890000000000]"
+162,0.5,A3IUIBMPBYHAF4,"electricity consumption_(55576666666.667, 3890000000000]"
+163,0.5,A1Q6IR9E7MW3BM,"electricity consumption_(55576666666.667, 3890000000000]"
+164,0.3,A3LE78DP9ZK2R7,"electricity consumption_(55576666666.667, 3890000000000]"
+165,0.5,A2WC2NO555XU3J,"electricity consumption_(55576666666.667, 3890000000000]"
+166,0.6,A3MKZ4HSQKNNOO,"electricity consumption_(55576666666.667, 3890000000000]"
+167,0.4,A3L2UB07EZJAMD,"electricity consumption_(55576666666.667, 3890000000000]"
+168,0.5,AVHZJ2HQJG3NB,"electricity consumption_(55576666666.667, 3890000000000]"
+169,0.3,A1JQJAWQ9YWTC3,"electricity consumption_(55576666666.667, 3890000000000]"
+170,0.7,AMA18W8F60Y2J,"electricity consumption_(55576666666.667, 3890000000000]"
+171,0.6,ADEMAGRRRGSPT,"electricity consumption_(55576666666.667, 3890000000000]"
+172,0.1,A2YRYS17DU3A8R,"electricity consumption_(55576666666.667, 3890000000000]"
+173,0.7,A1GF29TP5AVQ49,"electricity consumption_(55576666666.667, 3890000000000]"
+174,0.4,ATJFUHXPYHISH,"electricity consumption_(55576666666.667, 3890000000000]"
+175,0.5,A1743ZO14I4NFO,"electricity consumption_(55576666666.667, 3890000000000]"
+176,0.6,A2CF2BD4Q0ZDJN,region_5_0
+177,0.3,A1PY5N4FASWD01,region_5_0
+178,0.8,A27SMEOPKV84VI,region_5_0
+179,0.2,A2VBSFSJXLZZ7A,region_5_0
+180,0.1,A6KIHXQ85IH67,region_5_0
+181,0.3,A1YY98SJG37KSU,region_5_0
+182,0.5,AH4W0KRSGIH0J,region_5_0
+183,0.7,A2VU8AC7MY3721,region_5_0
+184,0.9,A1ZD9SJXQ9C6EW,region_5_0
+185,0.5,A360G7Q6RO5XRL,region_5_0
+186,0.1,A3BGQS3TMP7RQG,region_5_0
+187,0.8,ACJK1CSODSI6N,region_5_0
+193,0.3,ATB9VOR75W6P3,region_5_0
+194,0.7,A2YXL5GQ3LZUY0,region_5_0
+195,0.8,A3Y2Z6ZK6HEAC,region_5_0
+196,0.9,ANMXMEB55AGM6,region_5_0
+197,0.3,ADAGUJNWMEPT6,region_5_0
+198,0.8,A3EIVR2LS7CCWB,region_5_0
+199,0.8,A1JSUTQQBKXS86,region_5_0
+200,0.2,A3O3RIY1ELZ6YR,region_5_0
+201,0.8,ANGB67ECCF73,region_5_0
+202,0.3,A34MRQ1OP87XC6,region_5_0
+203,0.4,A1QG4WF9ZTZTK2,region_5_0
+204,0.9,A2O2Q0LVWOWJ1G,region_5_0
+205,0.7,A356795ET25HER,region_5_0
+206,0.3,A2CF2BD4Q0ZDJN,region_5_1
+207,0.4,A1PY5N4FASWD01,region_5_1
+208,0.2,A27SMEOPKV84VI,region_5_1
+209,0.1,A2VBSFSJXLZZ7A,region_5_1
+210,0.8,A6KIHXQ85IH67,region_5_1
+211,0.7,A1YY98SJG37KSU,region_5_1
+212,0.6,AH4W0KRSGIH0J,region_5_1
+213,0.6,A2VU8AC7MY3721,region_5_1
+214,0.1,A1ZD9SJXQ9C6EW,region_5_1
+215,0.1,A360G7Q6RO5XRL,region_5_1
+216,0.4,A3BGQS3TMP7RQG,region_5_1
+217,0.2,ACJK1CSODSI6N,region_5_1
+223,0.4,ATB9VOR75W6P3,region_5_1
+224,0.3,A2YXL5GQ3LZUY0,region_5_1
+225,0.6,A3Y2Z6ZK6HEAC,region_5_1
+226,0.1,ANMXMEB55AGM6,region_5_1
+227,0.1,ADAGUJNWMEPT6,region_5_1
+228,0.2,A3EIVR2LS7CCWB,region_5_1
+229,0.2,A1JSUTQQBKXS86,region_5_1
+230,0.2,A3O3RIY1ELZ6YR,region_5_1
+231,0.8,ANGB67ECCF73,region_5_1
+232,0.2,A34MRQ1OP87XC6,region_5_1
+233,0.6,A1QG4WF9ZTZTK2,region_5_1
+234,0.1,A2O2Q0LVWOWJ1G,region_5_1
+235,0.1,A356795ET25HER,region_5_1
+236,0.1,A2CF2BD4Q0ZDJN,region_5
+237,0.1,A1PY5N4FASWD01,region_5
+238,0.1,A27SMEOPKV84VI,region_5
+239,0.1,A2VBSFSJXLZZ7A,region_5
+240,0.5,A6KIHXQ85IH67,region_5
+241,0.3,A1YY98SJG37KSU,region_5
+242,0.2,AH4W0KRSGIH0J,region_5
+243,0.4,A2VU8AC7MY3721,region_5
+244,0.3,A1ZD9SJXQ9C6EW,region_5
+245,0.7,A360G7Q6RO5XRL,region_5
+246,0.1,A3BGQS3TMP7RQG,region_5
+247,0.1,ACJK1CSODSI6N,region_5
+253,0.1,ATB9VOR75W6P3,region_5
+254,0.7,A2YXL5GQ3LZUY0,region_5
+255,0.3,A3Y2Z6ZK6HEAC,region_5
+256,0.1,ANMXMEB55AGM6,region_5
+257,0.1,ADAGUJNWMEPT6,region_5
+258,0.2,A3EIVR2LS7CCWB,region_5
+259,0.1,A1JSUTQQBKXS86,region_5
+260,0.4,A3O3RIY1ELZ6YR,region_5
+261,0.3,ANGB67ECCF73,region_5
+262,0.4,A34MRQ1OP87XC6,region_5
+263,0.4,A1QG4WF9ZTZTK2,region_5
+264,0.2,A2O2Q0LVWOWJ1G,region_5
+265,0.1,A356795ET25HER,region_5
