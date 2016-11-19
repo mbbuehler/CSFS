@@ -84,42 +84,27 @@ class ExperimentStudent(AbstractExperiment):
             df = df.join(dummies)
             df = df.drop(col, axis='columns')
 
-        print(tabulate(df, headers='keys'))
-
-        df.to_csv(self.path_bin, index=False)
-        return
-
-        features_to_bin = ['age',
-                           '',
-                           '']
 
 
-        exit()
-        # filter out where we have no values
-        df = df[df['Rank_rel'] != -1]
-        # binarise target
-        df[self.target] = df['Rank_rel'].apply(lambda x: 1 if x > 1 else 0)
-        # drop columns we dont need any more
-        df = df.drop('Rank_rel', axis='columns')
-        df = df.drop('teamID', axis='columns')
+        def get_numerical_features(df):
+            """
+            returns numerical features without binary ones.
+            :pre nominal features are already encoded binary
+            :param df:
+            :return: list(features)
+            """
+            return [f for f in df if set(df[f]) != {0, 1}]
 
-        cols_binning = ['yearID', 'G', 'Ghome',
-            'W', 'L', 'R', 'AB', 'H', '2B', '3B', 'HR', 'BB',
-            'SO', 'SB', 'CS', 'RA', 'ER', 'ERA', 'CG', 'SHO', 'SV', 'IPouts', 'HA',
-            'HRA', 'BBA', 'SOA', 'E', 'DP', 'FP', 'attendance', 'BPF', 'PPF',
-            ]
+        features_numerical = get_numerical_features(df)
 
-        for col in cols_binning:
+        for col in features_numerical:
             df[col] = pd.cut(df[col], 3)
 
-        features = list(df.columns)
-        features.remove(self.target) # do not bin target variable
-        for col in features:
+        for col in features_numerical:
             dummies = pd.get_dummies(df[col], prefix='{}'.format(col))
             df = df.join(dummies)
             df = df.drop(col, axis='columns')
         # print(tabulate(df[:100], headers='keys'))
-
         df.to_csv(self.path_bin, index=False)
 
     def get_metadata(self):
@@ -128,7 +113,7 @@ class ExperimentStudent(AbstractExperiment):
         :return:
         """
         df_data = pd.read_csv(self.path_bin)
-        df_data = df_data[df_data['subject']==1]
+        # df_data = df_data[df_data['subject'] == 0] # limit data to certain subject.
 
         df = pd.DataFrame()
         df['p'] = np.mean(df_data)
@@ -148,6 +133,7 @@ class ExperimentStudent(AbstractExperiment):
         h_x = _H([df.loc[self.target]['p'], 1-df.loc[self.target]['p']])
         df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
         df['IG ratio'] = df.apply(lambda x: x['IG']/x['H'], axis='columns') # correct?
+        df = df.sort_values(by=['IG'], ascending=False)
         df.to_csv(self.path_meta, index=True)
 
     def _get_dataset_bin(self):
