@@ -46,7 +46,7 @@ def prob(x, xi):
     """
     return sum([1 for x0 in x if x0 == xi])/len(x)
 
-def IG_from_series(instance, h_x):
+def IG_from_series(instance, h_x, identifier='p'):
     """
 
     :param instance: series
@@ -54,10 +54,10 @@ def IG_from_series(instance, h_x):
     :return:
     """
 
-    cond_h = H_X_Y_from_series(instance)
+    cond_h = H_X_Y_from_series(instance, identifier=identifier)
     return h_x - cond_h
 
-def H_X_Y_from_series(instance):
+def H_X_Y_from_series(instance, identifier):
     """
     Calculates conditional entropy from p and cond_p
     ONLY FOR BINARY
@@ -70,8 +70,11 @@ def H_X_Y_from_series(instance):
     # print((1-instance['p']) * _H([instance['p|f=0'], 1-instance['p|f=0']]))
     #
     # print((instance['p']) * _H([instance['p|f=1'], 1-instance['p|f=1']]))
-    return (1-instance['p']) * _H([instance['p|f=0'], 1-instance['p|f=0']]) \
-           + (instance['p']) * _H([instance['p|f=1'], 1-instance['p|f=1']])
+    normal = identifier
+    cond_0 = '{}|f=0'.format(identifier)
+    cond_1 = '{}|f=1'.format(identifier)
+    return (1-instance[normal]) * _H([instance[cond_0], 1-instance[cond_0]]) \
+           + (instance[normal]) * _H([instance[cond_1], 1-instance[cond_1]])
 
 
 def H_X_Y(x, y):

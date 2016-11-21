@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
-
+from scipy.stats.mstats import gmean
 from tabulate import tabulate
 from bs4 import BeautifulSoup
 
@@ -25,17 +25,30 @@ class CSFSCrowdAnalyser:
         features = df_crowd.index.values
         df_actual = df_actual.loc[features]
 
+        print(tabulate(df_crowd[:3], headers='keys'))
         # remove metadata we do not need.
-        if 'IG' in df_crowd.columns:
-            columns = ['p', 'p|f=0', 'p|f=1', 'IG']
-        else:
-            # We did not ask for the target variable
-            columns = ['p', 'p|f=0', 'p|f=1']
-        df_actual = df_actual[columns]
-        df_crowd = df_crowd[columns]
+        columns_crowd = list(df_crowd.columns) #['p', 'p|f=0', 'p|f=1', 'median', 'median|f=0', 'median|f=1', 'geomean', 'geomean|f=0', 'geomean|f=1', 'IG']
+        remove_cols = ['n p', 'n p|f=0', 'n p|f=1', 'std p', 'std p|f=0', 'std p|f=1']
+        columns_crowd = [e for e in columns_crowd if e not in remove_cols]
+        columns_actual = ['p', 'p|f=0', 'p|f=1', 'IG']
+        # if 'IG' not in df_crowd.columns:
+        #     columns.remove('IG')
+        df_actual = df_actual[columns_actual]
+        df_crowd = df_crowd[columns_crowd]
+
+        df_tmp = df_actual.copy()
+        df_tmp['median'] = df_actual['p']
+        df_tmp['geomean'] = df_actual['p']
+        df_tmp['median|f=0'] = df_actual['p|f=0']
+        df_tmp['geomean|f=0'] = df_actual['p|f=0']
+        df_tmp['median|f=1'] = df_actual['p|f=1']
+        df_tmp['geomean|f=1'] = df_actual['p|f=1']
+        df_tmp['IG geomean'] = df_actual['IG']
+        df_tmp['IG median'] = df_actual['IG']
+
 
         # calculate how good/bad the crowd was
-        df_diff = abs(df_actual-df_crowd)
+        df_diff = abs(df_tmp-df_crowd)
 
         # combine results in a multiindex
         df_combined = pd.concat(dict(crowd=df_crowd, actual=df_actual, diff=df_diff), axis='columns')
@@ -184,20 +197,25 @@ class CSFSCrowdAggregator:
         p = get_val_or_nan(df, "{}".format(f), 'answer mean')
         std_p = get_val_or_nan(df, "{}".format(f), 'answer std')
         n_p = get_val_or_nan(df, "{}".format(f), 'answer count')
+        median = get_val_or_nan(df, f, 'answer median')
+        geomean = get_val_or_nan(df, f, 'answer gmean')
         # n_p_unique = get_val_or_nan(df, "{}".format(f), 'answerUser nunique')
 
         p_0 = get_val_or_nan(df, "{}_0".format(f), 'answer mean')
         std_p_0 = get_val_or_nan(df, "{}_0".format(f), 'answer std')
         n_p_0 = get_val_or_nan(df, "{}_0".format(f), 'answer count')
-        # n_p_0_unique = get_val_or_nan(df, "{}_0".format(f), 'answerUser nunique')
+        median_0 = get_val_or_nan(df, "{}_0".format(f), 'answer median')
+        geomean_0 = get_val_or_nan(df, "{}_0".format(f), 'answer gmean')
 
         p_1 = get_val_or_nan(df, "{}_1".format(f), 'answer mean')
         std_p_1 = get_val_or_nan(df, "{}_1".format(f), 'answer std')
         n_p_1 = get_val_or_nan(df, "{}_1".format(f), 'answer count')
-        # n_p_1_unique = get_val_or_nan(df, "{}_1".format(f), 'answerUser nunique')
-        metadata = {'p': p, 'std p': std_p, 'n p': n_p, #'n unique p': n_p_unique,
-                   'p|f=0': p_0, 'std p|f=0': std_p_0, 'n p|f=0': n_p_0, #'n unique p|f=0 ': n_p_0_unique,
-                   'p|f=1': p_1, 'std p|f=1': std_p_1, 'n p|f=1': n_p_1, #'n unique p|f=1 ': n_p_1_unique,
+        median_1 = get_val_or_nan(df, "{}_1".format(f), 'answer median')
+        geomean_1 = get_val_or_nan(df, "{}_1".format(f), 'answer gmean')
+
+        metadata = {'p': p, 'std p': std_p, 'n p': n_p, 'median': median, 'geomean': geomean,
+                   'p|f=0': p_0, 'std p|f=0': std_p_0, 'n p|f=0': n_p_0, 'median|f=0': median_0, 'geomean|f=0': geomean_0,
+                   'p|f=1': p_1, 'std p|f=1': std_p_1, 'n p|f=1': n_p_1, 'median|f=1': median_1, 'geomean|f=1': geomean_1,
                    }
         return metadata
 
@@ -207,8 +225,8 @@ class CSFSCrowdAggregator:
         :param df_clean:
         :return:
         """
-        f = {'answer': ['mean', 'std', 'count'], 'answerUser': [pd.Series.nunique]}
-        # df = df_clean.groupby('question').apply(f)#lambda x: sum(x['answer']))
+        f = {'answer': ['mean', 'median', gmean, 'std', 'count'], 'answerUser': [pd.Series.nunique]}
+
         df = df_clean.groupby('feature').agg(f)
 
         df.columns = [' '.join(col).strip() for col in df.columns.values] # flatten hierarchical column names http://stackoverflow.com/questions/14507794/python-pandas-how-to-flatten-a-hierarchical-index-in-columns
@@ -231,6 +249,8 @@ class CSFSCrowdAggregator:
     def get_ig_df(self, df, target):
         h_x = _H([df.loc[target]['p'], 1-df.loc[target]['p']])
         df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
+        df['IG median'] = df.apply(IG_from_series, axis='columns', h_x=h_x, identifier='median')
+        df['IG geomean'] = df.apply(IG_from_series, axis='columns', h_x=h_x, identifier='geomean')
         return df
 
     def aggregate(self):

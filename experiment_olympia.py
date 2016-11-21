@@ -122,6 +122,7 @@ class ExperimentOlympia(AbstractExperiment):
         """
         df_data = pd.read_csv(self.path_bin)
 
+        # calc using arithmetic mean
         df = pd.DataFrame()
         df['p'] = np.mean(df_data)
 
@@ -138,9 +139,10 @@ class ExperimentOlympia(AbstractExperiment):
 
         df['H'] = [H(df_data[x]) for x in df_data]
         h_x = _H([df.loc[self.target]['p'], 1-df.loc[self.target]['p']])
-        df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
+        df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x, identifier='p')
         df['IG ratio'] = df.apply(lambda x: x['IG']/x['H'], axis='columns') # correct?
         df.to_csv(self.path_meta, index=True)
+
 
     def _get_dataset_bin(self):
         """
@@ -161,7 +163,7 @@ class ExperimentOlympia(AbstractExperiment):
         df_clean = CSFSCrowdCleaner(self.path_questions, self.path_answers_raw, self.target).clean()
         df_clean.to_csv(self.path_answers_clean, index=True)
 
-        df_aggregated = CSFSCrowdAggregator(df_clean).aggregate()
+        df_aggregated = CSFSCrowdAggregator(df_clean, target=self.target).aggregate()
         df_aggregated.to_csv(self.path_answers_aggregated, index=True)
 
         df_combined = CSFSCrowdAnalyser().get_combined_df(self.path_answers_aggregated, self.path_meta)
@@ -232,7 +234,7 @@ if __name__ == '__main__':
     experiment = ExperimentOlympia('olympia', 4)
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
-    # experiment.get_metadata()
+    experiment.get_metadata()
     experiment.evaluate_crowd_all_answers()
     # experiment.evaluate_flock()
     # experiment.evaluate_csfs_auc()
