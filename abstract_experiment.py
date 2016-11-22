@@ -9,9 +9,10 @@ from infoformulas_listcomp import H, _H, IG_from_series
 
 class AbstractExperiment():
 
-    def __init__(self, dataset_name, experiment_number):
+    def __init__(self, dataset_name, experiment_number, experiment_name):
         self.dataset_name = dataset_name
         self.number = experiment_number
+        self.experiment_name = experiment_name
         self.base_path = 'datasets/{}/'.format(self.dataset_name)
 
     def _create_if_nonexisting(self, path, folder):
@@ -66,9 +67,10 @@ class AbstractExperiment():
         :return:
         """
         df_data = pd.read_csv(self.path_bin)
+        # df_data = df_data[df_data['subject'] == 0] # limit data to certain subject.
 
         df = pd.DataFrame()
-        df['p'] = np.mean(df_data)
+        df['mean'] = np.mean(df_data)
 
         def cond_mean(df, cond_value, target):
             result = list()
@@ -77,14 +79,15 @@ class AbstractExperiment():
                 result.append(np.mean(tmp_df[target]))
             return result
 
-        df['p|f=0'] = cond_mean(df_data, cond_value=0, target=self.target)
-        df['p|f=1'] = cond_mean(df_data, cond_value=1, target=self.target)
+        df['mean|f=0'] = cond_mean(df_data, cond_value=0, target=self.target)
+        df['mean|f=1'] = cond_mean(df_data, cond_value=1, target=self.target)
         df['std'] = np.std(df_data)
 
         df['H'] = [H(df_data[x]) for x in df_data]
-        h_x = _H([df.loc[self.target]['p'], 1-df.loc[self.target]['p']])
-        df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
+        h_x = _H([df.loc[self.target]['mean'], 1-df.loc[self.target]['mean']])
+        df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x, identifier='mean')
         df['IG ratio'] = df.apply(lambda x: x['IG']/x['H'], axis='columns') # correct?
+        df = df.sort_values(by=['IG'], ascending=False)
         df.to_csv(self.path_meta, index=True)
 
     def _remove_non_informative_rows(self, df, threshold):

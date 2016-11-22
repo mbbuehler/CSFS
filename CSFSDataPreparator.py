@@ -3,10 +3,8 @@ import pandas as pd
 
 class DataPreparator:
 
-    def __init__(self, df_raw, columns_to_remove=list(), no_bins=3):
-        self.df_raw = df_raw
-        self.columns_to_remove = columns_to_remove
-        self.no_bins = no_bins
+    def __init__(self):
+        pass
 
     def drop_columns(self, df, columns):
         return df.drop(columns, axis='columns')
@@ -35,7 +33,7 @@ class DataPreparator:
         dummies = pd.get_dummies(series, prefix='{}'.format(name))
         return dummies
 
-    def get_encoded(self, series):
+    def get_encoded(self, series, no_bins):
         """
 
         :param series:
@@ -45,21 +43,23 @@ class DataPreparator:
         if self._is_binary(series):
             df_result = self._encode_binary(series)
         elif self._is_numerical(series):
-            df_result = self._binning_numerical(series, no_bins=self.no_bins)
+            df_result = self._binning_numerical(series, no_bins=no_bins)
         else:
             df_result = self._encode_nominal(series)
         df_result = df_result.astype('int64')
         return df_result
 
-    def prepare(self):
+    def prepare(self, df_raw, columns_to_remove=list(), no_bins=3, columns_to_ignore=list()):
         """
         binarises dataframe.
         :return: pd.DataFrame() with binary {0,1} columns
         """
-        df_raw = self.drop_columns(self.df_raw, self.columns_to_remove)
-        df_result = pd.DataFrame()
+        # print(df_raw)
+        df_result = df_raw[columns_to_ignore]
+        df_raw = self.drop_columns(df_raw, columns_to_ignore)
+        df_raw = self.drop_columns(df_raw, columns_to_remove)
         for f in df_raw:
-            df_encoded = self.get_encoded(df_raw[f])
+            df_encoded = self.get_encoded(df_raw[f], no_bins)
             df_result = pd.concat([df_result, df_encoded], axis='columns')
         return df_result
 
