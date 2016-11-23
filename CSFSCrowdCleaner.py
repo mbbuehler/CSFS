@@ -180,17 +180,24 @@ class CSFSCrowdAggregator:
     """
     Cleans and aggregates crowd answers
     """
-    def __init__(self, df_clean, target=""):
+    def __init__(self, df_clean, target="", mode='normal'):
         """
         :param df_clean:
         :param target: can be None -> does not calculate IG
+        :param mode: 'extended' outputs various meta info, e.g. geometric mean,...
         :return:
         """
         self.df_clean = df_clean
         self.target = target
+        self.mode = mode
+
+    class Mode:
+        NORMAL = 'normal'
+        EXTENDED = 'extended'
 
     def _get_feature_metadata(self, f, df):
         # print(tabulate(df, headers='keys'))
+        # exit()
         # exit()
         def get_val_or_nan(df, index, column):
             try:
@@ -200,32 +207,43 @@ class CSFSCrowdAggregator:
                 return np.nan
 
 
-        p = get_val_or_nan(df, "{}".format(f), 'answer mean')
-        std_p = get_val_or_nan(df, "{}".format(f), 'answer std')
-        n_p = get_val_or_nan(df, "{}".format(f), 'answer count')
         median = get_val_or_nan(df, f, 'answer median')
-        geomean = get_val_or_nan(df, f, 'answer gmean')
-        maj_mean = get_val_or_nan(df, f, 'answer majority_mean')
-        # n_p_unique = get_val_or_nan(df, "{}".format(f), 'answerUser nunique')
-
-        p_0 = get_val_or_nan(df, "{}_0".format(f), 'answer mean')
-        std_p_0 = get_val_or_nan(df, "{}_0".format(f), 'answer std')
-        n_p_0 = get_val_or_nan(df, "{}_0".format(f), 'answer count')
         median_0 = get_val_or_nan(df, "{}_0".format(f), 'answer median')
-        geomean_0 = get_val_or_nan(df, "{}_0".format(f), 'answer gmean')
-        maj_mean_0 = get_val_or_nan(df, "{}_0".format(f), 'answer majority_mean')
-
-        p_1 = get_val_or_nan(df, "{}_1".format(f), 'answer mean')
-        std_p_1 = get_val_or_nan(df, "{}_1".format(f), 'answer std')
-        n_p_1 = get_val_or_nan(df, "{}_1".format(f), 'answer count')
         median_1 = get_val_or_nan(df, "{}_1".format(f), 'answer median')
-        geomean_1 = get_val_or_nan(df, "{}_1".format(f), 'answer gmean')
-        maj_mean_1 = get_val_or_nan(df, "{}_1".format(f), 'answer majority_mean')
+        metadata = {'median': median,
+                   'median|f=0': median_0,
+                   'median|f=1': median_1,
+                   }
 
-        metadata = {'p': p, 'std p': std_p, 'n p': n_p, 'median': median, 'geomean': geomean, 'majority_mean': maj_mean,
+        if self.mode==self.Mode.EXTENDED:
+
+            p = get_val_or_nan(df, "{}".format(f), 'answer mean')
+            std_p = get_val_or_nan(df, "{}".format(f), 'answer std')
+            n_p = get_val_or_nan(df, "{}".format(f), 'answer count')
+
+            geomean = get_val_or_nan(df, f, 'answer gmean')
+            maj_mean = get_val_or_nan(df, f, 'answer majority_mean')
+            # n_p_unique = get_val_or_nan(df, "{}".format(f), 'answerUser nunique')
+
+            p_0 = get_val_or_nan(df, "{}_0".format(f), 'answer mean')
+            std_p_0 = get_val_or_nan(df, "{}_0".format(f), 'answer std')
+            n_p_0 = get_val_or_nan(df, "{}_0".format(f), 'answer count')
+
+            geomean_0 = get_val_or_nan(df, "{}_0".format(f), 'answer gmean')
+            maj_mean_0 = get_val_or_nan(df, "{}_0".format(f), 'answer majority_mean')
+
+            p_1 = get_val_or_nan(df, "{}_1".format(f), 'answer mean')
+            std_p_1 = get_val_or_nan(df, "{}_1".format(f), 'answer std')
+            n_p_1 = get_val_or_nan(df, "{}_1".format(f), 'answer count')
+
+            geomean_1 = get_val_or_nan(df, "{}_1".format(f), 'answer gmean')
+            maj_mean_1 = get_val_or_nan(df, "{}_1".format(f), 'answer majority_mean')
+
+            metadata = {'p': p, 'std p': std_p, 'n p': n_p, 'median': median, 'geomean': geomean, 'majority_mean': maj_mean,
                    'p|f=0': p_0, 'std p|f=0': std_p_0, 'n p|f=0': n_p_0, 'median|f=0': median_0, 'geomean|f=0': geomean_0, 'majority_mean|f=0': maj_mean_0,
                    'p|f=1': p_1, 'std p|f=1': std_p_1, 'n p|f=1': n_p_1, 'median|f=1': median_1, 'geomean|f=1': geomean_1,'majority_mean|f=1': maj_mean_1,
                    }
+
         return metadata
 
     def get_metadata(self, df_clean):
@@ -234,21 +252,24 @@ class CSFSCrowdAggregator:
         :param df_clean:
         :return:
         """
-        def majority_mean(x):
-            n = 3
-            counts = x.value_counts()
-            selected = list(counts.head(n).index)
-            maj_mean = np.mean(selected)
-            return maj_mean
+        if self.mode==self.Mode.EXTENDED:
+            def majority_mean(x):
+                n = 3
+                counts = x.value_counts()
+                selected = list(counts.head(n).index)
+                maj_mean = np.mean(selected)
+                return maj_mean
 
-        f = {'answer': ['mean', 'median', gmean, 'std', 'count', majority_mean], 'answerUser': [pd.Series.nunique]}
+            f = {'answer': ['mean', 'median', gmean, 'std', 'count', majority_mean], 'answerUser': [pd.Series.nunique]}
+        else:
+            f = {'answer': ['median', 'std', 'count']}
 
         df = df_clean.groupby('feature').agg(f)
 
         df.columns = [' '.join(col).strip() for col in df.columns.values] # flatten hierarchical column names http://stackoverflow.com/questions/14507794/python-pandas-how-to-flatten-a-hierarchical-index-in-columns
 
-        df['crowd_mean_all'] = np.mean(df_clean['answer'])
-        df['crowd_std_all'] = np.std(df_clean['answer'])
+        # df['crowd_mean_all'] = np.mean(df_clean['answer'])
+        # df['crowd_std_all'] = np.std(df_clean['answer'])
 
         features = sorted(set(df_clean.feature.apply(lambda x: re.sub(r'_[01]', '', x))))
         # print(features)
@@ -262,11 +283,16 @@ class CSFSCrowdAggregator:
         return result
 
     def get_ig_df(self, df, target):
-        h_x = _H([df.loc[target]['p'], 1-df.loc[target]['p']])
-        df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
+        h_x = _H([df.loc[target]['median'], 1-df.loc[target]['median']])
         df['IG median'] = df.apply(IG_from_series, axis='columns', h_x=h_x, identifier='median')
-        df['IG geomean'] = df.apply(IG_from_series, axis='columns', h_x=h_x, identifier='geomean')
-        df['IG majority_mean'] = df.apply(IG_from_series, axis='columns', h_x=h_x, identifier='majority_mean')
+
+        if self.mode==self.Mode.EXTENDED:
+            h_x = _H([df.loc[target]['p'], 1-df.loc[target]['p']])
+            df['IG'] = df.apply(IG_from_series, axis='columns', h_x=h_x)
+            h_x = _H([df.loc[target]['geomean'], 1-df.loc[target]['geomean']])
+            df['IG geomean'] = df.apply(IG_from_series, axis='columns', h_x=h_x, identifier='geomean')
+            h_x = _H([df.loc[target]['majority_mean'], 1-df.loc[target]['majority_mean']])
+            df['IG majority_mean'] = df.apply(IG_from_series, axis='columns', h_x=h_x, identifier='majority_mean')
         return df
 
     def aggregate(self):
