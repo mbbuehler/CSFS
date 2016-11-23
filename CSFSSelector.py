@@ -175,7 +175,7 @@ class CSFSBestFromMetaSelector(CSFSSelector):
             :return:
             """
             super().__init__(df, target)
-            self.ranking_column = 'IG'
+            self.ranking_column = 'IG median'
 
         def select(self, n):
             nlargest = self.df.nlargest(n, self.ranking_column)
