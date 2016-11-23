@@ -166,7 +166,7 @@ class ExperimentOlympia(AbstractExperiment):
         df_clean = CSFSCrowdCleaner(self.path_questions, self.path_answers_raw, self.target).clean()
         df_clean.to_csv(self.path_answers_clean, index=True)
 
-        df_aggregated = CSFSCrowdAggregator(df_clean, target=self.target).aggregate()
+        df_aggregated = CSFSCrowdAggregator(df_clean, target=self.target, mode=CSFSCrowdAggregator.Mode.EXTENDED).aggregate()
         df_aggregated.to_csv(self.path_answers_aggregated, index=True)
 
         df_combined = CSFSCrowdAnalyser().get_combined_df(self.path_answers_aggregated, self.path_meta)
@@ -266,6 +266,6 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    # experiment.evaluate_crowd_all_answers()
+    experiment.evaluate_crowd_all_answers()
     # experiment.evaluate_flock()
-    experiment.evaluate_csfs_auc()
+    # experiment.evaluate_csfs_auc()
