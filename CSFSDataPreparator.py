@@ -39,14 +39,21 @@ class DataPreparator:
         :param series:
         :return: pd. Dataframe
         """
-        df_result = pd.DataFrame()
+        # print(series[:3])
+
         if self._is_binary(series):
             df_result = self._encode_binary(series)
+            # print('is binary')
         elif self._is_numerical(series):
             df_result = self._binning_numerical(series, no_bins=no_bins)
+            # print('is numerical')
         else:
             df_result = self._encode_nominal(series)
+            # print('is else')
+        # print(df_result[:5])
         df_result = df_result.astype('int64')
+
+        # input()
         return df_result
 
     def prepare(self, df_raw, columns_to_remove=list(), no_bins=3, columns_to_ignore=list()):

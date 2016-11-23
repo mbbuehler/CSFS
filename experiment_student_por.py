@@ -47,16 +47,10 @@ class ExperimentStudent(AbstractExperiment):
         preparator = DataPreparator()
 
         # only take subset we have questions for
-        df_raw = preparator.prepare(df_raw, features_to_remove, no_bins=3, columns_to_ignore=['G3'])
+        df_raw = preparator.drop_columns(df_raw, features_to_remove)
         df_raw.to_csv(self.path_cleaned, index=False)
 
     def bin_binarise(self):
-        """
-        binning and binarise
-        outputs a csv into "cleaned" folder "_bin"
-        :return:
-        """
-
         """
         binning and binarise
         outputs a csv into "cleaned" folder "_bin"
