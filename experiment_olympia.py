@@ -1,3 +1,5 @@
+from random import shuffle
+
 import numpy as np
 import pandas as pd
 import re
@@ -15,8 +17,8 @@ from util.util_features import get_feature_inf, get_features_from_questions
 
 class ExperimentOlympia(AbstractExperiment):
 
-    def __init__(self, dataset_name, experiment_number):
-        super().__init__(dataset_name, experiment_number)
+    def __init__(self, dataset_name, experiment_number, experiment_name):
+        super().__init__(dataset_name, experiment_number, experiment_name)
         experiment_name = 'experiment3'
         experiment_name = 'experiment4_extreme-cond-means'
         experiment_name = 'experiment2-4_all'
@@ -30,8 +32,9 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_answers_aggregated = 'datasets/olympia/results/{}/answers_aggregated.csv'.format(experiment_name)
         self.path_answers_metadata = 'datasets/olympia/results/{}/answers_metadata.csv'.format(experiment_name)
         self.path_csfs_auc = 'datasets/olympia/results/{}/csfs_auc.csv'.format(experiment_name)
+        self.path_csfs_std = 'datasets/olympia/results/{}/csfs_std.csv'.format(experiment_name)
         self.path_questions = 'datasets/olympia/questions/{}/questions.csv'.format(experiment_name) # experiment2 for experiment3
-        self.path_flock_result = 'datasets/olympia/questions/{}/flock_auc.csv'.format(experiment_name)
+        self.path_flock_result = 'datasets/olympia/results/{}/flock_auc.csv'.format(experiment_name)
         self.target = 'medals'
 
 
@@ -170,30 +173,58 @@ class ExperimentOlympia(AbstractExperiment):
         df_combined.to_csv(self.path_answers_metadata, index=True)
 
 
+    def _get_sample_df(self, df, features, r):
+        """
+        creates a dataframe with r samples for each feature
+        :param df: df_crowd_answers. row must contain columns with feature name and column with answer
+        :param features: list(str)
+        :param r: int
+        :return: df_sample
+        """
+        grouped = df.groupby('feature')
+        df_sample = pd.DataFrame()
+        for feature in features:
+            group = grouped.get_group(feature)
+            samples = group.sample(n=r)
+            df_sample = df_sample.append(samples)
+        return df_sample
+
     def evaluate_csfs_auc(self):
         df_data = self._get_dataset_bin()
         evaluator = CSFSEvaluator(df_data, self.target)
-        R = range(3, len(df_data), 1) # number of samples
+
+        df_crowd_answers = pd.read_csv(self.path_answers_clean, index_col=0)
+        min_count = df_crowd_answers.groupby('feature').agg('count').min().min() # returns number of responses for feature with fewest answers
+        R = range(3, min_count, 1) # number of samples
         N_Feat = [3, 5, 7, 9, 11]
-        result = pd.DataFrame(columns=N_Feat, index=R)
+        n_samples = 100 # number of repetitions to calculate mean auc (and std)
 
-        df_aggregated = pd.read_csv(self.path_answers_aggregated, index_col=0)
-        selector = CSFSBestFromMetaSelector(df_aggregated)
+        df_csfs_auc = pd.DataFrame(index=R, columns=N_Feat)
+        df_csfs_std = pd.DataFrame(index=R, columns=N_Feat)
+        features = list(set(df_crowd_answers['feature']))
+        for r in R:
+            sys.stdout.write('r: {}\n'.format(r))
+            aucs = {n_feat: list() for n_feat in N_Feat}
 
-        aucs = dict()
+            for i in range(n_samples):
+                # sample a number of crowd answers for each feature randomly
+                df_sample = self._get_sample_df(df_crowd_answers, features, r)
 
-        for n_feat in N_Feat:
-            nbest_features = selector.select(n_feat)
-            auc = evaluator.evaluate_features(nbest_features)
-            aucs[n_feat] = auc
+                # get df with metadata that will make it possible to select n best features
+                df_crowd_metadata = CSFSCrowdAggregator(df_sample, target=self.target).aggregate()
+                # select features+
+                selector = CSFSBestFromMetaSelector(df_crowd_metadata)
 
-        # we are not sure how many answers we have for each feature. -> fill a dataframe with constant values.
-        answer_count_min = df_aggregated['n p'].min().astype('int')
-        answer_count_max = df_aggregated['n p'].max().astype('int')
+                for n_feat in N_Feat:
+                    nbest_features = selector.select(n_feat)
+                    auc = evaluator.evaluate_features(nbest_features)
+                    aucs[n_feat].append(auc)
 
-        df_csfs_auc = pd.DataFrame(aucs, index=range(answer_count_min, answer_count_max))
-
+            df_csfs_auc.loc[r] = {n_feat: np.mean(aucs[n_feat]) for n_feat in N_Feat}
+            df_csfs_std.loc[r] = {n_feat: np.std(aucs[n_feat]) for n_feat in N_Feat}
+        # print(df_csfs_auc)
         df_csfs_auc.to_csv(self.path_csfs_auc)
+        df_csfs_std.to_csv(self.path_csfs_std)
 
 
     def evaluate_flock(self):
@@ -207,7 +238,7 @@ class ExperimentOlympia(AbstractExperiment):
         result = pd.DataFrame(columns=N_Feat, index=R)
 
         for r in R:
-            sys.stdout.write('processing r =', r, '\n')
+            sys.stdout.write('r: {}\n'.format(r))
             aucs = {n_feat: list() for n_feat in N_Feat}
             for i in range(n_samples):
                 # get a number of samples
@@ -231,10 +262,10 @@ class ExperimentOlympia(AbstractExperiment):
 
 
 if __name__ == '__main__':
-    experiment = ExperimentOlympia('olympia', 4)
+    experiment = ExperimentOlympia('olympia', 4, 'experiment2-4_all')
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
-    experiment.get_metadata()
-    experiment.evaluate_crowd_all_answers()
+    # experiment.get_metadata()
+    # experiment.evaluate_crowd_all_answers()
     # experiment.evaluate_flock()
-    # experiment.evaluate_csfs_auc()
+    experiment.evaluate_csfs_auc()
