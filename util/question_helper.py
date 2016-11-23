@@ -24,8 +24,13 @@ def display_questions():
 
 if __name__ == '__main__':
     # display_questions()
-    features = ['electricity consumption per person_[26.757, 1320.325]',
-                'electricity consumption_(55576666666.667, 3890000000000]',
-                'region_5']
-    create_0_1(features)
+    # todo: create questions for student
+    features = ['Mjob_other', 'higher==yes', 'absences_(21.333, 32]', 'failures_(-0.003, 1]', 'paid==yes', 'Medu_(-0.004, 1.333]', 'health_(2.333, 3.667]', 'failures_(2, 3]', 'famsize==LE3', 'age_(19.667, 22]', 'Pstatus==T', 'school==MS', 'failures_(1, 2]', 'Mjob_at_home']
     create_question_templates(len(features))
+    create_0_1(features)
+
+
+    # features = ['electricity consumption per person_[26.757, 1320.325]',
+    #             'electricity consumption_(55576666666.667, 3890000000000]',
+    #             'region_5']
+    # create_question_templates(len(features))
