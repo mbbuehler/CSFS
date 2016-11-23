@@ -131,5 +131,21 @@ if __name__ == '__main__':
                 'internet users_(6149000, 245000000]',
                 'exports_(77193333333.333, 1580000000000]',
                 ]
+    features = ['',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+    ]
     # create_question_templates(10)
     get_feature_inf()
