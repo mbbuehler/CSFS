@@ -12,7 +12,6 @@ from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from abstract_experiment import AbstractExperiment
 from infoformulas_listcomp import _H, IG_from_series, H
-from util.util_features import get_feature_inf, get_features_from_questions
 
 
 class ExperimentOlympia(AbstractExperiment):

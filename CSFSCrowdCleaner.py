@@ -82,9 +82,19 @@ class CSFSCrowdCleaner:
         :return:
         """
         answer_users_count = df_clean.groupby('feature').answerUser.apply(lambda x: x.value_counts()).reset_index()
-        spammers = answer_users_count[answer_users_count['answerUser'] > 1]['level_1']
-        df_without_spammers = df_clean[~df_clean['answerUser'].isin(spammers)]
-        return df_without_spammers
+        # df_spammed: df with columns: 'feature', 'level_1', 'answerUser', e.g. 'medals', 'ACS3r2S', 10
+        df_spammed = answer_users_count[answer_users_count['answerUser']>1].sort_values(by='answerUser', ascending=False)
+        df_spammed.columns = ['feature', 'answerUser', 'count']
+
+        # print(len(df_clean))
+        for i,row in df_spammed.iterrows():
+            drop_indeces = df_clean[(df_clean['answerUser']==row.answerUser) & (df_clean['feature']==row.feature)].index
+            df_clean = df_clean.drop(drop_indeces)
+        # print(len(df_clean))
+        # exit()
+        # spammers = answer_users_count[answer_users_count['answerUser'] > 1]['level_1']
+        # df_without_spammers = df_clean[~df_clean['answerUser'].isin(spammers)]
+        return df_clean
 
     def raw_to_clean(self, df_answers):
         """
@@ -173,6 +183,9 @@ class CSFSCrowdCleaner:
         df_clean = self.raw_to_clean(self.df_answers)
         df_clean = self.questions_to_features(self.df_questions, df_clean)
         df_clean = self.remove_spammers(df_clean)
+        # print(tabulate(df_clean))
+        # print(df_clean.groupby('feature').agg('count'))
+        # exit()
         return df_clean
 
 
