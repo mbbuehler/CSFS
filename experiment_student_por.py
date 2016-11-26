@@ -67,11 +67,17 @@ class ExperimentStudent(AbstractExperiment):
 
 if __name__ == '__main__':
     experiment = ExperimentStudent('student', 2, 'experiment2_por')
+
+    N_Features = [3, 5, 7, 9, 11]
+    n_samples = 100 # number of repetitions to calculate average auc score for samples)
+    n_samples = 1
     # experiment.set_up_basic_folder_structure()
     # experiment.set_up_experiment_folder_structure('experiment2_por')
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
     # experiment.evaluate_crowd_all_answers()
-    experiment.evaluate_flock()
+    experiment.drop_analysis(N_Features, n_samples)
+    experiment.evaluate_flock(N_Features, n_samples)
+        #
     # experiment.evaluate_csfs_auc()

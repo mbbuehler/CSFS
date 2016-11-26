@@ -3,8 +3,12 @@ import numpy as np
 import pandas as pd
 import sys
 
+from joblib import Parallel, delayed
+
+import CSFSLoader
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector
+from analysis_noisy_means_drop import _conduct_analysis
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
 
@@ -104,6 +108,10 @@ class AbstractExperiment:
         # kick too noisy rows
         return df[df_tmp['ratio'] <= threshold]
 
+    def drop_analysis(self, N_features, N_samples=100):
+        df = CSFSLoader.CSFSLoader().load_dataset(self.path_bin)
+        Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, self.target, mean_error, N_features, N_samples, self.dataset_name) for mean_error in np.linspace(0.0, 0.6, 200))
+
     def _get_dataset_bin(self):
         """
         Selects subset of data set we have questions for.
@@ -115,26 +123,23 @@ class AbstractExperiment:
         df = df_raw[features]
         return df
 
-    def evaluate_flock(self):
+    def evaluate_flock(self, N_features, n_samples=100):
         df_data = self._get_dataset_bin()
         evaluator = CSFSEvaluator(df_data, self.target)
 
         R = range(3, 100, 1) # number of samples
-        N_Feat = [3, 5, 7, 9, 11]
-        n_samples = 1 # number of repetitions to calculate average auc score for samples
-
-        result = pd.DataFrame(columns=N_Feat, index=R)
+        result = pd.DataFrame(columns=N_features, index=R)
 
         for r in R:
             sys.stdout.write('r: {}\n'.format(r))
-            aucs = {n_feat: list() for n_feat in N_Feat}
+            aucs = {n_feat: list() for n_feat in N_features}
             for i in range(n_samples):
                 # get a number of samples
                 df_sample = df_data.sample(n=r, axis='rows')
                 df_sample.index = range(r) # otherwise we have a problem with automatic iteration when calculating conditional probabilities
                 best_selector = CSFSBestActualSelector(df_sample, self.target)
 
-                for n_feat in N_Feat:
+                for n_feat in N_features:
                     nbest_features = best_selector.select(n_feat)
                     auc = evaluator.evaluate_features(nbest_features)
                     aucs[n_feat].append(auc)
