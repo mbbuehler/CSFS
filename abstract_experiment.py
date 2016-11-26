@@ -1,14 +1,15 @@
 import os
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
+import sys
 
+from CSFSEvaluator import CSFSEvaluator
+from CSFSSelector import CSFSBestActualSelector
 from infoformulas_listcomp import H, _H, IG_from_series
+from util.util_features import get_features_from_questions
 
 
-class AbstractExperiment():
-
+class AbstractExperiment:
     def __init__(self, dataset_name, experiment_number, experiment_name):
         self.dataset_name = dataset_name
         self.number = experiment_number
@@ -103,9 +104,40 @@ class AbstractExperiment():
         # kick too noisy rows
         return df[df_tmp['ratio'] <= threshold]
 
+    def _get_dataset_bin(self):
+        """
+        Selects subset of data set we have questions for.
+        """
+        df_raw = pd.read_csv(self.path_bin)
+        # kick all features we don't want
+        features = get_features_from_questions(self.path_questions, remove_cond=True)
+        features.append(self.target)
+        df = df_raw[features]
+        return df
 
-    """
-    - get crowd answers + aggregate
-    - flock experiment
-    - std noise experiment
-    """
+    def evaluate_flock(self):
+        df_data = self._get_dataset_bin()
+        evaluator = CSFSEvaluator(df_data, self.target)
+
+        R = range(3, len(df_data), 1) # number of samples
+        N_Feat = [3, 5, 7, 9, 11]
+        n_samples = 100 # number of repetitions to calculate average auc score for samples
+
+        result = pd.DataFrame(columns=N_Feat, index=R)
+
+        for r in R:
+            sys.stdout.write('r: {}\n'.format(r))
+            aucs = {n_feat: list() for n_feat in N_Feat}
+            for i in range(n_samples):
+                # get a number of samples
+                df_sample = df_data.sample(n=r, axis='rows')
+                df_sample.index = range(r) # otherwise we have a problem with automatic iteration when calculating conditional probabilities
+                best_selector = CSFSBestActualSelector(df_sample, self.target)
+
+                for n_feat in N_Feat:
+                    nbest_features = best_selector.select(n_feat)
+                    auc = evaluator.evaluate_features(nbest_features)
+                    aucs[n_feat].append(auc)
+            result.loc[r] = {n_feat: np.mean(aucs[n_feat]) for n_feat in aucs}
+        result.to_csv(self.path_flock_result)
+

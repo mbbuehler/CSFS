@@ -2,7 +2,6 @@ import pandas as pd
 import re
 
 from CSFSSelector import CSFSBestActualSelector
-from util.question_helper import create_question_templates
 
 
 def get_target_ratio(path):
@@ -47,7 +46,9 @@ def get_features_from_questions(path_questions, remove_cond=False, remove_binnin
     """
     df_features = pd.read_csv(path_questions, header=None)
     features = list(df_features[0])
-    # print(features)
+
+    print(features)
+    # exit()
     if remove_cond:
         features = remove_cond_markup(features)
     if remove_binning:
@@ -62,7 +63,7 @@ def remove_cond_markup(features):
     """
     result = list()
     for f in features:
-        match = re.match(r'(.*[(\[].*[)\]])', f) or re.match(r'(.*_\d)_\d', f)
+        match = re.match(r'(.*[(\[].*[)\]])', f) or re.match(r'(.*_\d)_\d', f) or re.match(r'(.*==.*)_\d', f) or re.match(r'(.*_.*)_\d', f)
         if match:
             result.append(match.group(1))
     result = list(set(result))

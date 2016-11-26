@@ -1,19 +1,7 @@
 import numpy as np
 import pandas as pd
-import re
-
-import sys
-
-from sklearn.preprocessing import Imputer
-from tabulate import tabulate
-
-from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdAnalyser, CSFSCrowdCleaner
 from CSFSDataPreparator import DataPreparator
-from CSFSEvaluator import CSFSEvaluator
-from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from abstract_experiment import AbstractExperiment
-from infoformulas_listcomp import _H, IG_from_series, H
-from util.util_features import get_feature_inf, get_features_from_questions
 
 
 class ExperimentStudent(AbstractExperiment):
@@ -30,8 +18,8 @@ class ExperimentStudent(AbstractExperiment):
         # self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(base_path, experiment_name)
         # self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(base_path, experiment_name)
         # self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(base_path, experiment_name)
-        # self.path_questions = '{}questions/{}/questions.csv'.format(base_path, experiment_name) # experiment2 for experiment3
-        # self.path_flock_result = '{}questions/{}/flock_auc.csv'.format(experiment_name)
+        self.path_questions = '{}questions/{}/questions.csv'.format(self.base_path, experiment_name) # experiment2 for experiment3
+        self.path_flock_result = '{}results/{}/flock_auc.csv'.format(self.base_path, experiment_name)
         self.target = 'G3'
 
 
@@ -65,12 +53,6 @@ class ExperimentStudent(AbstractExperiment):
         df = preparator.prepare(df, columns_to_ignore=[self.target])
         df.to_csv(self.path_bin, index=False)
 
-    def _get_dataset_bin(self):
-        """
-        Selects subset of data set we have questions for.
-        """
-        pass
-
     def evaluate_crowd_all_answers(self):
         """
         Aggregates crowd answers and evaluates for all crowd answers
@@ -83,17 +65,13 @@ class ExperimentStudent(AbstractExperiment):
         pass
 
 
-    def evaluate_flock(self):
-        pass
-
-
 if __name__ == '__main__':
     experiment = ExperimentStudent('student', 2, 'experiment2_por')
     # experiment.set_up_basic_folder_structure()
     # experiment.set_up_experiment_folder_structure('experiment2_por')
-    experiment.preprocess_raw()
-    experiment.bin_binarise()
-    experiment.get_metadata()
+    # experiment.preprocess_raw()
+    # experiment.bin_binarise()
+    # experiment.get_metadata()
     # experiment.evaluate_crowd_all_answers()
-    # experiment.evaluate_flock()
+    experiment.evaluate_flock()
     # experiment.evaluate_csfs_auc()
