@@ -119,9 +119,9 @@ class AbstractExperiment:
         df_data = self._get_dataset_bin()
         evaluator = CSFSEvaluator(df_data, self.target)
 
-        R = range(3, len(df_data), 1) # number of samples
+        R = range(3, 100, 1) # number of samples
         N_Feat = [3, 5, 7, 9, 11]
-        n_samples = 100 # number of repetitions to calculate average auc score for samples
+        n_samples = 1 # number of repetitions to calculate average auc score for samples
 
         result = pd.DataFrame(columns=N_Feat, index=R)
 
