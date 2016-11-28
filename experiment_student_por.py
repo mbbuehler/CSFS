@@ -77,7 +77,7 @@ if __name__ == '__main__':
     # experiment.get_metadata()
     # experiment.evaluate_crowd_all_answers()
      # experiment.drop_analysis(N_Features, n_samples)
-    # experiment.evaluate_flock(N_Features, n_samples)
-    experiment.drop_evaluation(N_Features, 1)
+    experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
+    # experiment.drop_evaluation(N_Features, n_samples)
         #
     # experiment.evaluate_csfs_auc()

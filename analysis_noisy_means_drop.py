@@ -136,12 +136,17 @@ def visualise_results(dataset_name, dataset_class, N_features, N_samples, fit_cu
     ax.legend(loc='lower center', bbox_to_anchor=(.5, -.25), fancybox=True, shadow=True, ncol=4)
     def get_target_mean():
         if target:
-            path = "datasets/{}/{}.csv".format(dataset_class, dataset_name)
+            path = "datasets/{}/cleaned/{}/{}_clean_bin.csv".format(dataset_class, dataset_name, dataset_name)
             df = CSFSLoader().load_dataset(path)
             return round(np.mean(df[target]),2)
-        return "n.a."
+        return -1
 
-    plt.title('{} (target mean: {}): AUC'.format(dataset_name, get_target_mean()))
+    target_mean = get_target_mean()
+    if target_mean > 0:
+        title = '{} (target mean: {}): AUC'.format(dataset_name, target_mean)
+    else:
+        title = '{}'.format(dataset_name)
+    plt.title(title)
     plt.xlim([-.01, .61])
     plt.ylim([0.5, 1.05])
     plt.xlabel('max error for each feature')

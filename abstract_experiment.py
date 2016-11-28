@@ -127,11 +127,18 @@ class AbstractExperiment:
         df = df_raw[features]
         return df
 
-    def evaluate_flock(self, N_features, n_samples=100):
+    def evaluate_flock(self, N_features, n_samples=100, R=range(3, 100, 1)):
+        """
+
+        :param N_features: list(int)
+        :param n_samples: int
+        :param R: list(int)
+        :return:
+        """
         df_data = self._get_dataset_bin()
         evaluator = CSFSEvaluator(df_data, self.target)
 
-        R = range(3, 100, 1) # number of samples
+        # R = range(3, 100, 1) # number of samples
         result = pd.DataFrame(columns=N_features, index=R)
 
         for r in R:
