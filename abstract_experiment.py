@@ -8,7 +8,7 @@ from joblib import Parallel, delayed
 import CSFSLoader
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector
-from analysis_noisy_means_drop import _conduct_analysis
+from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
 
@@ -108,9 +108,13 @@ class AbstractExperiment:
         # kick too noisy rows
         return df[df_tmp['ratio'] <= threshold]
 
-    def drop_analysis(self, N_features, N_samples=100):
+    def drop_analysis(self, N_features, n_samples=100):
         df = CSFSLoader.CSFSLoader().load_dataset(self.path_bin)
-        Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, self.target, mean_error, N_features, N_samples, self.dataset_name) for mean_error in np.linspace(0.0, 0.6, 200))
+        Parallel(n_jobs=8)(delayed(_conduct_analysis)(df, self.target, mean_error, N_features, n_samples, self.dataset_name) for mean_error in np.linspace(0.0, 0.6, 200))
+
+    def drop_evaluation(self, N_features, n_samples):
+        visualise_results(dataset_name=self.dataset_name, N_features=N_features, show_plot=False, N_samples=n_samples, dataset_class=self.experiment_name)
+
 
     def _get_dataset_bin(self):
         """

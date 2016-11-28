@@ -56,7 +56,7 @@ todo: there is only one best in result data (saving memory). show random and noi
     results = dict()
     pattern = r'(\d+)features_{}samples_(.*?)error'.format(N_samples)
     for f in files:
-        match = re.match(pattern, f)
+        match = re.search(pattern, f)
         if match:
             no_features = int(match.group(1))
             error = float(match.group(2))
