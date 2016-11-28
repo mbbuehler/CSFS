@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
     N_Features = [3, 5, 7, 9, 11]
     n_samples = 100 # number of repetitions to calculate average auc score for samples)
-    n_samples = 1
+    n_samples = 100
     # experiment.set_up_basic_folder_structure()
     # experiment.set_up_experiment_folder_structure('experiment2_por')
     # experiment.preprocess_raw()
