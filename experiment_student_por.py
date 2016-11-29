@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+
+from CSFSCrowdCleaner import CSFSCrowdCleaner, CSFSCrowdAggregator, CSFSCrowdAnalyser
 from CSFSDataPreparator import DataPreparator
 from abstract_experiment import AbstractExperiment
 
@@ -13,12 +15,12 @@ class ExperimentStudent(AbstractExperiment):
         self.path_cleaned = '{}cleaned/{}/student-por_clean.csv'.format(self.base_path, experiment_name)
         self.path_bin = '{}cleaned/{}/student-por_clean_bin.csv'.format(self.base_path, experiment_name)
         self.path_meta = '{}cleaned/{}/student-por_clean_bin_meta.csv'.format(self.base_path, experiment_name)
-        # self.path_answers_raw = '{}results/{}/answers_raw.xlsx'.format(base_path, experiment_name)
-        # self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(base_path, experiment_name)
-        # self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(base_path, experiment_name)
-        # self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(base_path, experiment_name)
-        # self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(base_path, experiment_name)
-        self.path_questions = '{}questions/{}/questions.csv'.format(self.base_path, experiment_name) # experiment2 for experiment3
+        self.path_answers_raw = '{}results/{}/answers_raw.xlsx'.format(self.base_path, experiment_name)
+        self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)
+        self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(self.base_path, experiment_name)
+        self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
+        self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
+        self.path_questions = '{}questions/{}/questions_high-school.csv'.format(self.base_path, experiment_name) # experiment2 for experiment3
         self.path_flock_result = '{}results/{}/flock_auc.csv'.format(self.base_path, experiment_name)
         self.target = 'G3'
 
@@ -58,11 +60,15 @@ class ExperimentStudent(AbstractExperiment):
         Aggregates crowd answers and evaluates for all crowd answers
         :return:
         """
-        pass
+        df_clean = CSFSCrowdCleaner(self.path_questions, self.path_answers_raw, self.target).clean()
+        df_clean.to_csv(self.path_answers_clean, index=True)
 
+        df_aggregated = CSFSCrowdAggregator(df_clean, target=self.target, mode=CSFSCrowdAggregator.Mode.EXTENDED, fake_features={'G3': 0.5}).aggregate()
+        df_aggregated.to_csv(self.path_answers_aggregated, index=True)
 
-    def evaluate_csfs_auc(self):
-        pass
+        df_combined = CSFSCrowdAnalyser().get_combined_df(self.path_answers_aggregated, self.path_meta)
+        df_combined.to_csv(self.path_answers_metadata, index=True)
+
 
 
 if __name__ == '__main__':
@@ -77,7 +83,9 @@ if __name__ == '__main__':
     # experiment.get_metadata()
     # experiment.evaluate_crowd_all_answers()
      # experiment.drop_analysis(N_Features, n_samples)
-    experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
+    # experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
+    # experiment.evaluate_csfs_auc()
+    experiment.evaluate_crowd_all_answers()
     # experiment.drop_evaluation(N_Features, n_samples)
         #
     # experiment.evaluate_csfs_auc()
