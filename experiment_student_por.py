@@ -20,6 +20,7 @@ class ExperimentStudent(AbstractExperiment):
         self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(self.base_path, experiment_name)
         self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
         self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
+        self.path_csfs_std = '{}results/{}/csfs_std.csv'.format(self.base_path, experiment_name)
         self.path_questions = '{}questions/{}/questions_high-school.csv'.format(self.base_path, experiment_name) # experiment2 for experiment3
         self.path_flock_result = '{}results/{}/flock_auc.csv'.format(self.base_path, experiment_name)
         self.target = 'G3'
@@ -84,8 +85,8 @@ if __name__ == '__main__':
     # experiment.evaluate_crowd_all_answers()
      # experiment.drop_analysis(N_Features, n_samples)
     # experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
-    # experiment.evaluate_csfs_auc()
-    experiment.evaluate_crowd_all_answers()
+    experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
+    # experiment.evaluate_crowd_all_answers()
     # experiment.drop_evaluation(N_Features, n_samples)
         #
     # experiment.evaluate_csfs_auc()

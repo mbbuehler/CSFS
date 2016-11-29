@@ -173,12 +173,17 @@ class AbstractExperiment:
         df_combined.to_csv(self.path_answers_metadata, index=True)
 
 
-    def evaluate_csfs_auc(self):
+    def evaluate_csfs_auc(self, fake_features={}):
         df_data = self._get_dataset_bin()
         evaluator = CSFSEvaluator(df_data, self.target)
 
         df_crowd_answers = pd.read_csv(self.path_answers_clean, index_col=0)
         min_count = df_crowd_answers.groupby('feature').agg('count').min().min() # returns number of responses for feature with fewest answers
+
+        for f in fake_features:
+            data = {'answer': fake_features[f], 'answerUser': 'FAKE', 'feature': f}
+            df_crowd_answers = df_crowd_answers.append([data]*min_count, ignore_index=True) # need to append it several times in order to allow random selection
+
         R = range(3, min_count, 1) # number of samples
         N_Feat = [3, 5, 7, 9, 11]
         n_samples = 100 # number of repetitions to calculate mean auc (and std)
