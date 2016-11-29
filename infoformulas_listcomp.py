@@ -46,7 +46,7 @@ def prob(x, xi):
     """
     return sum([1 for x0 in x if x0 == xi])/len(x)
 
-def IG_from_series(instance, h_x, identifier='p'):
+def IG_from_series(instance, h_x, identifier='mean'):
     """
 
     :param instance: series
