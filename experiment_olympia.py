@@ -265,6 +265,9 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    experiment.evaluate_crowd_all_answers()
+    # experiment.evaluate_crowd_all_answers()
     # experiment.evaluate_flock()
-    # experiment.evaluate_csfs_auc()
+    experiment.evaluate_csfs_auc(fake_features={'electricity consumption per person_[26.757, 1320.325]': 0.4,
+                                                'electricity consumption per person_[26.757, 1320.325]_0': 0.6,
+                                                'electricity consumption per person_[26.757, 1320.325]_1': 0.36},
+                                 fake_till_n=25)

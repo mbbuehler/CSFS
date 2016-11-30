@@ -172,17 +172,40 @@ class AbstractExperiment:
         df_combined = CSFSCrowdAnalyser().get_combined_df(self.path_answers_aggregated, self.path_meta)
         df_combined.to_csv(self.path_answers_metadata, index=True)
 
+    def _append_fake_user_answers(self, df, feature, value, n=1):
+        """
+        Appends n user answers for feature with given value to df
+        :param feature: str
+        :param value: float (e.g. median)
+        :param n: int
+        :return:df
+        """
+        data = {'answer': value, 'answerUser': 'FAKE', 'feature': feature}
+        df = df.append([data]*n, ignore_index=True) # need to append it several times in order to allow random selection
+        return df
 
-    def evaluate_csfs_auc(self, fake_features={}):
+
+    def evaluate_csfs_auc(self, fake_features={}, fake_till_n=-1):
         df_data = self._get_dataset_bin()
         evaluator = CSFSEvaluator(df_data, self.target)
 
         df_crowd_answers = pd.read_csv(self.path_answers_clean, index_col=0)
         min_count = df_crowd_answers.groupby('feature').agg('count').min().min() # returns number of responses for feature with fewest answers
 
+        if fake_till_n > min_count:
+            # make sure all features have at least fake_till_n entries by duplicating answers
+            min_count = fake_till_n
+            df_counts = df_crowd_answers.groupby('feature', as_index=False).agg('count')[['feature', 'answer']]
+            df_counts['missing'] = df_counts['answer'].apply(lambda x: x-min_count)
+            df_counts = df_counts[df_counts['missing']<0]
+            for f in df_counts['feature']:
+                median = np.median(df_crowd_answers[df_crowd_answers['feature']==f]['answer'])
+                n = df_counts[df_counts['feature']==f]['missing'].values[0] * -1
+                self._append_fake_user_answers(df_crowd_answers, f, median, n)
+            feature_to_replicate = df_counts[df_counts['answer']<min_count]['feature']
+
         for f in fake_features:
-            data = {'answer': fake_features[f], 'answerUser': 'FAKE', 'feature': f}
-            df_crowd_answers = df_crowd_answers.append([data]*min_count, ignore_index=True) # need to append it several times in order to allow random selection
+            df_crowd_answers = self._append_fake_user_answers(df_crowd_answers, f, fake_features[f], min_count)
 
         R = range(3, min_count, 1) # number of samples
         N_Feat = [3, 5, 7, 9, 11]
