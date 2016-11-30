@@ -3,15 +3,28 @@ from abc import abstractmethod, ABCMeta
 
 import pandas as pd
 import numpy as np
+import sys
 
 
 class KnapsackSolver():
     """
     http://codereview.stackexchange.com/questions/20569/dynamic-programming-solution-to-knapsack-problem (accessed 30.11.16)
     """
+    @staticmethod
+    def isinteger(x):
+        """
+        :param x: single value or list
+        :return: boolean True if all values are int, else False
+        """
+        return np.equal(np.mod(x, 1), 0).all()
 
     @staticmethod
     def knapsack(items, maxweight):
+        weights = [items[i][1] for i in range(len(items))]
+        if not KnapsackSolver.isinteger(weights):
+            print('Weights have to be integers. Aborting knapsack.', file=sys.stderr)
+            return None
+
         # Create an (N+1) by (W+1) 2-d list to contain the running values
         # which are to be filled by the dynamic programming routine.
         #
@@ -81,23 +94,36 @@ class Recommender:
     def __init__(self):
         pass
 
+    def _get_recommended_features(self, df_cost_ig, reconstruction):
+        features_recommended = list()
+        for selected in reconstruction:
+            ig = selected[0]
+            cost = selected[1]
+            features_recommended.append(df_cost_ig[(df_cost_ig['IG'] == ig) & (df_cost_ig['cost']==cost)]['feature'].values[0])
+        return features_recommended
+
     def doit(self, df_cost_ig, budget):
         costs = df_cost_ig['cost'].values
         values = df_cost_ig['IG'].values
 
         items = [[values[i], costs[i]] for i in range(len(costs))]
         bestvalue, reconstruction = KnapsackSolver.knapsack(items, budget)
-        return bestvalue, reconstruction
+
+        features = self._get_recommended_features(df_cost_ig, reconstruction)
+
+        return bestvalue, features
 
 
 def test():
-    data = {'cost': [5, 4, 6, 3],
+    data = {
+            'feature': ['F1', 'F2', 'F3', 'F4'],
+            'cost': [5, 4, 6, 3],
             'IG': [10, 40, 30, 50]
             }
     df_cost_ig = pd.DataFrame(data)
-    bestvalue, reconstruction = Recommender().doit(df_cost_ig, 10)
+    bestvalue, features_recommended = Recommender().doit(df_cost_ig, 10)
     assert bestvalue == 90
-    assert reconstruction == [[40, 4], [50, 3]]
+    assert features_recommended == ['F2', 'F4']
 
 
 if __name__ == '__main__':
