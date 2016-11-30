@@ -91,10 +91,16 @@ class Recommender:
      für dieses Budget wahrscheinlich optimal ist. Hans kann sehr einfach verschiedene Budget’s prüfen.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, df_cost_ig):
+        self.df_cost_ig = df_cost_ig
 
     def _get_recommended_features(self, df_cost_ig, reconstruction):
+        """
+        Finds recommended features in df accordingn to reconstruction
+        :param df_cost_ig: pandas.DataFrame with columns: ['IG', 'cost', 'feature']
+        :param reconstruction: 2d-list. first colum: ig, second column: cost
+        :return: list(str)
+        """
         features_recommended = list()
         for selected in reconstruction:
             ig = selected[0]
@@ -102,16 +108,40 @@ class Recommender:
             features_recommended.append(df_cost_ig[(df_cost_ig['IG'] == ig) & (df_cost_ig['cost']==cost)]['feature'].values[0])
         return features_recommended
 
-    def doit(self, df_cost_ig, budget):
-        costs = df_cost_ig['cost'].values
-        values = df_cost_ig['IG'].values
+    def recommend_for_budget(self, budget):
+        """
+        Recommends features for a given budget
+        :param df_cost_ig:  pandas.DataFrame with columns: ['IG', 'cost', 'feature']
+        :param budget: int
+        :return: bestvalue: sum of IG, feature: list(str)
+        """
+        costs = self.df_cost_ig['cost'].values
+        values = self.df_cost_ig['IG'].values
 
         items = [[values[i], costs[i]] for i in range(len(costs))]
         bestvalue, reconstruction = KnapsackSolver.knapsack(items, budget)
 
-        features = self._get_recommended_features(df_cost_ig, reconstruction)
+        features = self._get_recommended_features(self.df_cost_ig, reconstruction)
 
         return bestvalue, features
+
+    def get_stats_str(self, budget, bestvalue, features):
+        s = """
+Budget: {},
+achieved IG sum: {:.4f},
+# Features chosen (total): {} ({})
+Chosen Features ratio: {:.2f}
+Features recommended:
+- {}
+        """.format(budget,
+                   bestvalue,
+                   len(features),
+                   len(self.df_cost_ig),
+                   len(features) / len(self.df_cost_ig),
+                   "\n- ".join(features),
+
+                   )
+        return s
 
 
 def test():
@@ -121,10 +151,32 @@ def test():
             'IG': [10, 40, 30, 50]
             }
     df_cost_ig = pd.DataFrame(data)
-    bestvalue, features_recommended = Recommender().doit(df_cost_ig, 10)
+    bestvalue, features_recommended = Recommender().recommend_for_budget(df_cost_ig, 10)
     assert bestvalue == 90
     assert features_recommended == ['F2', 'F4']
 
+def test_from_csv():
+    df_olympia = pd.read_csv('example_data/olympia.csv', index_col=0)
+    data = {'feature': list(df_olympia.index), 'cost': list(df_olympia['Cost']), 'IG': list(df_olympia['IG median'])}
+    df_cost_ig = pd.DataFrame(data)
+    budget = 50
+
+    recommender = Recommender(df_cost_ig)
+    bestvalue, features_recommended = recommender.recommend_for_budget(budget)
+    print(recommender.get_stats_str(budget, bestvalue, features_recommended))
+
+
+    df_student = pd.read_csv('example_data/student.csv', index_col=0)
+    data = {'feature': list(df_student.index), 'cost': list(df_student['Cost']), 'IG': list(df_student['IG median'])}
+    df_cost_ig = pd.DataFrame(data)
+    budget = 20
+
+    recommender = Recommender(df_cost_ig)
+    bestvalue, features_recommended = recommender.recommend_for_budget(budget)
+    print(recommender.get_stats_str(budget, bestvalue, features_recommended))
+
+
 
 if __name__ == '__main__':
-    test()
+    # test()
+    test_from_csv()
