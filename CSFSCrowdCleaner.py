@@ -64,17 +64,21 @@ class CSFSCrowdCleaner:
     def __init__(self, path_questions, path_answers, target):
         self.df_questions = pd.read_csv(path_questions, header=None)
         self.df_questions.columns = ['feature', 'question'] # as column names are missing, we add them here. (internal use only)
+        self.df_questions2 = pd.read_csv('datasets/olympia/questions/experiment2-4_all/questions_mod.csv', header=None)
+        self.df_questions2.columns = ['feature', 'question']
+
+
         self.df_answers = pd.read_excel(path_answers)
         self.target = target
 
-    def questions_to_features(self):
-        """
-        Returns the cleaned crowd answers with the corresponding features
-        :return:
-        """
-        df_clean = self.get_clean_df(self.df_answers)
-        df = self.questions_to_features(self.df_questions, df_clean)
-        return df
+    # def questions_to_features(self):
+    #     """
+    #     Returns the cleaned crowd answers with the corresponding features
+    #     :return:
+    #     """
+    #     df_clean = self.get_clean_df(self.df_answers)
+    #     df = self.questions_to_features(self.df_questions, df_clean)
+    #     return df
 
     def remove_spammers(self, df_clean):
         """
@@ -82,6 +86,7 @@ class CSFSCrowdCleaner:
         :param df_clean:
         :return:
         """
+        len_original = len(df_clean)
         answer_users_count = df_clean.groupby('feature').answerUser.apply(lambda x: x.value_counts()).reset_index()
         # df_spammed: df with columns: 'feature', 'level_1', 'answerUser', e.g. 'medals', 'ACS3r2S', 10
         df_spammed = answer_users_count[answer_users_count['answerUser']>1].sort_values(by='answerUser', ascending=False)
@@ -96,6 +101,8 @@ class CSFSCrowdCleaner:
         # exit()
         # spammers = answer_users_count[answer_users_count['answerUser'] > 1]['level_1']
         # df_without_spammers = df_clean[~df_clean['answerUser'].isin(spammers)]
+        len_no_spam = len(df_clean)
+        print('Removed {} spam answers'.format(len_original - len_no_spam))
         return df_clean
 
     def raw_to_clean(self, df_answers):
@@ -181,12 +188,20 @@ class CSFSCrowdCleaner:
         :return:
         """
         # print(tabulate(df_clean, headers='keys'))
+        # make sure whitespaces do not kick out valid answers
+        def clean_string(x):
+            x = x.strip('\n\t')
+            x = " ".join(x.split())
+            # print(x)
+            return x
+        df_clean['question'] = df_clean['question'].apply(clean_string)
+        df_questions['question'] = df_questions['question'].apply(clean_string)
 
-        df_merged = df_clean.merge(df_questions, left_on='question', right_on='question')
+        df_merged = df_clean.merge(df_questions, left_on='question', right_on='question', how='inner')
 
         df_lost = df_clean.drop(df_merged.index)
         print('Lost {} answers when merging questions and features'.format(len(df_lost)))
-        print('indeces lost: {}'.format(list(df_lost.index)))
+        # print('indeces lost: {}'.format(list(df_lost.index)))
 
         df_merged = df_merged.drop('question', axis='columns')
         return df_merged
@@ -197,7 +212,6 @@ class CSFSCrowdCleaner:
         :return: pd.DataFrame
         """
         df_clean = self.raw_to_clean(self.df_answers)
-
         df_clean = self.questions_to_features(self.df_questions, df_clean)
         df_clean = self.remove_spammers(df_clean)
         return df_clean
