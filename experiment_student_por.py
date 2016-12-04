@@ -24,7 +24,8 @@ class ExperimentStudent(AbstractExperiment):
         self.path_questions = '{}questions/{}/questions_high-school.csv'.format(self.base_path, experiment_name) # experiment2 for experiment3
         self.path_flock_result = '{}results/{}/flock_auc.csv'.format(self.base_path, experiment_name)
 
-        self.path_cost_ig = 'application/conditions/test/student.csv'
+        self.path_cost_ig_test = 'application/conditions/test/student.csv'
+        self.path_cost_ig_expert = 'application/conditions/expert/student.csv'
         self.path_budget_evaluation = '{}budget/{}/budget_evaluation.csv'.format(self.base_path, experiment_name)
         self.target = 'G3'
 
@@ -93,5 +94,7 @@ if __name__ == '__main__':
     # experiment.drop_evaluation(N_Features, n_samples)
     budget_range = range(10, 180, 10)
     experiment.evaluate_budget(budget_range)
+    df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
+    experiment.get_figure_budget_evaluation(df_budget_evaluation)
         #
     # experiment.evaluate_csfs_auc()

@@ -4,13 +4,14 @@ import pandas as pd
 import sys
 
 from joblib import Parallel, delayed
+from tabulate import tabulate
 
 import CSFSLoader
 from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdCleaner, CSFSCrowdAnalyser
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from analysis_noisy_means_drop import _conduct_analysis, visualise_results
-from application.CSFSConditionEvaluation import TestEvaluation
+from application.CSFSConditionEvaluation import TestEvaluation, RankingEvaluation
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
 import pandas as pd
@@ -30,7 +31,8 @@ class AbstractExperiment:
     path_csfs_auc = ''
     path_questions = ''
     path_flock_result = ''
-    path_cost_ig = ''
+    path_cost_ig_test = ''
+    path_cost_ig_expert = ''
     path_budget_evaluation = ''
     target = ''
 
@@ -276,29 +278,41 @@ class AbstractExperiment:
         result.to_csv(self.path_flock_result)
 
     def evaluate_budget(self, budget_range):
-        test_evaluation = TestEvaluation(self.path_cost_ig, self.path_bin, self.target)
+        evaluation_test = TestEvaluation(self.path_cost_ig_test, self.path_bin, self.target)
+        df_test = evaluation_test.get_auc_for_budget_range(budget_range)
 
-        df = test_evaluation.get_auc_for_budget_range(budget_range)
-        df.to_csv(self.path_budget_evaluation, index=True)
+        evaluation_expert = RankingEvaluation(self.path_cost_ig_expert, self.path_bin, self.target)
+        df_expert = evaluation_expert.get_auc_for_budget_range(budget_range)
 
-    def get_figure_budget_evaluation(self, df_cost_ig):
+        df_result = pd.concat(dict(test=df_test, expert=df_expert), axis='columns')
+        df_result.to_csv(self.path_budget_evaluation, index=True)
+
+    def get_figure_budget_evaluation(self, df_budget_evaluation):
         """
         plot (in python notebook):
-        plotly.offline.iplot(fig)
+        # plotly.offline.iplot(fig)
         :param df_cost_ig pd.DataFrame
         :return figure
         """
-        trace_auc = go.Scatter(
-            x=df_cost_ig.index,
-            y=df_cost_ig.AUC,
-            name='AUC'
+        def get_traces(df, name):
+            trace_auc = go.Scatter(
+                x=df.index,
+                y=df.AUC,
+                name='AUC {}'.format(name)
+                )
+            trace_fc = go.Bar(
+                x=df.index,
+                y=df.count_features_ratio,
+                name='ratio #features selected {}'.format(name)
             )
-        trace_fc = go.Bar(
-            x=df_cost_ig.index,
-            y=df_cost_ig.count_features_ratio,
-            name='ratio #features selected',
-        )
-        data = [trace_auc, trace_fc]
+            return [trace_auc, trace_fc]
+
+        data = list()
+        for header in set(df_budget_evaluation.columns.get_level_values(0)):  # returns only columns on level 0 (test, expert,...)
+            traces = get_traces(df_budget_evaluation[header], header)
+            data.append(traces[0])
+            data.append(traces[1])
+
 
         layout = go.Layout(
             title='Performance vs. Budget',
