@@ -1,0 +1,18 @@
+,bestvalue,AUC,features,count_features_ratio
+10,0.2302630638,0.543701996928,"['failures_(-0.003, 1]']",0.06666666666666667
+20,0.3597034695,0.543701996928,"['failures_(-0.003, 1]', 'failures_(2, 3]']",0.13333333333333333
+30,0.4784125703,0.620909279841,"['failures_(-0.003, 1]', 'failures_(2, 3]', 'higher==yes']",0.2
+40,0.5140253005,0.620145477546,"['failures_(-0.003, 1]', 'failures_(2, 3]', 'higher==yes', 'paid==yes']",0.26666666666666666
+50,0.5723752594,0.658006867263,"['Pstatus==T', 'failures_(-0.003, 1]', 'failures_(2, 3]', 'higher==yes', 'studytime_(0.997, 2]']",0.3333333333333333
+60,0.6079879896,0.656268546128,"['Pstatus==T', 'failures_(-0.003, 1]', 'failures_(2, 3]', 'higher==yes', 'paid==yes', 'studytime_(0.997, 2]']",0.4
+70,0.6259199287,0.668961687901,"['absences_(21.333, 32]', 'failures_(-0.003, 1]', 'failures_(2, 3]', 'higher==yes', 'paid==yes', 'studytime_(0.997, 2]']",0.4
+80,0.6549693342,0.657744736604,"['Pstatus==T', 'absences_(21.333, 32]', 'failures_(-0.003, 1]', 'failures_(2, 3]', 'higher==yes', 'paid==yes', 'studytime_(0.997, 2]']",0.4666666666666667
+90,0.670924424,0.65848513599,"['Pstatus==T', 'absences_(21.333, 32]', 'failures_(-0.003, 1]', 'failures_(1, 2]', 'failures_(2, 3]', 'higher==yes', 'paid==yes', 'studytime_(0.997, 2]']",0.5333333333333333
+100,0.6854491268,0.646880229511,"['Pstatus==T', 'absences_(21.333, 32]', 'failures_(-0.003, 1]', 'failures_(1, 2]', 'failures_(2, 3]', 'famsize==LE3', 'higher==yes', 'paid==yes', 'studytime_(0.997, 2]']",0.6
+110,0.6973200369,0.665817791633,"['Fjob_teacher', 'Pstatus==T', 'absences_(21.333, 32]', 'failures_(-0.003, 1]', 'failures_(1, 2]', 'failures_(2, 3]', 'famsize==LE3', 'higher==yes', 'paid==yes', 'studytime_(0.997, 2]']",0.6666666666666666
+120,0.709190947,0.680216589862,"['Medu_(-0.004, 1.333]', 'Pstatus==T', 'absences_(21.333, 32]', 'failures_(-0.003, 1]', 'failures_(1, 2]', 'failures_(2, 3]', 'famsize==LE3', 'higher==yes', 'paid==yes', 'studytime_(0.997, 2]']",0.6666666666666666
+130,0.7210618571,0.692608927442,"['Fjob_teacher', 'Medu_(-0.004, 1.333]', 'Pstatus==T', 'absences_(21.333, 32]', 'failures_(-0.003, 1]', 'failures_(1, 2]', 'failures_(2, 3]', 'famsize==LE3', 'higher==yes', 'paid==yes', 'studytime_(0.997, 2]']",0.7333333333333333
+140,0.7326816193,0.694919445197,"['Fjob_teacher', 'Medu_(-0.004, 1.333]', 'Mjob_other', 'Pstatus==T', 'absences_(21.333, 32]', 'failures_(-0.003, 1]', 'failures_(1, 2]', 'failures_(2, 3]', 'famsize==LE3', 'higher==yes', 'paid==yes', 'studytime_(0.997, 2]']",0.8
+150,0.741396441,0.709726981115,"['Fjob_teacher', 'Medu_(-0.004, 1.333]', 'Mjob_at_home', 'Mjob_other', 'Pstatus==T', 'absences_(21.333, 32]', 'failures_(-0.003, 1]', 'failures_(1, 2]', 'failures_(2, 3]', 'famsize==LE3', 'higher==yes', 'paid==yes', 'studytime_(0.997, 2]']",0.8666666666666667
+160,0.741396441,0.709726981115,"['Fjob_teacher', 'Medu_(-0.004, 1.333]', 'Mjob_at_home', 'Mjob_other', 'Pstatus==T', 'absences_(21.333, 32]', 'failures_(-0.003, 1]', 'failures_(1, 2]', 'failures_(2, 3]', 'famsize==LE3', 'higher==yes', 'paid==yes', 'studytime_(0.997, 2]']",0.8666666666666667
+170,0.741396441,0.709726981115,"['Fjob_teacher', 'Medu_(-0.004, 1.333]', 'Mjob_at_home', 'Mjob_other', 'Pstatus==T', 'absences_(21.333, 32]', 'failures_(-0.003, 1]', 'failures_(1, 2]', 'failures_(2, 3]', 'famsize==LE3', 'higher==yes', 'paid==yes', 'studytime_(0.997, 2]']",0.8666666666666667

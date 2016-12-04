@@ -23,6 +23,9 @@ class ExperimentStudent(AbstractExperiment):
         self.path_csfs_std = '{}results/{}/csfs_std.csv'.format(self.base_path, experiment_name)
         self.path_questions = '{}questions/{}/questions_high-school.csv'.format(self.base_path, experiment_name) # experiment2 for experiment3
         self.path_flock_result = '{}results/{}/flock_auc.csv'.format(self.base_path, experiment_name)
+
+        self.path_cost_ig = 'application/conditions/test/student.csv'
+        self.path_budget_evaluation = '{}budget/{}/budget_evaluation.csv'.format(self.base_path, experiment_name)
         self.target = 'G3'
 
 
@@ -85,8 +88,10 @@ if __name__ == '__main__':
     # experiment.evaluate_crowd_all_answers()
      # experiment.drop_analysis(N_Features, n_samples)
     # experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
-    experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
+    # experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
     # experiment.evaluate_crowd_all_answers()
     # experiment.drop_evaluation(N_Features, n_samples)
+    budget_range = range(10, 180, 10)
+    experiment.evaluate_budget(budget_range)
         #
     # experiment.evaluate_csfs_auc()

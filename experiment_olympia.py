@@ -34,6 +34,8 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_csfs_std = 'datasets/olympia/results/{}/csfs_std.csv'.format(experiment_name)
         self.path_questions = 'datasets/olympia/questions/{}/questions_mod2.csv'.format(experiment_name) # experiment2 for experiment3
         self.path_flock_result = 'datasets/olympia/results/{}/flock_auc.csv'.format(experiment_name)
+        self.path_cost_ig = 'application/conditions/test/olympia.csv'
+        self.path_budget_evaluation = 'datasets/olympia/budget/{}/budget_evaluation.csv'.format(experiment_name)
         self.target = 'medals'
 
 
@@ -151,4 +153,7 @@ if __name__ == '__main__':
     # experiment.get_metadata()
     # experiment.evaluate_crowd_all_answers()
     # experiment.evaluate_flock()
-    experiment.evaluate_csfs_auc(fake_till_n=25)
+    # experiment.evaluate_csfs_auc(fake_till_n=25)
+
+    budget_range = range(10, 160, 10)
+    experiment.evaluate_budget(budget_range)

@@ -10,9 +10,12 @@ from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdCleaner, CSFSCrowdAna
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from analysis_noisy_means_drop import _conduct_analysis, visualise_results
+from application.CSFSConditionEvaluation import TestEvaluation
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
-
+import pandas as pd
+import numpy as np
+import plotly.graph_objs as go
 
 class AbstractExperiment:
 
@@ -27,6 +30,8 @@ class AbstractExperiment:
     path_csfs_auc = ''
     path_questions = ''
     path_flock_result = ''
+    path_cost_ig = ''
+    path_budget_evaluation = ''
     target = ''
 
     def __init__(self, dataset_name, experiment_number, experiment_name):
@@ -269,4 +274,43 @@ class AbstractExperiment:
                     aucs[n_feat].append(auc)
             result.loc[r] = {n_feat: np.mean(aucs[n_feat]) for n_feat in aucs}
         result.to_csv(self.path_flock_result)
+
+    def evaluate_budget(self, budget_range):
+        test_evaluation = TestEvaluation(self.path_cost_ig, self.path_bin, self.target)
+
+        df = test_evaluation.get_auc_for_budget_range(budget_range)
+        df.to_csv(self.path_budget_evaluation, index=True)
+
+    def get_figure_budget_evaluation(self, df_cost_ig):
+        """
+        plot (in python notebook):
+        plotly.offline.iplot(fig)
+        :param df_cost_ig pd.DataFrame
+        :return figure
+        """
+        trace_auc = go.Scatter(
+            x=df_cost_ig.index,
+            y=df_cost_ig.AUC,
+            name='AUC'
+            )
+        trace_fc = go.Bar(
+            x=df_cost_ig.index,
+            y=df_cost_ig.count_features_ratio,
+            name='ratio #features selected',
+        )
+        data = [trace_auc, trace_fc]
+
+        layout = go.Layout(
+            title='Performance vs. Budget',
+            xaxis=dict(
+                title='Cost',
+
+            ),
+            yaxis=dict(
+                range=[0, 1],
+            ),
+        )
+
+        fig = go.Figure(data=data, layout=layout)
+        return fig
 
