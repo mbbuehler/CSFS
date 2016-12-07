@@ -1,0 +1,9 @@
+Your friend Richard is an experienced high school teacher. He claims that given some aspects about the student (for example the age of the student), he can predict how well a student will be performing respective to the rest of the class. Specifically, he claims that he can predict whether a student's final grade will be amongst the better half of the class.
+Richard and you brainstorm possibly relevant aspects. You come up with 15 aspects and the costs associated with acquiring the data (in USD). Richard then asks you for your opinion about the relevance of each aspect. He would like you to come up with a ranked list consisting of the 15 aspects you brainstormed.
+Below you find a list with aspects. Please rank the aspects below by taking into consideration the costs associated with acquiring the data. The best aspect should be on top and the worst aspect on the bottom. 
+For example, if you think that the aspect "student lives in the city" (cost: $10 USD) is better than the aspect "student has a part-time job" (cost: $20 USD), you should rank the home address higher than the student's name.
+
+
+
+
+

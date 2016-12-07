@@ -1,0 +1,14 @@
+,IG median,Cost,Description
+"education expenditures_(4.133, 5.6]",0.0562146288,15,The country has medium education expenditures (between 4% of GDP and 6% of GDP).
+"electricity consumption per person_(4244.0286, 48501.33]",0.0896596952,10,The country has a high electricity consumption per person (more than 4200kWh).
+"electricity consumption per person_[26.757, 1320.325]",0.0579934015,10,The country has a low electricity consumption per person (less than 1300kWh).
+"electricity consumption_(55576666666.667, 3890000000000]",0.0896596952,10,The country has a high electricity consumption (more than 56 billion kWh).
+"electricity consumption_[90210000, 7952000000]",0.153404817,10,The country has a low electricity consumption (less than 8 billion kWh).
+"exports_(77193333333.333, 1580000000000]",0.0896596952,15,The country has high exports (more than $77 billion).
+"exports_[1163000, 10071333333.333]",0.0896596952,15,The country has low exports (less than $10 billion).
+"inflation rate_(1.9, 4.2]",-0.0290494055,10,The country has a medium inflation rate (between 2% and 4% of GDP).
+"internet users_[14400, 1167666.667]",0.2490224996,20,"The country has a low number of Internet users (less than 1,168,000)."
+"public debt_(61.733, 226.1]",-0.0290494055,15,The country has high public debt (more than 62% GDP).
+region_3,-0.0152767017,5,The country belongs to Asia.
+region_5,0.0498044999,5,The country belongs to the Sub Saharan Africa region.
+"unemployment rate_[0.3, 6.433]",0.04811151,15,The country has a low unemployment rate (less than 6%).

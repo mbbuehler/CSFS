@@ -1,0 +1,5 @@
+"Your friend Tom is big gambler as well as a sports lover. He loves betting with his friends. He just had an idea for a new betting challenge: Betting on which countries will win a gold medal at the next olympics.
+In order to increase his chances of winning, he wants to build a classifier. For each country, he has already collected its name and whether it won at least one gold medal at the last olympics (target variable). Understandably, no classifier will be able to predict very well with so little information. Tom therefore came up with a few more features he could use, but each of them will cost money, since Tom needs to find and download the data from various sources. Before going ahead with implementing his ideas, Tom turns to you. He would like you to rank his feature ideas based on their costs and how likely you think they increase classifier performance.
+Please help Tom and rank the given aspects in descending order. The most relevant aspect should be on top, the least relevant aspect on the bottom."
+
+

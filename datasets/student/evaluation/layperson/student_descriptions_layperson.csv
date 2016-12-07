@@ -1,0 +1,16 @@
+No,Cost,Description
+1,20,… whether the student's father works as a teacher or not.
+2,40,… whether the student's mother had poor education (no education or only Primary school education until 4th grade)  or not.
+3,20,… whether the student's mother is a house wife and not otherwise employed or if she works away from home.
+4,20,"?? … whether the student's mother works in neither teaching, health care, civil services (e.g. administrative or police) and does not stay at home or not."
+5,10,… whether the student's parents live together or not.
+6,30,… whether the student has a high number of absences (more than 21) or not.
+7,30,… whether the student belongs to the older part of the class (older than 19 years) or not.
+8,20,… whether the student has failed a maximum of one class or more than that.
+9,20,… whether the student has failed the same number of classes like the other students (2 classes) or another number.
+10,20,… whether the student has failed more classes than the other students (three classes or more) or not.
+11,20,… whether the student's family size is rather small (less or equal to three) or rather large.
+12,30,"… whether the student has a rather average health status (not bad, but also not exceptional) or not."
+13,20,… whether the student said that he/she would like to pursue higher education after finishing high school or not.
+14,20,… whether the student takes extra-curricular paid classes (besides the mandatory ones) or not.
+15,30,… whether the spends less than five hours per week studying or more.

@@ -1,0 +1,16 @@
+No,Feature,IG median,Cost,Description
+1,Fjob_teacher,0.0118709101,20,The student's father works as a teacher.
+2,"Medu_(-0.004, 1.333]",0.0237418202,40,The student's mother has no education or only Primary school education until 4th grade.
+3,Mjob_at_home,0.0087148217,20,The student's mother is a house wife.
+4,Mjob_other,0.0116197622,20,"The student's mother works in another field than teaching, health care, civil services (e.g. administrative or police) or at home."
+5,Pstatus==T,0.0290494055,10,The student's parents live together.
+6,"absences_(21.333, 32]",0.0469813446,30,The student has a high number of absences (more than 21)
+7,"age_(19.667, 22]",0,30,The student belongs to to the older part of the class (older than 19 years)
+8,"failures_(-0.003, 1]",0.2302630638,20,The student has failed a maximum of one class.
+9,"failures_(1, 2]",0.0159550898,20,The student has failed an average number of classes (2 classes).
+10,"failures_(2, 3]",0.1294404057,20,The student has failed many classes (three classes or more).
+11,famsize==LE3,0.0145247028,20,The student's family size is rather small (less or equal to three).
+12,"health_(2.333, 3.667]",0,30,The student has an average health status.
+13,higher==yes,0.1187091008,20,The student is willing to to take higher education.
+14,paid==yes,0.0356127302,20,The student takes extra paid classes.
+15,"studytime_(0.997, 2]",0.0649132836,30,The student studies little (less than five hours per week).
