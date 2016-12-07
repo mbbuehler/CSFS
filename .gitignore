@@ -97,3 +97,4 @@ nohup.out
 
 # lock files (backup)
 .~lock*
+local.php
