@@ -62,9 +62,6 @@
     </div>
     <div class="col-md-6">
         <div id="source">
-            <!--<div id="row-0" class="col-md-4"></div>-->
-            <!--<div id="row-1" class="col-md-4"></div>-->
-            <!--<div id="row-2" class="col-md-4"></div>-->
         </div>
     </div>
     <div class="col-md-12">
@@ -84,6 +81,7 @@
         }, {'name': 't4_attr', 'id': 0}]};
 
     function onAdded(){
+        $('#target').find('.item').attr('class', 'row item');
             if (is_count_correct(CSFS.items)) {
                 onFinished();
             }
@@ -99,7 +97,7 @@
     }
 
     function create_item(data) {
-        return $('<div class="row"><span role="button" class="glyphicon glyphicon-move" aria-hidden="true"><span class="feature" id="' + data.id + '">' + data.name + '</span></span></div>');
+        return $('<div class="col-md-4 item"><span role="button" class="glyphicon glyphicon-move" aria-hidden="true"><span class="feature" id="' + data.id + '">' + data.name + '</span></span></div>');
     }
 
     function clear_all() {
@@ -117,34 +115,30 @@
             $('#source').append($item);
         }
 
-        $('#source .row').dblclick(function(){
+        $('#source .item').dblclick(function(){
             $('#target').append($(this));
             onAdded();
         });
 
         var source = document.getElementById('source');
         var target = document.getElementById('target');
-        var sortable = Sortable.create(
+        Sortable.create(
                 source,
                 {
                     group: "ranking-source",
                     handle: '.glyphicon-move',
-                    draggable: '.row',
-                    // Element is removed from the list into another list
-//                    onRemove: function (evt) {
-//                        $(evt.item).wrap('<div class="row">');
-//                    },
+                    draggable: '.item',
                     animation: 200,
                 }
         );
-        var sortable2 = Sortable.create(target,
+        Sortable.create(target,
                 {
                     group: {name: "ranking-target", put: ["ranking-source"]},
-                    draggable: '.row',
+                    draggable: '.item',
                     ghostclass: 'ghost',
                     animation: 300,
                     onAdd: onAdded,
-                    onMove: onAdded
+                    onMove: onAdded,
                 });
     }
 
@@ -192,11 +186,7 @@
             list.push({'id': id, 'name': name});
         }
         return list;
-
-
     }
-
-
 </script>
 </body>
 </html>
