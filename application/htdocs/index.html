@@ -29,13 +29,17 @@
         #source {
             border: 1px darkblue;
             border-style: solid;
+            min-height: 5em;
+            margin-bottom: 1em;
+            padding-left: 1.5em;
         }
 
         #target {
             min-height: 5em;
-            min-width: 5em;
             border: 1px darkgreen;
             border-style: solid;
+            margin-bottom: 1em;
+            padding-left: 1.5em;
         }
 
         .field {
@@ -52,11 +56,11 @@
 <body>
 <h1>Rank Features</h1>
 <div class="container">
-    <div class="col-md-5">
+    <div class="col-md-6">
         <div id="target">
         </div>
     </div>
-    <div class="col-md-5">
+    <div class="col-md-6">
         <div id="source">
             <!--<div id="row-0" class="col-md-4"></div>-->
             <!--<div id="row-1" class="col-md-4"></div>-->
@@ -74,7 +78,25 @@
 
 
 <script>
+    var CSFS = {items: [{'name': 't1_attr', 'id': 0}, {'name': 't2_attr', 'id': 0}, {
+            'name': 't3_attr',
+            'id': 0
+        }, {'name': 't4_attr', 'id': 0}]};
 
+    function onAdded(){
+            if (is_count_correct(CSFS.items)) {
+                onFinished();
+            }
+    }
+    function  onFinished() {
+        if (is_count_correct(CSFS.items)) { // is valid
+            $('#submit').attr('disabled', false);
+            var list_ordered = get_ordered();
+            var output = get_output_string(list_ordered);
+            $('#output').val(output);
+            return true;
+        }
+    }
 
     function create_item(data) {
         return $('<div class="row"><span role="button" class="glyphicon glyphicon-move" aria-hidden="true"><span class="feature" id="' + data.id + '">' + data.name + '</span></span></div>');
@@ -87,19 +109,17 @@
         $('#submit').attr('disabled', 'disabled');
     }
 
-    function reset(items) {
+    function reset() {
         clear_all();
 
-        for (var i = 0; i < items.length; i++) {
-            var $item = create_item(items[i]);
+        for (var i = 0; i < CSFS.items.length; i++) {
+            var $item = create_item(CSFS.items[i]);
             $('#source').append($item);
         }
 
         $('#source .row').dblclick(function(){
             $('#target').append($(this));
-            if (is_count_correct(items)) {
-                $('#submit').attr('disabled', false);
-            }
+            onAdded();
         });
 
         var source = document.getElementById('source');
@@ -123,36 +143,20 @@
                     draggable: '.row',
                     ghostclass: 'ghost',
                     animation: 300,
-                    onAdd: function (evt) {
-                        if (is_count_correct(items)) {
-                            $('#submit').attr('disabled', false);
-                        }
-                    }
+                    onAdd: onAdded,
+                    onMove: onAdded
                 });
     }
 
     (function () {
-        var items = [{'name': 't1_attr', 'id': 0}, {'name': 't2_attr', 'id': 0}, {
-            'name': 't3_attr',
-            'id': 0
-        }, {'name': 't4_attr', 'id': 0}];
-
-        reset(items);
+        reset();
 
         $('#submit').click(function (e) {
-            if (is_count_correct(items)) { // is valid
-                var list_ordered = get_ordered();
-                var output = get_output_string(list_ordered);
-                $('#output').val(output);
-                return true;
-            } else {
-                alert('Please finish ordering.');
-                return false;
-            }
+            onAdded();
         });
 
         $('#reset').click(function () {
-            reset(items);
+            reset();
         });
     })();
 
