@@ -1,0 +1,13 @@
+{
+ "name": "flare",
+ "children": [
+    {
+     "name": "optimization",
+     "children": [
+      {"name": "AspectRatioBanker", "size": 300},
+      {"name": "AspectRatioBanker", "size": 100},
+      {"name": "AspectRatioBanker", "size": 300}
+     ]
+    }
+ ]
+}

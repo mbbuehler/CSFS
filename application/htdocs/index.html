@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feature Ranking</title>
+    <script src="http://rubaxa.github.io/Sortable/Sortable.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <script src="circle.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
+    <style>
+        body {
+            padding: 2em;
+        }
+
+        #source {
+            border: 1px darkblue;
+            border-style: solid;
+        }
+
+        #target {
+            min-height: 5em;
+            min-width: 5em;
+            border: 1px darkgreen;
+            border-style: solid;
+        }
+
+        .field {
+            border: 1px black;
+            border-style: solid;
+            margin: 1em;
+            background-color: lightgreen;
+        }
+
+
+    </style>
+
+</head>
+<body>
+<h1>Rank Features</h1>
+<div class="container">
+    <div class="col-md-5">
+        <div id="target">
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div id="source">
+            <!--<div id="row-0" class="col-md-4"></div>-->
+            <!--<div id="row-1" class="col-md-4"></div>-->
+            <!--<div id="row-2" class="col-md-4"></div>-->
+        </div>
+    </div>
+    <div class="col-md-12">
+        <input id="output" class="form-control" type="text" readonly="readonly">
+    </div>
+    <div class="col-md-12">
+        <button id="reset" type="button" class="btn">Reset</button>
+        <button id="submit" type="button" class="btn btn-primary" disabled="disabled">Finished</button>
+    </div>
+</div>
+
+
+<script>
+
+
+    function create_item(data) {
+        return $('<div class="row"><span role="button" class="glyphicon glyphicon-move" aria-hidden="true"><span class="feature" id="' + data.id + '">' + data.name + '</span></span></div>');
+    }
+
+    function clear_all() {
+        $('#output').val('');
+        $('#source').empty();
+        $('#target').empty();
+        $('#submit').attr('disabled', 'disabled');
+    }
+
+    function reset(items) {
+        clear_all();
+
+        for (var i = 0; i < items.length; i++) {
+            var $item = create_item(items[i]);
+            $('#source').append($item);
+        }
+
+        $('#source .row').dblclick(function(){
+            $('#target').append($(this));
+            if (is_count_correct(items)) {
+                $('#submit').attr('disabled', false);
+            }
+        });
+
+        var source = document.getElementById('source');
+        var target = document.getElementById('target');
+        var sortable = Sortable.create(
+                source,
+                {
+                    group: "ranking-source",
+                    handle: '.glyphicon-move',
+                    draggable: '.row',
+                    // Element is removed from the list into another list
+//                    onRemove: function (evt) {
+//                        $(evt.item).wrap('<div class="row">');
+//                    },
+                    animation: 200,
+                }
+        );
+        var sortable2 = Sortable.create(target,
+                {
+                    group: {name: "ranking-target", put: ["ranking-source"]},
+                    draggable: '.row',
+                    ghostclass: 'ghost',
+                    animation: 300,
+                    onAdd: function (evt) {
+                        if (is_count_correct(items)) {
+                            $('#submit').attr('disabled', false);
+                        }
+                    }
+                });
+    }
+
+    (function () {
+        var items = [{'name': 't1_attr', 'id': 0}, {'name': 't2_attr', 'id': 0}, {
+            'name': 't3_attr',
+            'id': 0
+        }, {'name': 't4_attr', 'id': 0}];
+
+        reset(items);
+
+        $('#submit').click(function (e) {
+            if (is_count_correct(items)) { // is valid
+                var list_ordered = get_ordered();
+                var output = get_output_string(list_ordered);
+                $('#output').val(output);
+                return true;
+            } else {
+                alert('Please finish ordering.');
+                return false;
+            }
+        });
+
+        $('#reset').click(function () {
+            reset(items);
+        });
+    })();
+
+    function get_output_string(list_ordered) {
+        var output = "";
+        for (var i = 0; i < list_ordered.length; i++) {
+            output += '"';
+            output += i;
+            output += ":";
+            output += list_ordered[i].name;
+            output += '"';
+            if (i<list_ordered.length-1) {
+                output += ",";
+            }
+        }
+        output += "|";
+        output += "MD5(...)";
+        return output;
+    }
+
+    function is_count_correct(items) {
+        var list_ordered = get_ordered();
+        return list_ordered.length === items.length;
+    }
+
+    function get_ordered() {
+        var $target = $('#target');
+        var features = $target.find('.feature');
+        var list = [];
+        for (var i = 0; i < features.length; i++) {
+            var id = features[i].id;
+            var name = features[i].innerHTML;
+            list.push({'id': id, 'name': name});
+        }
+        return list;
+
+
+    }
+
+
+</script>
+</body>
+</html>
