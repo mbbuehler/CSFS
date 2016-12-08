@@ -98,3 +98,7 @@ nohup.out
 # lock files (backup)
 .~lock*
 local.php
+
+
+/application/htdocs/nbproject
+application/htdocs/nbproject/

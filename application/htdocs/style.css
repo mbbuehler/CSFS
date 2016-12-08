@@ -37,3 +37,6 @@ html span {
         }
         span.feature{
         }
+        .handle:hover{
+            color: blue;
+        }

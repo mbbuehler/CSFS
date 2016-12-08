@@ -26,6 +26,13 @@
 
 </head>
 <body>
+    
+    <?php 
+    require 'database.php'; 
+    
+    $data = get_student_upwork();
+    ?>
+    
 <h1>Rank Features</h1>
 <div class="container-fluid">
     <div class="col-md-4 col-xs-6">
@@ -47,10 +54,8 @@
 
 
 <script>
-    var CSFS = {items: [{'name': 'FA', 'id': 0}, {'name': 'FB', 'id': 0}, {
-            'name': 'FC',
-            'id': 0
-        }, {'name': 'FD', 'id': 0}]};
+    var items = <?php echo json_encode($data); ?>;
+    var CSFS = {'items': items};
 
     function prepend_numbering(){
         var $rows = $('#target').find('.row');
@@ -82,8 +87,8 @@
         }
     }
 
-    function create_item(data) {
-        return $('<div role="button" class="col-md-4 item"><span  class="glyphicon glyphicon-move" aria-hidden="true"></span> <span class="feature" id="' + data.id + '">' + data.name + '</span></div>');
+    function create_item(item) {
+        return $('<div role="button" class="col-md-4 item"><span  class="glyphicon glyphicon-move handle" aria-hidden="true"></span> <span class="feature" id="' + item.No + '">' + item.No + '</span> <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" title="' + item.Description + '"></span></div>');
     }
 
     function clear_all() {
@@ -113,6 +118,7 @@
                 {
                     group: "ranking-source",
                     draggable: '.item',
+                    handle: '.handle',
                     animation: 200,
                 }
         );
@@ -125,6 +131,7 @@
                     onAdd: onAdded,
                     onMove: onAdded,
                 });
+                
     }
 
     (function () {
@@ -137,6 +144,9 @@
         $('#reset').click(function () {
             reset();
         });
+        
+                
+        $('[data-toggle="tooltip"]').tooltip(); 
     })();
 
     function get_output_string(list_ordered) {
