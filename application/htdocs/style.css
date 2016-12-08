@@ -1,0 +1,39 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+            padding: 2em;
+        }
+
+html span {
+            font-size: x-large;
+
+}
+
+        .box {
+            padding: 0.5em;
+            min-height:20em;
+            margin-bottom: 1em;
+        }
+
+        #target {
+            border: 2px darkblue;
+            border-style: solid;
+        }
+
+        .item {
+            border: 1px black;
+            border-style: solid;
+            margin: 0.2em;
+            height: 5em;
+            background-color: lightgreen;
+            position: relative;
+            text-align: center;
+            padding-top: 1em;
+        }
+        .item:hover{
+            background-color: cyan;
+        }
+        span.feature{
+        }

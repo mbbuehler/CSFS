@@ -21,47 +21,19 @@
             crossorigin="anonymous"></script>
     <script src="circle.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
-    <style>
-        body {
-            padding: 2em;
-        }
+    <link rel="stylesheet" href="style.css"/>
 
-        #source {
-            border: 1px darkblue;
-            border-style: solid;
-            min-height: 5em;
-            margin-bottom: 1em;
-            padding-left: 1.5em;
-        }
-
-        #target {
-            min-height: 5em;
-            border: 1px darkgreen;
-            border-style: solid;
-            margin-bottom: 1em;
-            padding-left: 1.5em;
-        }
-
-        .field {
-            border: 1px black;
-            border-style: solid;
-            margin: 1em;
-            background-color: lightgreen;
-        }
-
-
-    </style>
 
 </head>
 <body>
 <h1>Rank Features</h1>
-<div class="container">
-    <div class="col-md-6">
-        <div id="target">
+<div class="container-fluid">
+    <div class="col-md-4 col-xs-6">
+        <div class="box" id="target">
         </div>
     </div>
-    <div class="col-md-6">
-        <div id="source">
+    <div class="col-md-8 col-xs-6">
+        <div class="box" id="source">
         </div>
     </div>
     <div class="col-md-12">
@@ -75,13 +47,27 @@
 
 
 <script>
-    var CSFS = {items: [{'name': 't1_attr', 'id': 0}, {'name': 't2_attr', 'id': 0}, {
-            'name': 't3_attr',
+    var CSFS = {items: [{'name': 'FA', 'id': 0}, {'name': 'FB', 'id': 0}, {
+            'name': 'FC',
             'id': 0
-        }, {'name': 't4_attr', 'id': 0}]};
+        }, {'name': 'FD', 'id': 0}]};
+
+    function prepend_numbering(){
+        var $rows = $('#target').find('.row');
+        for (var i = 0; i < $rows.length; i++){
+            if ($rows.eq(i).find('.number').length == 0){
+                $rows.eq(i).find('.feature').before($('<span class="number"></span>'));
+            }
+            console.log($rows.eq(i).find('span').eq(2).text());
+            $rows.eq(i).find('.number').text((i+1)+'. ');
+        }
+        console.log('---');
+    }
 
     function onAdded(){
         $('#target').find('.item').attr('class', 'row item');
+
+        prepend_numbering();
             if (is_count_correct(CSFS.items)) {
                 onFinished();
             }
@@ -97,7 +83,7 @@
     }
 
     function create_item(data) {
-        return $('<div class="col-md-4 item"><span role="button" class="glyphicon glyphicon-move" aria-hidden="true"><span class="feature" id="' + data.id + '">' + data.name + '</span></span></div>');
+        return $('<div role="button" class="col-md-4 item"><span  class="glyphicon glyphicon-move" aria-hidden="true"></span> <span class="feature" id="' + data.id + '">' + data.name + '</span></div>');
     }
 
     function clear_all() {
@@ -126,7 +112,6 @@
                 source,
                 {
                     group: "ranking-source",
-                    handle: '.glyphicon-move',
                     draggable: '.item',
                     animation: 200,
                 }
@@ -178,7 +163,7 @@
 
     function get_ordered() {
         var $target = $('#target');
-        var features = $target.find('.feature');
+        var features = $target.find('span.feature');
         var list = [];
         for (var i = 0; i < features.length; i++) {
             var id = features[i].id;
