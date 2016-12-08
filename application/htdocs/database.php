@@ -18,11 +18,24 @@ function get_connection(){
     return $conn;
 }
 
-
-function get_student_upwork(){
+/***
+ * Fetches all data from a table given name and condition.
+ */
+function get_data($dataset_name, $condition){
+    
+    $table_name = $dataset_name."_".$condition; // e.g. student_layperson
+    
     $conn = get_connection();
-    $sql = "SELECT * FROM student_upwork";
+    $sql = "SELECT * FROM ".$table_name;
     $result = $conn->query($sql);
+    $data = result_to_array($result, 'shuffle');
+    return $data;
+}
+
+/***
+ * Converts a $conn->query($sql) into an array.
+ */
+function result_to_array($result, $do_shuffle=False){
     $data = array();
 
     if ($result->num_rows > 0) {
@@ -33,7 +46,22 @@ function get_student_upwork(){
     } else {
         echo "0 results";
     }
+    if($do_shuffle=='shuffle'){
+        shuffle($data); // randomise order so the crowd has no bias
+    }
+    return $data;
+}
+
+/***
+ * Gets the task description
+ */
+function get_task($dataset_name, $condition){
+    $conn = get_connection();
+    $sql = "SELECT * FROM `tasks` WHERE `dataset_name` LIKE '".$dataset_name."' AND `condition` LIKE '".$condition."'";
+    $result = $conn->query($sql);
     $conn->close();
+    $data = result_to_array($result);
+    $data = $data[0]; // this should only return one row
     return $data;
 }
 

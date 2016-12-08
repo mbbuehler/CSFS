@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+        <?php 
+    require 'csfs_strings.php'; 
+    ?>
     <meta charset="UTF-8">
-    <title>Feature Ranking</title>
+    <title><?php echo $S['TITLE']; ?></title>
     <script src="http://rubaxa.github.io/Sortable/Sortable.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"
             integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
@@ -30,11 +33,19 @@
     <?php 
     require 'database.php'; 
     
-    $data = get_student_upwork();
+    $data = get_data('student', 'layperson');
+    $task = get_task('student', 'layperson');
     ?>
     
-<h1>Rank Features</h1>
+
+
 <div class="container-fluid">
+    <h1><?php echo $S['HEADER']; ?></h1>
+    
+    <div class="col-md-12">
+        <h2><?php echo $S['TASK_DESCRIPTION'] ?></h2>
+        <p> <?php echo $task['description']; ?> </p>
+    </div>
     <div class="col-md-4 col-xs-6">
         <div class="box" id="target">
         </div>
@@ -74,12 +85,12 @@
 
         prepend_numbering();
             if (is_count_correct(CSFS.items)) {
-                onFinished();
+                $('#submit').attr('disabled', false);
             }
     }
     function  onFinished() {
         if (is_count_correct(CSFS.items)) { // is valid
-            $('#submit').attr('disabled', false);
+            
             var list_ordered = get_ordered();
             var output = get_output_string(list_ordered);
             $('#output').val(output);
@@ -88,7 +99,7 @@
     }
 
     function create_item(item) {
-        return $('<div role="button" class="col-md-4 item"><span  class="glyphicon glyphicon-move handle" aria-hidden="true"></span> <span class="feature" id="' + item.No + '">' + item.No + '</span> <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" title="' + item.Description + '"></span></div>');
+        return $('<div role="button" class="col-md-3 item"><span  class="glyphicon glyphicon-move handle" aria-hidden="true"></span> <span class="feature" id="' + item.No + '">' + item.Name + '</span> <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" title="' + item.Description + '"></span></div>');
     }
 
     function clear_all() {
@@ -138,7 +149,7 @@
         reset();
 
         $('#submit').click(function (e) {
-            onAdded();
+            onFinished();
         });
 
         $('#reset').click(function () {
@@ -155,7 +166,7 @@
             output += '"';
             output += i;
             output += ":";
-            output += list_ordered[i].name;
+            output += list_ordered[i].id;
             output += '"';
             if (i<list_ordered.length-1) {
                 output += ",";

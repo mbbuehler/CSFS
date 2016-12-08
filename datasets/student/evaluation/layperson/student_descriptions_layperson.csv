@@ -1,16 +1,16 @@
-No,Cost,Description
-1,20,… whether the student's father works as a teacher or not.
-2,40,… whether the student's mother had poor education (no education or only Primary school education until 4th grade)  or not.
-3,20,… whether the student's mother is a house wife and not otherwise employed or if she works away from home.
-4,20,"?? … whether the student's mother works in neither teaching, health care, civil services (e.g. administrative or police) and does not stay at home or not."
-5,10,… whether the student's parents live together or not.
-6,30,… whether the student has a high number of absences (more than 21) or not.
-7,30,… whether the student belongs to the older part of the class (older than 19 years) or not.
-8,20,… whether the student has failed a maximum of one class or more than that.
-9,20,… whether the student has failed the same number of classes like the other students (2 classes) or another number.
-10,20,… whether the student has failed more classes than the other students (three classes or more) or not.
-11,20,… whether the student's family size is rather small (less or equal to three) or rather large.
-12,30,"… whether the student has a rather average health status (not bad, but also not exceptional) or not."
-13,20,… whether the student said that he/she would like to pursue higher education after finishing high school or not.
-14,20,… whether the student takes extra-curricular paid classes (besides the mandatory ones) or not.
-15,30,… whether the spends less than five hours per week studying or more.
+No,Cost,Feature,Name,Description
+1,20,Fjob_teacher,Father is a teacher,You get the information whether the student's father works as a teacher or whether he works as something else.
+2,40,"Medu_(-0.004, 1.333]",Mother has only basic education,You get the information whether the student's mother received only basic education (no education at all / primary school until 4th grade) or more than that.
+3,20,Mjob_at_home,Mother is a house wife,You get the information whether the student's mother is a house wife and is not otherwise employed or whether she works something else.
+4,20,Mjob_other,Mother works something else,"You get the information whether the student's mother is neither a housewife nor works in neither teaching, health care, civil services (e.g. administrative or police)."
+5,10,Pstatus==T,Parents live together,You get the information whether the student's parents live together or separated.
+6,30,"absences_(21.333, 32]",Many absences,You get the information whether the student has a high number of absences (more than 21) or not.
+7,30,"age_(19.667, 22]",Student is old,You get the information whether the student belongs to the older part of the class (older than 19 years) or to the younger part.
+8,20,"failures_(-0.003, 1]",Few failed classes,You get the information whether the student has failed at maximum one class or if he/she failed more classes.
+9,20,"failures_(1, 2]",Failed two classes,You get the information whether the student has failed exactly 2 classes.
+10,20,"failures_(2, 3]",Failed 3+ classes,You get the information whether the student has failed three / more than three classes or whether the student has failed less than three classes.
+11,20,famsize==LE3,Small family,You get the information whether the student's family size is rather small (less or equal to three) or bigger than that.
+12,30,"health_(2.333, 3.667]",Average health status,"You get the information whether the student has an average health status (not bad, but also not exceptional) or another health status."
+13,20,higher==yes,Higher education,You get the information whether the student said that he/she would like to pursue higher education after finishing high school.
+14,20,paid==yes,Extra paid classes,You get the information whether the student takes extra-curricular paid classes (besides the mandatory ones) or not.
+15,30,"studytime_(0.997, 2]",Studies little,You get the information whether the student spends less than five hours per week studying or more than that.

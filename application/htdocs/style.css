@@ -6,8 +6,8 @@ body {
             padding: 2em;
         }
 
-html span {
-            font-size: x-large;
+html span, p {
+            font-size: large;
 
 }
 
