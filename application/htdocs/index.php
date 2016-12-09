@@ -71,7 +71,7 @@
     </div>
     <form method="post" id="form" action="">
     
-    <div class="col-md-3"><?php echo $S['LABEL_NAME']; ?>:</div><div class="col-md-9"><input value="<?php echo $name ?>" name="name" type="text"/></div>
+    <div class="col-md-3"><?php echo $S['LABEL_NAME']; ?>:</div><div class="col-md-9"><input id="name" value="<?php echo $name ?>" name="name" type="text"/></div>
     <div class="col-md-3">Token: </div><div class="col-md-9"><input type="text" value="<?php echo $token; ?>" name="token" readonly="readonly"/></div>
     <div class="alert alert-warning" id="message"></div>
     
@@ -181,8 +181,14 @@
         <?php } ?>
     })();
     
+    function is_form_valid(){
+        var is_valid = false;
+        is_valid = $('#name').val() != "" && is_count_correct(CSFS.items);
+        return is_valid;
+    }
+    
     function onSubmit(e){
-            if (is_count_correct(CSFS.items)) { // is valid
+            if (is_form_valid) { // is valid
             
                 var list_ordered = get_ordered();
                 var output = get_output_string(list_ordered);
@@ -190,7 +196,7 @@
                 return true;
             } else{
                 e.preventDefault();
-                $('#message').val('Incorrect!').show();
+                $('#message').val('Please fill all fields.').show();
             }
             return false;  
     }
