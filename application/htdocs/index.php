@@ -44,6 +44,7 @@
     ?>
     
 <?php if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
+    $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
      $result_token = handle_post($dataset_name, $condition);
      $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
      
@@ -70,10 +71,12 @@
         <p> <?php echo $task['description']; ?> </p>
     </div>
     <form method="post" id="form" action="">
+        
+        <div class="col-md-12"><div class="alert alert-danger" id="message"></div></div>
     
     <div class="col-md-3"><?php echo $S['LABEL_NAME']; ?>:</div><div class="col-md-9"><input id="name" value="<?php echo $name ?>" name="name" type="text"/></div>
     <div class="col-md-3">Token: </div><div class="col-md-9"><input type="text" value="<?php echo $token; ?>" name="token" readonly="readonly"/></div>
-    <div class="alert alert-warning" id="message"></div>
+    
     
     <div class="col-md-4 col-xs-12">
         <div class="box" id="target">
@@ -98,6 +101,7 @@
 <script>
     var items = <?php echo json_encode($data); ?>;
     var CSFS = {'items': items};
+    console.log(CSFS);
 
     function prepend_numbering(){
         var $rows = $('#target').find('.row');
@@ -161,8 +165,9 @@
                     group: {name: "ranking-target", put: ["ranking-source"]},
                     draggable: '.item',
                     animation: 300,
+                    handle: '.handle',
                     onAdd: onAdded,
-                    onMove: onAdded,
+                    onUpdate: onAdded,
                 });
                 
             $('[data-toggle="tooltip"]').tooltip();
@@ -188,17 +193,18 @@
     }
     
     function onSubmit(e){
-            if (is_form_valid) { // is valid
-            
-                var list_ordered = get_ordered();
-                var output = get_output_string(list_ordered);
-                $('#output_token').val(output);
-                return true;
-            } else{
-                e.preventDefault();
-                $('#message').val('Please fill all fields.').show();
-            }
-            return false;  
+        if (is_form_valid()) { // is valid
+
+            var list_ordered = get_ordered();
+            var output = get_output_string(list_ordered);
+            $('#output_token').val(output);
+            return true;
+        } 
+
+        e.preventDefault();
+        $('#message').text('Please fill all fields.').show();
+
+        return false;  
     }
 
     function get_output_string(list_ordered) {
