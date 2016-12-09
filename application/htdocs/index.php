@@ -24,7 +24,7 @@
             crossorigin="anonymous"></script>
     <script src="circle.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
 
 
 </head>
