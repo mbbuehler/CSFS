@@ -65,3 +65,40 @@ function get_task($dataset_name, $condition){
     return $data;
 }
 
+function handle_post($dataset_name, $condition){
+    $clean = [];
+    foreach ($_POST as $key=>$val){
+        $clean[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_STRING);
+    }
+    
+    $output_token = save_ranking($dataset_name, $condition, $clean);
+    
+    if($output_token == false){
+        return "Something went wrong. Please try again.";
+    }
+    return $output_token;
+    
+}
+
+function save_ranking($dataset_name, $condition, $data){
+    $name = $data['name'];
+    $output_token = $data['output_token'];
+    
+    $hash = md5($name);
+    $output_token .= $hash;
+    
+    $conn = get_connection();
+    $sql = "INSERT INTO result (dataset_name, cond, name, output_token)
+VALUES ('".$dataset_name."', '".$condition."', '".$name."','".$output_token."')";
+    
+    if ($conn->query($sql) === TRUE) {
+        
+    return $output_token;
+} else {
+    echo "Error: " . $sql . "<br>" . $conn->error;
+}
+
+$conn->close();
+return false;
+    
+}

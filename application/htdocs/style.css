@@ -6,7 +6,7 @@ body {
             padding: 2em;
         }
 
-html span, p {
+span, p, div, button {
             font-size: large;
 
 }

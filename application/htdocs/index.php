@@ -32,13 +32,36 @@
     
     <?php 
     require 'database.php'; 
+    $dataset_name = 'test';
+    $condition = 'layperson';
     
-    $data = get_data('student', 'layperson');
-    $task = get_task('student', 'layperson');
+    
+    $data = get_data($dataset_name, $condition);
+    $task = get_task('student', $condition);
+    
+    $name = filter_input(INPUT_GET, 'name', FILTER_SANITIZE_STRING);
+    $token = filter_input(INPUT_GET, 'token', FILTER_SANITIZE_STRING);
     ?>
     
-
-
+<?php if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
+     $result_token = handle_post($dataset_name, $condition);
+     $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+     
+    ?>
+    <h1><?php echo $S['THANKS']; ?>, <?php echo $name; ?>!</h1>
+    <p><?php echo $S['TASK_AFTER_SUBMIT']; ?></p>
+    
+    <div class="col-md-3 col-xs-12">
+        Token: 
+    </div>
+    <div class="col-md-9 col-xs-12">
+        <input class="form-control" type="text" name="output_token" value="<?php echo $result_token; ?>" readonly="readonly">
+    </div>
+    <?php
+    
+} else {
+    // Is not post
+    ?>    
 <div class="container-fluid">
     <h1><?php echo $S['HEADER']; ?></h1>
     
@@ -46,22 +69,30 @@
         <h2><?php echo $S['TASK_DESCRIPTION'] ?></h2>
         <p> <?php echo $task['description']; ?> </p>
     </div>
-    <div class="col-md-4 col-xs-6">
+    <form method="post" id="form" action="">
+    
+    <div class="col-md-3"><?php echo $S['LABEL_NAME']; ?>:</div><div class="col-md-9"><input value="<?php echo $name ?>" name="name" type="text"/></div>
+    <div class="col-md-3">Token: </div><div class="col-md-9"><input type="text" value="<?php echo $token; ?>" name="token" readonly="readonly"/></div>
+    <div class="alert alert-warning" id="message"></div>
+    
+    <div class="col-md-4 col-xs-12">
         <div class="box" id="target">
         </div>
     </div>
-    <div class="col-md-8 col-xs-6">
+    <div class="col-md-8 col-xs-12">
         <div class="box" id="source">
         </div>
     </div>
     <div class="col-md-12">
-        <input id="output" class="form-control" type="text" readonly="readonly">
-    </div>
-    <div class="col-md-12">
         <button id="reset" type="button" class="btn">Reset</button>
-        <button id="submit" type="button" class="btn btn-primary" disabled="disabled">Finished</button>
+        <input type="hidden" id="output_token" name="output_token">
+        <button id="submit" type="submit" class="btn btn-primary" disabled="disabled">Finished</button>
     </div>
+    </form>
 </div>
+    <?php 
+} 
+?>
 
 
 <script>
@@ -88,18 +119,9 @@
                 $('#submit').attr('disabled', false);
             }
     }
-    function  onFinished() {
-        if (is_count_correct(CSFS.items)) { // is valid
-            
-            var list_ordered = get_ordered();
-            var output = get_output_string(list_ordered);
-            $('#output').val(output);
-            return true;
-        }
-    }
 
     function create_item(item) {
-        return $('<div role="button" class="col-md-3 item"><span  class="glyphicon glyphicon-move handle" aria-hidden="true"></span> <span class="feature" id="' + item.No + '">' + item.Name + '</span> <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" title="' + item.Description + '"></span></div>');
+        return $('<div role="button" class="col-md-3 col-xs-12 item"><span  class="glyphicon glyphicon-move handle" aria-hidden="true"></span> <span class="feature" id="' + item.No + '">' + item.Name + '</span> <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" title="' + item.Description + '"></span></div>');
     }
 
     function clear_all() {
@@ -110,7 +132,8 @@
     }
 
     function reset() {
-        clear_all();
+        clear_all();$
+        $('#message').hide();
 
         for (var i = 0; i < CSFS.items.length; i++) {
             var $item = create_item(CSFS.items[i]);
@@ -137,43 +160,52 @@
                 {
                     group: {name: "ranking-target", put: ["ranking-source"]},
                     draggable: '.item',
-                    ghostclass: 'ghost',
                     animation: 300,
                     onAdd: onAdded,
                     onMove: onAdded,
                 });
                 
+            $('[data-toggle="tooltip"]').tooltip();
+                
     }
 
+
     (function () {
-        reset();
-
-        $('#submit').click(function (e) {
-            onFinished();
-        });
-
-        $('#reset').click(function () {
+        <?php if($_SERVER['REQUEST_METHOD'] == 'GET'){ ?>
             reset();
-        });
-        
-                
-        $('[data-toggle="tooltip"]').tooltip(); 
+
+            $('#reset').click(function () {
+                reset();
+            }); 
+            $('#form').submit(onSubmit);
+        <?php } ?>
     })();
+    
+    function onSubmit(e){
+            if (is_count_correct(CSFS.items)) { // is valid
+            
+                var list_ordered = get_ordered();
+                var output = get_output_string(list_ordered);
+                $('#output_token').val(output);
+                return true;
+            } else{
+                e.preventDefault();
+                $('#message').val('Incorrect!').show();
+            }
+            return false;  
+    }
 
     function get_output_string(list_ordered) {
         var output = "";
         for (var i = 0; i < list_ordered.length; i++) {
-            output += '"';
             output += i;
             output += ":";
             output += list_ordered[i].id;
-            output += '"';
             if (i<list_ordered.length-1) {
                 output += ",";
             }
         }
         output += "|";
-        output += "MD5(...)";
         return output;
     }
 
