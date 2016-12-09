@@ -23,7 +23,7 @@ function get_connection(){
  */
 function get_data($dataset_name, $condition){
     
-    $table_name = $dataset_name."_".$condition; // e.g. student_layperson
+    $table_name = $dataset_name."_".$condition; // e.g. student_1
     
     $conn = get_connection();
     $sql = "SELECT * FROM ".$table_name;
@@ -44,7 +44,7 @@ function result_to_array($result, $do_shuffle=False){
             $data[] = $row;
         }
     } else {
-        echo "0 results";
+//        echo "0 results";
     }
     if($do_shuffle=='shuffle'){
         shuffle($data); // randomise order so the crowd has no bias
@@ -87,9 +87,11 @@ function save_ranking($dataset_name, $condition, $data){
     $hash = md5($name);
     $output_token .= $hash;
     
+    $comment = $data['comment'];
+    
     $conn = get_connection();
-    $sql = "INSERT INTO result (dataset_name, cond, name, output_token)
-VALUES ('".$dataset_name."', '".$condition."', '".$name."','".$output_token."')";
+    $sql = "INSERT INTO result (dataset_name, cond, name, output_token, comment)
+VALUES ('".$dataset_name."', '".$condition."', '".$name."','".$output_token."', '".$comment."')";
     
     if ($conn->query($sql) === TRUE) {
         
