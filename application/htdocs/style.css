@@ -45,6 +45,11 @@ span, p, div, button {
             font-size: 1.8em;
         }
         
+        footer p {
+            font-size: 1em;
+            text-align: right;
+        }
+        
         @media only screen and (max-device-width: 700px) {
         span.glyphicon.handle {
     font-size: 2em;
