@@ -30,16 +30,15 @@
 
     </head>
     <body>
-        
+
 
         <?php
-        
         require 'database.php';
         $dataset_name = $_GET['dataset_name'] ? filter_input(INPUT_GET, 'dataset_name', FILTER_SANITIZE_STRING) : 'student';
         $condition = $_GET['condition'] ? filter_input(INPUT_GET, 'condition', FILTER_SANITIZE_STRING) : 1;
-        
-        
-        
+
+
+
         $S = get_S($condition);
 //        var_dump($S);
 
@@ -65,15 +64,15 @@
                 <img width="50px" src="images/thumb-up.jpeg" title="saved"/>
             </p>
 
-            <?php if($condition==1){ ?>
-            <div class="col-md-3 col-xs-12">
-                Token: 
-            </div>
-            <div class="col-md-9 col-xs-12">
-                <input class="form-control" type="text" name="output_token" value="<?php echo $result_token; ?>" readonly="readonly">
-            </div>
-                    <?php 
-            } ?>
+            <?php if ($condition == 1) { ?>
+                <div class="col-md-3 col-xs-12">
+                    Token: 
+                </div>
+                <div class="col-md-9 col-xs-12">
+                    <input class="form-control" type="text" name="output_token" value="<?php echo $result_token; ?>" readonly="readonly">
+                </div>
+                <?php }
+            ?>
             <?php
         } else {
             // Is not post
@@ -133,15 +132,14 @@
             var items = <?php echo json_encode($data); ?>;
             var CSFS = {'items': items};
 
-            
+
             (function () {
-<?php if ($_SERVER['REQUEST_METHOD'] == 'GET') { 
-    
+<?php if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     ?>
-//            var isMobileOrTablet = mobileAndTabletcheck();
-//            if(isMobileOrTablet){
-//                window.alert('<?php echo $S['ONMOBILE']; ?>');
-//            }
+    //            var isMobileOrTablet = mobileAndTabletcheck();
+    //            if(isMobileOrTablet){
+    //                window.alert('<?php echo $S['ONMOBILE']; ?>');
+    //            }
                     reset();
 
                     $('#reset').click(function () {
@@ -151,7 +149,7 @@
 <?php } ?>
             })();
 
-                       function onSubmit(e) {
+            function onSubmit(e) {
                 if (is_form_valid()) { // is valid
 
                     var list_ordered = get_ordered();
@@ -170,7 +168,7 @@
         <footer id="footer">
             <hr>
             <p><a href="http://mbuehler.ch">Marcel B&uuml;hler</a>, <?php echo date("Y"); ?></p>
-</footer>
-        
+        </footer>
+
     </body>
 </html>
