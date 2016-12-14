@@ -64,7 +64,7 @@
                 <img width="50px" src="images/thumb-up.jpeg" title="saved"/>
             </p>
 
-            <?php if ($condition == 1) { ?>
+            <?php if ($condition == 1 || $condition == 3) { ?>
                 <div class="col-md-3 col-xs-12">
                     Token: 
                 </div>
