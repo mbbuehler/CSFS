@@ -77,32 +77,7 @@ class Evaluation(metaclass=ABCMeta):
         return result
 
 
-class RankingEvaluation(Evaluation):
-    def __init__(self, path_cost_ig, path_cleaned_bin, target):
-        Evaluation.__init__(self, path_cost_ig, path_cleaned_bin, target)
-
-    def get_selected_index(self, budget):
-        index = list()
-        costs = 0
-        for i, row in self.df_cost_ig.iterrows():
-            if costs + row.cost <= budget:
-                costs += row.cost
-                index.append(i)
-            else:
-                break
-        return index
-
-
-    def get_auc_for_budget(self, budget):
-        index_selected = self.get_selected_index(budget)
-        features = list(self.df_cost_ig['feature'].loc[index_selected])
-        bestvalue = sum(self.df_cost_ig['IG'].loc[index_selected])
-        auc = self.evaluator.evaluate_features(features)
-        return bestvalue, auc, features, len(features)/self.count_features_all
-
-
-class TestEvaluation:
-
+class TestEvaluation(Evaluation):
     def __init__(self, path_cost_ig, path_cleaned_bin, target):
         df = pd.read_csv(path_cost_ig, index_col=0)
         data = {'feature': list(df.index), 'cost': list(df['Cost']), 'IG': list(df['IG median'])}

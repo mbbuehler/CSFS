@@ -11,8 +11,8 @@ from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdCleaner, CSFSCrowdAna
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from analysis_noisy_means_drop import _conduct_analysis, visualise_results
-from application.CSFSConditionEvaluation import TestEvaluation, RankingEvaluation
-from application.EvaluationRanking import ERParser, EREvaluator
+from application.CSFSConditionEvaluation import TestEvaluation
+from application.EvaluationRanking import ERParser, EREvaluator, ERCondition
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
 import pandas as pd
@@ -281,15 +281,15 @@ class AbstractExperiment:
             result.loc[r] = {n_feat: np.mean(aucs[n_feat]) for n_feat in aucs}
         result.to_csv(self.path_flock_result)
 
-    def evaluate_budget(self, budget_range):
-        evaluation_test = TestEvaluation(self.path_cost_ig_test, self.path_bin, self.target)
-        df_test = evaluation_test.get_auc_for_budget_range(budget_range)
-
-        evaluation_expert = RankingEvaluation(self.path_cost_ig_expert, self.path_bin, self.target)
-        df_expert = evaluation_expert.get_auc_for_budget_range(budget_range)
-
-        df_result = pd.concat(dict(test=df_test, expert=df_expert), axis='columns')
-        df_result.to_csv(self.path_budget_evaluation, index=True)
+    # def evaluate_budget(self, budget_range):
+    #     evaluation_test = TestEvaluation(self.path_cost_ig_test, self.path_bin, self.target)
+    #     df_test = evaluation_test.get_auc_for_budget_range(budget_range)
+    #
+    #     evaluation_expert = RankingEvaluation(self.path_cost_ig_expert, self.path_bin, self.target)
+    #     df_expert = evaluation_expert.get_auc_for_budget_range(budget_range)
+    #
+    #     df_result = pd.concat(dict(test=df_test, expert=df_expert), axis='columns')
+    #     df_result.to_csv(self.path_budget_evaluation, index=True)
 
     def evaluate_domain(self, budget_range):
         # load answer df and cost_ig df
@@ -298,8 +298,13 @@ class AbstractExperiment:
         df_cleaned_bin = pd.read_csv(self.path_bin)
 
         evaluator = EREvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target)
-        df_evaluated = evaluator.evaluate_all(budget_range)
-        print(df_evaluated)
+        data_evaluated = evaluator.evaluate_all(budget_range)
+
+        df_test = TestEvaluation(self.path_cost_ig_test, self.path_bin, self.target).get_auc_for_budget_range(budget_range)
+
+        data_evaluated[ERCondition.TEST] = df_test
+        df_evaluated = pd.concat(data_evaluated, axis='columns')
+        df_evaluated.to_csv(self.path_budget_evaluation)
 
 
 

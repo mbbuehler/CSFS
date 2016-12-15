@@ -10,6 +10,7 @@ class ERCondition:
     LAYPERSON = 1 # AMT Turkers
     DOMAIN = 2 # e.g. Teachers
     EXPERT = 3 # Upwork
+    TEST = 4
 
     @staticmethod
     def get_all():
@@ -111,9 +112,14 @@ class EREvaluator:
         return df_evaluated
 
     def evaluate_all(self, budget_range):
+        """
+        returns {condition: DF, } e.g. {2: Df}
+        :param budget_range:
+        :return:dict
+        """
         data = {condition: self.evaluate(budget_range, condition) for condition in ERCondition.get_all()}
-        df_combined = pd.concat(data, axis='columns')
-        return df_combined
+
+        return data
 
 
 
