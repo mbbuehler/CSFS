@@ -43,7 +43,7 @@ class AucForBudgetCalculator:
         result = {budget: self.get_auc_for_budget(budget) for budget in budget_range}
         result = pd.DataFrame.from_dict(result, orient='index')
         result.transpose()
-        result.columns = ['AUC']
+        result.columns = ['auc']
         return result.sort_index()
 
 
@@ -73,7 +73,7 @@ class Evaluation(metaclass=ABCMeta):
         """
         result = {budget: self.get_auc_for_budget(budget) for budget in budget_range}
         result = pd.DataFrame(result).transpose()
-        result.columns = ['bestvalue', 'AUC', 'features', 'count_features_ratio']
+        result.columns = ['bestvalue', 'auc', 'features', 'count_features_ratio']
         return result
 
 

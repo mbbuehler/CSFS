@@ -108,7 +108,7 @@ class EREvaluator:
         ci_low = [e[0] for e in ci_intervals]
         ci_high = [e[1] for e in ci_intervals]
 
-        df_evaluated = pd.DataFrame(dict(mean=mean, std=std, ci_95_low=ci_low, ci_95_hi=ci_high))
+        df_evaluated = pd.DataFrame(dict(auc=mean, std=std, ci_lo=ci_low, ci_hi=ci_high))
         return df_evaluated
 
     def evaluate_all(self, budget_range):

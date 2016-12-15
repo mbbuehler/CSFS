@@ -318,21 +318,22 @@ class AbstractExperiment:
         def get_traces(df, name):
             trace_auc = go.Scatter(
                 x=df.index,
-                y=df.AUC,
+                y=df.auc,
                 name='AUC {}'.format(name)
                 )
-            trace_fc = go.Bar(
-                x=df.index,
-                y=df.count_features_ratio,
-                name='ratio #features selected {}'.format(name)
-            )
-            return [trace_auc, trace_fc]
+            # trace_fc = go.Bar(
+            #     x=df.index,
+            #     y=df.count_features_ratio,
+            #     name='ratio #features selected {}'.format(name)
+            # )
+            # return [trace_auc, trace_fc]
+            return trace_auc
 
         data = list()
         for header in set(df_budget_evaluation.columns.get_level_values(0)):  # returns only columns on level 0 (test, expert,...)
             traces = get_traces(df_budget_evaluation[header], header)
             data.append(traces[0])
-            data.append(traces[1])
+            #data.append(traces[1])
 
 
         layout = go.Layout(
