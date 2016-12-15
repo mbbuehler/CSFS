@@ -6,6 +6,51 @@ from CSFSEvaluator import CSFSEvaluator
 from application.CSFSFeatureRecommender import Recommender
 
 
+class AucForBudgetCalculator:
+    """
+    EvaluationRankingEvaluator. Calculates the AUC for a budget or a budget range given an ordered list of features with cost and IG
+    For each crowd answer, one EREvaluator is needed
+    """
+    def __init__(self, df_features_ranked, df_cleaned_bin, target):
+        self.df_features_ranked = df_features_ranked
+        self.df_cleaned_bin = df_cleaned_bin
+        self.target = target
+        self.auc_evaluator = CSFSEvaluator(df_cleaned_bin, target)
+
+    def get_selected_index(self, budget):
+        index = list()
+        costs = 0
+        for i, row in self.df_features_ranked.iterrows():
+            if costs + row.Cost <= budget:
+                costs += row.Cost
+                index.append(i)
+            else:
+                break
+        return index
+
+
+    def get_auc_for_budget(self, budget):
+        index_selected = self.get_selected_index(budget)
+        if len(index_selected) == 0:
+            print('Budget too low. No features selected')
+            return 0
+
+        features = list(self.df_features_ranked['Feature'].loc[index_selected])
+        auc = self.auc_evaluator.evaluate_features(features)
+        return auc
+
+    def get_auc_for_budget_range(self, budget_range):
+        result = {budget: self.get_auc_for_budget(budget) for budget in budget_range}
+        result = pd.DataFrame.from_dict(result, orient='index')
+        result.transpose()
+        result.columns = ['AUC']
+        return result.sort_index()
+
+
+
+
+
+
 class Evaluation(metaclass=ABCMeta):
     def __init__(self, path_cost_ig, path_cleaned_bin, target):
         df = pd.read_csv(path_cost_ig, index_col=0)
@@ -20,9 +65,16 @@ class Evaluation(metaclass=ABCMeta):
     def get_auc_for_budget(self, budget):
         return
 
-    @abstractmethod
     def get_auc_for_budget_range(self, budget_range):
-        return
+        """
+
+        :param budget_range: list(int)
+        :return: pd.DataFrame with columns: bestvalue, AUC and no_features
+        """
+        result = {budget: self.get_auc_for_budget(budget) for budget in budget_range}
+        result = pd.DataFrame(result).transpose()
+        result.columns = ['bestvalue', 'AUC', 'features', 'count_features_ratio']
+        return result
 
 
 class RankingEvaluation(Evaluation):
@@ -49,18 +101,6 @@ class RankingEvaluation(Evaluation):
         return bestvalue, auc, features, len(features)/self.count_features_all
 
 
-    def get_auc_for_budget_range(self, budget_range):
-        """
-
-        :param budget_range: list(int)
-        :return: pd.DataFrame with columns: bestvalue, AUC and no_features
-        """
-        result = {budget: self.get_auc_for_budget(budget) for budget in budget_range}
-        result = pd.DataFrame(result).transpose()
-        result.columns = ['bestvalue', 'AUC', 'features', 'count_features_ratio']
-        return result
-
-
 class TestEvaluation:
 
     def __init__(self, path_cost_ig, path_cleaned_bin, target):
@@ -78,16 +118,6 @@ class TestEvaluation:
         auc = self.evaluator.evaluate_features(features)
         return bestvalue, auc, features, len(features)/self.count_features_all
 
-    def get_auc_for_budget_range(self, budget_range):
-        """
-
-        :param budget_range: list(int)
-        :return: pd.DataFrame with columns: bestvalue, AUC and no_features
-        """
-        result = {budget: self.get_auc_for_budget(budget) for budget in budget_range}
-        result = pd.DataFrame(result).transpose()
-        result.columns = ['bestvalue', 'AUC', 'features', 'count_features_ratio']
-        return result
 
 
 def test():
