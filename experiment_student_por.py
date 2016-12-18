@@ -26,7 +26,7 @@ class ExperimentStudent(AbstractExperiment):
 
         self.path_cost_ig_test = 'application/conditions/test/student.csv'
         self.path_cost_ig_expert = 'application/conditions/expert/student.csv'
-        self.path_budget_evaluation = '{}budget/{}/budget_evaluation.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation = '{}evaluation/budget_evaluation.csv'.format(self.base_path, experiment_name)
         self.path_cost_ig_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_result = '{}evaluation/student_result.csv'.format(self.base_path, experiment_name)
