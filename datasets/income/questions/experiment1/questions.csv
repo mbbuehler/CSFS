@@ -1,0 +1,60 @@
+marital.status_Married-civ-spouse_0,"If a person working in the USA *is not married*, what is the probability that this person earns more than USD $50K per year?"
+marital.status_Married-civ-spouse_1,"If a person working in the USA *is not married*, what is the probability that this person earns more than USD $50K per year?"
+marital.status_Married-civ-spouse,What is the percentage of people *being married*?
+relationship_Husband_0,"If a person working in the USA **, what is the probability that this person earns more than USD $50K per year?"
+relationship_Husband_1,"If a person working in the USA **, what is the probability that this person earns more than USD $50K per year?"
+relationship_Husband,What is the percentage of people **?
+marital.status_Never-married_0,"If a person working in the USA *has been married or is still married*, what is the probability that this person earns more than USD $50K per year?"
+marital.status_Never-married_1,"If a person working in the USA *has been married or is still married*, what is the probability that this person earns more than USD $50K per year?"
+marital.status_Never-married,What is the percentage of people *having never been married*?
+"education.num_(11, 16]_0","If a person working in the USA *has a bad or average education (less education than 67% of the population)*, what is the probability that this person earns more than USD $50K per year?"
+"education.num_(11, 16]_1","If a person working in the USA *has a bad or average education (less education than 67% of the population)*, what is the probability that this person earns more than USD $50K per year?"
+"education.num_(11, 16]",What is the percentage of people *having a very good education (better than 67% of the population)*?
+relationship_Own-child_0,"If a person working in the USA **, what is the probability that this person earns more than USD $50K per year?"
+relationship_Own-child_1,"If a person working in the USA **, what is the probability that this person earns more than USD $50K per year?"
+relationship_Own-child,What is the percentage of people **?
+sex==Male_0,"If a person working in the USA *is not male*, what is the probability that this person earns more than USD $50K per year?"
+sex==Male_1,"If a person working in the USA *is not male*, what is the probability that this person earns more than USD $50K per year?"
+sex==Male,What is the percentage of people *the male population*?
+"education.num_(6, 11]_0","If a person working in the USA *has a low or high education (either very bad education or very good education, no average education)*, what is the probability that this person earns more than USD $50K per year?"
+"education.num_(6, 11]_1","If a person working in the USA *has a low or high education (either very bad education or very good education, no average education)*, what is the probability that this person earns more than USD $50K per year?"
+"education.num_(6, 11]",What is the percentage of people *having an average education (not very bad and neither very good)*?
+"age_(41.333, 65.667]_0","If a person working in the USA *is younger than 41 years or older than 66 years*, what is the probability that this person earns more than USD $50K per year?"
+"age_(41.333, 65.667]_1","If a person working in the USA *is younger than 41 years or older than 66 years*, what is the probability that this person earns more than USD $50K per year?"
+"age_(41.333, 65.667]",What is the percentage of people *being between 17 and 41 years old*?
+"age_(16.927, 41.333]_0","If a person working in the USA *is older than 41 years*, what is the probability that this person earns more than USD $50K per year?"
+"age_(16.927, 41.333]_1","If a person working in the USA *is older than 41 years*, what is the probability that this person earns more than USD $50K per year?"
+"age_(16.927, 41.333]",What is the percentage of people *being younger than 41 years*?
+"hours.per.week_(0.902, 33.667]_0","If a person working in the USA *works more than 34 hours per week*, what is the probability that this person earns more than USD $50K per year?"
+"hours.per.week_(0.902, 33.667]_1","If a person working in the USA *works more than 34 hours per week*, what is the probability that this person earns more than USD $50K per year?"
+"hours.per.week_(0.902, 33.667]",What is the percentage of people *working less than 34 hours per week*?
+native.country_China_0,"If a person working in the USA *is not from China*, what is the probability that this person earns more than USD $50K per year?"
+native.country_China_1,"If a person working in the USA *is not from China*, what is the probability that this person earns more than USD $50K per year?"
+native.country_China,What is the percentage of people *being from China*?
+native.country_Cuba_0,"If a person working in the USA *is not from Cuba*, what is the probability that this person earns more than USD $50K per year?"
+native.country_Cuba_1,"If a person working in the USA *is not from Cuba*, what is the probability that this person earns more than USD $50K per year?"
+native.country_Cuba,What is the percentage of people *being from Cuba*?
+native.country_Greece_0,"If a person working in the USA *is not from Greece*, what is the probability that this person earns more than USD $50K per year?"
+native.country_Greece_1,"If a person working in the USA *is not from Greece*, what is the probability that this person earns more than USD $50K per year?"
+native.country_Greece,What is the percentage of people *being from Greece*?
+native.country_Ireland_0,"If a person working in the USA *is not from Ireland*, what is the probability that this person earns more than USD $50K per year?"
+native.country_Ireland_1,"If a person working in the USA *is not from Ireland*, what is the probability that this person earns more than USD $50K per year?"
+native.country_Ireland,What is the percentage of people *being from Ireland*?
+"capital.loss_(2904, 4356]_0","If a person working in the USA **, what is the probability that this person earns more than USD $50K per year?"
+"capital.loss_(2904, 4356]_1","If a person working in the USA **, what is the probability that this person earns more than USD $50K per year?"
+"capital.loss_(2904, 4356]",What is the percentage of people **?
+education_Assoc-acdm_0,"If a person working in the USA **, what is the probability that this person earns more than USD $50K per year?"
+education_Assoc-acdm_1,"If a person working in the USA **, what is the probability that this person earns more than USD $50K per year?"
+education_Assoc-acdm,What is the percentage of people **?
+occupation_Armed-Forces_0,"If a person working in the USA *does not work for Armed Forces*, what is the probability that this person earns more than USD $50K per year?"
+occupation_Armed-Forces_1,"If a person working in the USA *does not work for Armed Forces*, what is the probability that this person earns more than USD $50K per year?"
+occupation_Armed-Forces,What is the percentage of people * working for Armed Forces*?
+native.country_Hungary_0,"If a person working in the USA *working in the US is not from Hungary*, what is the probability that this person earns more than USD $50K per year?"
+native.country_Hungary_1,"If a person working in the USA *working in the US is not from Hungary*, what is the probability that this person earns more than USD $50K per year?"
+native.country_Hungary,What is the percentage of people *working the US being from Hungary*?
+education_Assoc-voc_0,"If a person working in the USA **, what is the probability that this person earns more than USD $50K per year?"
+education_Assoc-voc_1,"If a person working in the USA **, what is the probability that this person earns more than USD $50K per year?"
+education_Assoc-voc,What is the percentage of people **?
+native.country_Scotland_0,"If a person working in the USA *is not from Scotland*, what is the probability that this person earns more than USD $50K per year?"
+native.country_Scotland_1,"If a person working in the USA *is not from Scotland*, what is the probability that this person earns more than USD $50K per year?"
+native.country_Scotland,What is the percentage of people *being from Scotland*?
