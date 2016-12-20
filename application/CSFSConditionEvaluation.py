@@ -1,12 +1,12 @@
 from abc import abstractmethod, ABCMeta
 
+import numpy as np
 import pandas as pd
 
 from CSFSEvaluator import CSFSEvaluator
 from application.CSFSFeatureRecommender import Recommender
 
-
-class AucForBudgetCalculator:
+class AUCCalculator:
     """
     EvaluationRankingEvaluator. Calculates the AUC for a budget or a budget range given an ordered list of features with cost and IG
     For each crowd answer, one EREvaluator is needed
@@ -16,6 +16,12 @@ class AucForBudgetCalculator:
         self.df_cleaned_bin = df_cleaned_bin
         self.target = target
         self.auc_evaluator = CSFSEvaluator(df_cleaned_bin, target)
+
+class AucForBudgetCalculator(AUCCalculator):
+    """
+    EvaluationRankingEvaluator. Calculates the AUC for a budget or a budget range given an ordered list of features with cost and IG
+    For each crowd answer, one EREvaluator is needed
+    """
 
     def get_selected_index(self, budget):
         index = list()
@@ -46,10 +52,20 @@ class AucForBudgetCalculator:
         result.columns = ['auc']
         return result.sort_index()
 
+class AUCForOrderedFeaturesCalculator(AUCCalculator):
 
+    def get_auc_for_nofeatures(self, n):
+        features = list(self.df_features_ranked['Feature'].loc[:n])
+        print(features)
+        auc = self.auc_evaluator.evaluate_features(features)
+        return auc
 
-
-
+    def get_auc_for_nofeatures_range(self, n_range):
+        result = {n: self.get_auc_for_nofeatures(n) for n in n_range}
+        result = pd.DataFrame.from_dict(result, orient='index')
+        result.transpose()
+        result.columns = ['auc']
+        return result.sort_index()
 
 class Evaluation(metaclass=ABCMeta):
     def __init__(self, path_cost_ig, path_cleaned_bin, target):
@@ -81,9 +97,9 @@ class TestEvaluation(Evaluation):
     def __init__(self, path_cost_ig, path_cleaned_bin, target):
         df = pd.read_csv(path_cost_ig, index_col=0)
         data = {'feature': list(df.index), 'cost': list(df['Cost']), 'IG': list(df['IG median'])}
-        df_cost_ig = pd.DataFrame(data)
-        self.count_features_all = len(df_cost_ig['feature'])
-        self.recommender = Recommender(df_cost_ig)
+        self.df_cost_ig = pd.DataFrame(data)
+        self.count_features_all = len(self.df_cost_ig['feature'])
+        self.recommender = Recommender(self.df_cost_ig)
 
         df_data = pd.read_csv(path_cleaned_bin)
         self.evaluator = CSFSEvaluator(df_data, target)
@@ -92,6 +108,22 @@ class TestEvaluation(Evaluation):
         bestvalue, features = self.recommender.recommend_for_budget(budget)
         auc = self.evaluator.evaluate_features(features)
         return bestvalue, auc, features, len(features)/self.count_features_all
+
+    def get_auc_for_nofeatures(self, features):
+        auc = self.evaluator.evaluate_features(features)
+        return np.nan, auc, features, len(features)/self.count_features_all
+
+    def get_auc_for_nofeatures_range(self):
+        self.df_cost_ig = self.df_cost_ig.sort_values('IG', ascending=False)
+        features = list(self.df_cost_ig['feature'])
+        features_range = range(1, len(features))
+        result = {i: self.get_auc_for_nofeatures(features[:i]) for i in features_range}
+        result = pd.DataFrame(result).transpose()
+        result.columns = ['bestvalue', 'auc', 'features', 'count_features_ratio']
+        return result
+
+
+
 
 
 

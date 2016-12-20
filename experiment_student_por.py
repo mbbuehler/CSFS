@@ -26,7 +26,8 @@ class ExperimentStudent(AbstractExperiment):
 
         self.path_cost_ig_test = 'application/conditions/test/student.csv'
         self.path_cost_ig_expert = 'application/conditions/expert/student.csv'
-        self.path_budget_evaluation = '{}evaluation/budget_evaluation.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_cost = '{}evaluation/budget_evaluation_cost.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_nofeatures = '{}evaluation/budget_evaluation_nofeatures.csv'.format(self.base_path, experiment_name)
         self.path_cost_ig_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_result = '{}evaluation/student_result.csv'.format(self.base_path, experiment_name)
@@ -99,6 +100,7 @@ if __name__ == '__main__':
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)
-    experiment.evaluate_ranking_all(budget_range)
+    # experiment.evaluate_ranking_cost(budget_range)
+    experiment.evaluate_ranking_nofeatures()
         #
     # experiment.evaluate_csfs_auc()

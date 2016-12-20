@@ -12,7 +12,7 @@ from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 from application.CSFSConditionEvaluation import TestEvaluation
-from application.EvaluationRanking import ERParser, EREvaluator, ERCondition
+from application.EvaluationRanking import ERParser, EREvaluator, ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
 import pandas as pd
@@ -35,7 +35,8 @@ class AbstractExperiment:
     path_cost_ig_test = ''
     path_cost_ig_expert = ''
     path_cost_ig_base = ''
-    path_budget_evaluation = ''
+    path_budget_evaluation_cost = ''
+    path_budget_evaluation_nofeatures = ''
     path_budget_evaluation_base = ''
     path_budget_evaluation_result = ''
     target = ''
@@ -291,20 +292,45 @@ class AbstractExperiment:
     #     df_result = pd.concat(dict(test=df_test, expert=df_expert), axis='columns')
     #     df_result.to_csv(self.path_budget_evaluation, index=True)
 
-    def evaluate_ranking_all(self, budget_range):
+    def evaluate_ranking_cost(self, budget_range):
+        """
+        Creates a csv with auc, CI for each condition (1-4). index: cost
+        :param budget_range:
+        :return:
+        """
         # load answer df and cost_ig df
         df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'date'])
         df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
         df_cleaned_bin = pd.read_csv(self.path_bin)
 
-        evaluator = EREvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target)
+        evaluator = ERCostEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target)
         data_evaluated = evaluator.evaluate_all(budget_range)
 
         df_test = TestEvaluation(self.path_cost_ig_test, self.path_bin, self.target).get_auc_for_budget_range(budget_range)
 
         data_evaluated[ERCondition.TEST] = df_test
         df_evaluated = pd.concat(data_evaluated, axis='columns')
-        df_evaluated.to_csv(self.path_budget_evaluation)
+        df_evaluated.to_csv(self.path_budget_evaluation_cost)
+
+    def evaluate_ranking_nofeatures(self):
+        """
+        Creates a csv with auc, CI for each condition (1-4). index: number of features (nofeatures)
+        :return:
+        """   # load answer df and cost_ig df
+        df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'date'])
+        df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
+        df_cleaned_bin = pd.read_csv(self.path_bin)
+
+        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target)
+        data_evaluated = evaluator.evaluate_all()
+
+        df_test = TestEvaluation(self.path_cost_ig_test, self.path_bin, self.target).get_auc_for_nofeatures_range()
+
+        data_evaluated[ERCondition.TEST] = df_test
+        df_evaluated = pd.concat(data_evaluated, axis='columns')
+        df_evaluated.to_csv(self.path_budget_evaluation_nofeatures)
+
+
 
 
 
