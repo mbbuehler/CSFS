@@ -2,11 +2,11 @@ No,Cost,Feature,Name,Description
 1,20,Fjob_teacher,Father is a teacher,You get the information whether the student's father works as a teacher (YES) or whether he works as something else (NO).
 2,40,"Medu_(-0.004, 1.333]",Mother has only basic education,You get the information whether the student's mother received only basic education (no education at all / primary school until 4th grade) (YES) or more than that (NO).
 3,20,Mjob_at_home,Mother is a house wife,You get the information whether the student's mother is a house wife and is not otherwise employed (YES) or whether she works something else (NO).
-4,20,Mjob_other,Mother works something else,"You get the information whether the student's mother is a housewife or works in either teaching, health care, civil services (e.g. administrative or police) (NO) or if she works something else (YES)."
+4,20,Mjob_other,Mother works something else,"You get the information whether the student's mother is a house wife or works in either teaching, health care, civil services (e.g. administrative or police) (NO) or if she works something else (YES)."
 5,10,Pstatus==T,Parents live together,You get the information whether the student's parents live together (YES) or separated (NO).
-6,30,"absences_(21.333, 32]",Many absences,You get the information whether the student has a high number of absences (more than 21) (YES) or not (NO). There might be reasons for the absences (e.g. sickness) or no reasons (playing truant). 
-7,30,"age_(19.667, 22]",Student is old,You get the information whether the student belongs to the older part of the class (older than 19 years) (YES) or to the younger part (NO).
-8,20,"failures_(-0.003, 1]",Few failed classes,You get the information whether the student has failed at maximum one class (YES) or if he/she failed more classes (NO). The average age of the students is 17 years.
+6,30,"absences_(21.333, 32]",Many absences,You get the information whether the student has a high number of absences (more than 21) (YES) or not (NO). Reasons might be that the student is sick or simply playing truant.
+7,30,"age_(19.667, 22]",Student is old,You get the information whether the student belongs to the older part of the class (older than 19 years) (YES) or to the younger part (NO).  The average age of the students is 17 years.
+8,20,"failures_(-0.003, 1]",Few failed classes,You get the information whether the student has failed none or at maximum one class (YES) or a higher number of classes (NO).
 9,20,"failures_(1, 2]",Failed two classes,You get the information whether the student has failed exactly 2 classes (YES) or another number (NO).
 10,20,"failures_(2, 3]",Failed 3+ classes,You get the information whether the student has failed three / more than three classes (YES) or whether the student has failed less than three classes (NO).
 11,20,famsize==LE3,Small family,You get the information whether the student's family size is rather small (less or equal to three) (YES) or bigger than that (NO).
