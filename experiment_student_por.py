@@ -99,6 +99,6 @@ if __name__ == '__main__':
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)
-    experiment.evaluate_domain(budget_range)
+    experiment.evaluate_ranking_all(budget_range)
         #
     # experiment.evaluate_csfs_auc()

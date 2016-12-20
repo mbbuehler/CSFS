@@ -291,7 +291,7 @@ class AbstractExperiment:
     #     df_result = pd.concat(dict(test=df_test, expert=df_expert), axis='columns')
     #     df_result.to_csv(self.path_budget_evaluation, index=True)
 
-    def evaluate_domain(self, budget_range):
+    def evaluate_ranking_all(self, budget_range):
         # load answer df and cost_ig df
         df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'date'])
         df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)

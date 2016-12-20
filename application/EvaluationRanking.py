@@ -90,25 +90,35 @@ class EREvaluator:
         :param condition: int
         :return: df
         """
-        return self.df_evaluation_result[self.df_evaluation_result['condition']==condition]
-
-    def evaluate(self, budget_range, condition):
-        df_result_filtered = self._get_filtered_result(condition)
+        df_result_filtered = self.df_evaluation_result[self.df_evaluation_result['condition'] == condition]
         if len(df_result_filtered) == 0:
             # no answers available
             return pd.DataFrame()
+        return df_result_filtered
 
-        list_budget_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()]
-        df_budget_aucs = pd.concat(list_budget_aucs, axis='columns').transpose() # df with columns index= x times 'AUC' and columns=cost
-        mean = np.mean(df_budget_aucs)
-        std = np.std(df_budget_aucs)
+    def _get_df_evaluated(self, df, col_val='cost'):
+        """
+        df with columns index= x times 'AUC' and columns=cost or no_features
+        :param df:
+        :return:
+        """
+        mean = np.mean(df)
+        std = np.std(df)
         # http://stackoverflow.com/questions/15033511/compute-a-confidence-interval-from-sample-data
         # The underlying assumptions for both are that the sample (array a) was drawn independently from a normal distribution with unknown standard deviation
-        ci_intervals = [st.t.interval(0.95, len(df_budget_aucs[cost])-1, loc=np.mean(df_budget_aucs[cost]), scale=st.sem(df_budget_aucs[cost])) for cost in df_budget_aucs]
+        ci_intervals = [st.t.interval(0.95, len(df[cost])-1, loc=np.mean(df[cost]), scale=st.sem(df[cost])) for cost in df]
         ci_low = [e[0] for e in ci_intervals]
         ci_high = [e[1] for e in ci_intervals]
 
         df_evaluated = pd.DataFrame(dict(auc=mean, std=std, ci_lo=ci_low, ci_hi=ci_high))
+        return df_evaluated
+
+    def evaluate(self, budget_range, condition):
+        df_result_filtered = self._get_filtered_result(condition)
+
+        list_budget_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()]
+        df_budget_aucs = pd.concat(list_budget_aucs, axis='columns').transpose() # df with columns index= x times 'AUC' and columns=cost
+        df_evaluated = self._get_df_evaluated(df_budget_aucs)
         return df_evaluated
 
     def evaluate_all(self, budget_range):
