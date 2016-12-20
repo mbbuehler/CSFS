@@ -69,8 +69,9 @@ if __name__ == '__main__':
     # experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
     # experiment.evaluate_crowd_all_answers()
     # experiment.drop_analysis(N_Features, n_samples)
-    # N_Features = [65, 80, 95, 116]
-    # experiment.drop_evaluation(N_Features, n_samples)
+    N_Features = [65, 80, 95, 116]
+    # N_Features = [5, 17, 32, 50]
+    experiment.drop_evaluation(N_Features, n_samples)
     #budget_range = range(10, 180, 10)
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
