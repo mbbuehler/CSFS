@@ -256,7 +256,7 @@ class AbstractExperiment:
 
         :param N_features: list(int)
         :param n_samples: int
-        :param R: list(int)
+        :param R: list(int) Costs in HITs
         :return:
         """
         df_data = self._get_dataset_bin()

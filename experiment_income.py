@@ -21,8 +21,8 @@ class ExperimentIncome(AbstractExperiment):
         # self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
         # self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
         # self.path_csfs_std = '{}results/{}/csfs_std.csv'.format(self.base_path, experiment_name)
-        # self.path_questions = '{}questions/{}/questions_high-school.csv'.format(self.base_path, experiment_name) # experiment2 for experiment3
-        # self.path_flock_result = '{}results/{}/flock_auc.csv'.format(self.base_path, experiment_name)
+        # self.path_questions = '{}questions/{}/questions.csv'.format(self.base_path, experiment_name) # experiment2 for experiment3
+        self.path_flock_result = '{}results/{}/flock_auc.csv'.format(self.base_path, experiment_name)
         #
         # self.path_cost_ig_test = 'application/conditions/test/income.csv'
         # self.path_cost_ig_expert = 'application/conditions/expert/income.csv'
@@ -65,13 +65,13 @@ if __name__ == '__main__':
     # experiment.get_metadata()
     # experiment.evaluate_crowd_all_answers()
      # experiment.drop_analysis(N_Features, n_samples)
-    # experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
+    # experiment.evaluate_flock(N_Features, n_samples, range(3, 100, 1))
     # experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
     # experiment.evaluate_crowd_all_answers()
     # experiment.drop_analysis(N_Features, n_samples)
-    N_Features = [65, 80, 95, 116]
+    # N_Features = [65, 80, 95, 116]
     # N_Features = [5, 17, 32, 50]
-    experiment.drop_evaluation(N_Features, n_samples)
+    # experiment.drop_evaluation(N_Features, n_samples)
     #budget_range = range(10, 180, 10)
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
