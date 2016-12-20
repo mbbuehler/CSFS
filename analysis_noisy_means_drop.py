@@ -167,9 +167,9 @@ def visualise_results(dataset_name, dataset_class, N_features, N_samples, fit_cu
     #     mode = match.group(3)
     #     dataset_class = 'artificial{}x{}_{}'.format(set_no, version, mode)
 
-    if not os.path.isdir('plots/{}/'.format(dataset_class)):
-            os.mkdir('plots/{}/'.format(dataset_class))
-    fig1.savefig('plots/{}/noisy_mean_{}.png'.format(dataset_class, dataset_name), dpi=100)
+    if not os.path.isdir('plots/{}/{}/'.format(dataset_name, dataset_class)):
+            os.mkdir('plots/{}/{}/'.format(dataset_name, dataset_class))
+    fig1.savefig('plots/{}/{}/noisy_mean_{}features.png'.format(dataset_name, dataset_class, "_".join(N_features)), dpi=100)
     plt.hold(False)
     plt.clf()
 

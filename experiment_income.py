@@ -68,7 +68,8 @@ if __name__ == '__main__':
     # experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
     # experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
     # experiment.evaluate_crowd_all_answers()
-    experiment.drop_analysis(N_Features, n_samples)
+    # experiment.drop_analysis(N_Features, n_samples)
+    # N_Features = [65, 80, 95, 116]
     # experiment.drop_evaluation(N_Features, n_samples)
     #budget_range = range(10, 180, 10)
     # experiment.evaluate_budget(budget_range)
