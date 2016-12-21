@@ -21,7 +21,7 @@ def create_0_1(features):
     #     print('What is the percentage of secondary education students **? Give your best guess (between 0 and 1).')
 
 def display_questions():
-    path = '../datasets/student/questions/experiment2_por/questions.csv'
+    path = '../datasets/income/questions/experiment1/questions.csv'
     questions = pd.read_csv(path, header=None)
     for q in questions[1]:
         print(q)
@@ -49,36 +49,37 @@ education_Assoc-acdm
 occupation_Armed-Forces
 native.country_Hungary
 education_Assoc-voc
-native.country_Scotland"""
+native.country_Scotland
+income==>50K"""
     features = features.split('\n')
     # create_question_templates(len(features))
     create_0_1(features)
 
     questions = [
-        'is not married',
-        'is married',
-        'are married',
-        '',
-        '',
-        '',
-        'has been married or is still married',
+        'is not married to a civilian (the person can be married to a member of the US military)',
+        'is married to a civilian',
+        'are married to a civilian',
+        'is not a husband',
+        'is a husband',
+        'are husbands',
+        'was married or is still married',
         'has never been married',
         'have never been married',
-        'has a bad or average education (less education than 67% of the population)',
-        'had a very good education (better than 67% of the population)',
-        'have a very good education (better than 67% of the population)',
-        '',
-        '',
-        '',
+        'has spent less than 11 years of his/her life on education', # in education?
+        'has spent 11 or more years of his/her life on education',
+        'have spent 11 or more years of their lives on education',
+        'has no children',
+        'has at least one child',
+        'have at least one child',
         'is not male',
         'is male',
         'are male', # take out?
-        'has a low or high education (either very bad education or very good education, no average education)',
-        'has an average education (not very bad and neither very good)',
-        'have an average education (not very bad and neither very good)',
+        'has spent less than 6 or more than 11 years of his/her life on education',
+        'has spent between 6 and 11 years of his/her life on education',
+        'have spent between 6 and 11 years of their lives on education',
         'is younger than 41 years or older than 66 years',
         'is between 41 and 66 years old',
-        'are between 41 and 661 years old',
+        'are between 41 and 66 years old',
         'is older than 41 years',
         'is younger than 41 years',
         'are younger than 41 years',
@@ -97,35 +98,36 @@ native.country_Scotland"""
         'is not from Ireland',
         'is from Ireland',
         'are from Ireland',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        'does not work for Armed Forces',
-        'works for Armed Forces',
-        'work for Armed Forces',
-        'working in the US is not from Hungary',
-        'working in the US is from Hungary',
+        'has no capital loss or a capital loss lower than $2900 from the purchase and sale of stocks, bonds, and other assets',
+        'has a capital loss higher than $2900 from the purchase and sale of stocks, bonds, and other assets',
+        'have a capital loss higher than $2900 from the purchase and sale of stocks, bonds, and other assets',
+        "does not have an associate's degree",
+        "has an associate's degree",
+        "have an associate's degree",
+        'does not work for the US military',
+        'works for the US military',
+        'work for the US military',
+        'is not from Hungary',
+        'is from Hungary',
         'are from Hungary',
-        '',
-        '',
-        '',
+        'does not have a vocational degree',
+        'has a vocational degree',
+        'have a vocational degree',
         'is not from Scotland',
         'is from Scotland',
         'are from Scotland',
     ]
 
     for i in range(0, len(questions), 3):
-        print('If a person working in the USA *{}*, what is the probability that this person earns more than USD $50K per year?'.format(questions[i]))
-        print('If a person working in the USA *{}*, what is the probability that this person earns more than USD $50K per year?'.format(questions[i+1]))
+        print('If a person working in the USA *{}*, what is the probability that this person earns more than $50,000 per year?'.format(questions[i]))
+        print('If a person working in the USA *{}*, what is the probability that this person earns more than $50,000 per year?'.format(questions[i+1]))
         print('What is the percentage of people working in the USA who *{}*?'.format(questions[i+2]))
+    print('What is the percentage of people working in the USA who *earn more than $50,000 per year*?')
 
 
     # features = ['electricity consumption per person_[26.757, 1320.325]',
     #             'electricity consumption_(55576666666.667, 3890000000000]',
     #             'region_5']
     # create_question_templates(len(features))
-
-    # display_questions()
+    print('---')
+    display_questions()

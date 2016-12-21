@@ -127,14 +127,36 @@ http://scg.sdsu.edu/dataset-adult_r/
     country – Country of origin for person
     income – Boolean Variable. Whether or not the person makes more than \$50,000 per annum income.
 
+=========================================
+Education
+education 	edu_year
+Children 	0
+Less than 1st grade 	0.5
+1st 2nd 3rd or 4th grade 	2.5
+5th or 6th grade 	5.5
+7th and 8th grade 	7.5
+9th grade 	9
+10th grade 	10
+11th grade 	11
+12th grade no diploma 	12
+High school graduate 	12
+Some college but no degree 	14
+Associates degree-academic program 	14
+Associates degree-occup /vocational 	14
+Bachelors degree(BA AB BS) 	16
+Masters degree(MA MS MEng MEd MSW MBA) 	18
+Prof school degree (MD DDS DVM LLB JD) 	20
+Doctorate degree(PhD EdD) 	21
 
 
 Questions:
-- what is capital-gain / capital-loss?
-- what is married civ vs married af spouse?
+- what is capital-gain / capital-loss? ‘capital gains,’ the profits from the sale of stocks, bonds, and other assets
+- what is married civ vs married af spouse? Married to a civilian / Armed Forces
 - relationship? brought up by? noone really knows
-- emplyed people only?
-- education_Assoc-voc ( Assoc-acdm)
+x education_Assoc-voc ( Assoc-acdm) Associates degree-occup /vocational: professional vs. academic
+Adults who are seeking postsecondary education have options when it comes to the notion of higher education: a four-year college, a two-year college with an associate degree, or a vocational/technical school with a certificate program
+
+
 - namy native countries are low
 
 
