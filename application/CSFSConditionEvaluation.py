@@ -56,7 +56,6 @@ class AUCForOrderedFeaturesCalculator(AUCCalculator):
 
     def get_auc_for_nofeatures(self, n):
         features = list(self.df_features_ranked['Feature'].loc[:n])
-        print(features)
         auc = self.auc_evaluator.evaluate_features(features)
         return auc
 
@@ -113,10 +112,9 @@ class TestEvaluation(Evaluation):
         auc = self.evaluator.evaluate_features(features)
         return np.nan, auc, features, len(features)/self.count_features_all
 
-    def get_auc_for_nofeatures_range(self):
+    def get_auc_for_nofeatures_range(self, features_range):
         self.df_cost_ig = self.df_cost_ig.sort_values('IG', ascending=False)
         features = list(self.df_cost_ig['feature'])
-        features_range = range(1, len(features))
         result = {i: self.get_auc_for_nofeatures(features[:i]) for i in features_range}
         result = pd.DataFrame(result).transpose()
         result.columns = ['bestvalue', 'auc', 'features', 'count_features_ratio']

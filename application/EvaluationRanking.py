@@ -76,6 +76,9 @@ class EREvaluator:
         self.parser = ERParser(df_evaluation_base)
         self.target = target
 
+    def evaluate(self, budget_range, condition):
+        pass
+
     def _get_filtered_result(self, condition):
         """
         Removes all conditions but condition from df_result
@@ -105,17 +108,39 @@ class EREvaluator:
         df_evaluated = pd.DataFrame(dict(auc=mean, std=std, ci_lo=ci_low, ci_hi=ci_high))
         return df_evaluated
 
+    def evaluate_all(self, budget_range):
+        """
+        returns {condition: DF, } e.g. {2: Df}
+        :param budget_range:
+        :return:dict
+        """
+        raw_data = dict()
+        evaluated = dict()
+        for condition in ERCondition.get_all():
+            raw, evaluated[condition] = self.evaluate(budget_range, condition)
+            raw_data[condition] = [list(raw[cost]) for cost in raw]
+            # aucs_raw is dict with key: condition (int) and val: dataframe with costs as columns and auc as values
+
+        df_raw = pd.DataFrame(raw_data, index=budget_range)
+        return df_raw, evaluated
+
 
 
 class ERCostEvaluator(EREvaluator):
 
     def evaluate(self, budget_range, condition):
+        """
+
+        :param budget_range:
+        :param condition:
+        :return: df_budget_aucs (raw df with columns = cost, index all 'auc') and df_evaluated (df with CI usw.)
+        """
         df_result_filtered = self._get_filtered_result(condition)
 
         list_budget_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()]
         df_budget_aucs = pd.concat(list_budget_aucs, axis='columns').transpose() # df with columns index= x times 'AUC' and columns=cost
         df_evaluated = self._get_df_evaluated(df_budget_aucs)
-        return df_evaluated
+        return df_budget_aucs, df_evaluated
 
 
     def _get_aucs(self, row, budget_range):
@@ -125,42 +150,26 @@ class ERCostEvaluator(EREvaluator):
         df_aucs = evaluator.get_auc_for_budget_range(budget_range) # df with one col: AUC and index= cost
         return df_aucs
 
-    def evaluate_all(self, budget_range):
-        """
-        returns {condition: DF, } e.g. {2: Df}
-        :param budget_range:
-        :return:dict
-        """
-        data = {condition: self.evaluate(budget_range, condition) for condition in ERCondition.get_all()}
 
-        return data
 
 class ERNofeaturesEvaluator(EREvaluator):
 
-    def evaluate(self, condition):
+    def evaluate(self, budget_range, condition):
         df_result_filtered = self._get_filtered_result(condition)
 
-        list_nofeature_aucs = [self._get_aucs(row) for i,row in df_result_filtered.iterrows()]
+        list_nofeature_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()]
         df_nofeatures_aucs = pd.concat(list_nofeature_aucs, axis='columns').transpose() # df with columns index= x times 'AUC' and columns=cost
         df_evaluated = self._get_df_evaluated(df_nofeatures_aucs)
-        return df_evaluated
+        return df_nofeatures_aucs, df_evaluated
 
-    def _get_aucs(self, row):
+    def _get_aucs(self, row, budget_range):
         token = row.token
         df_features_ranked = self.parser.get_ordered_features(token)
         evaluator = AUCForOrderedFeaturesCalculator(df_features_ranked, self.df_cleaned_bin, self.target)
-        nofeature_range = range(1, len(df_features_ranked))
-        df_aucs = evaluator.get_auc_for_nofeatures_range(nofeature_range) # df with one col: AUC and index= cost
+        df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
         return df_aucs
 
-    def evaluate_all(self):
-        """
-        returns {condition: DF, } e.g. {2: Df}
-        :param budget_range:
-        :return:dict
-        """
-        data = {condition: self.evaluate(condition) for condition in ERCondition.get_all()}
-        return data
+
 
 def test():
     token = '0:13,1:14,2:1,3:3,4:4,5:7,6:11,7:5,8:12,9:15,10:6,11:2,12:8,13:9,14:10|e7cf0fccca7858d47a96c82837e6d439'

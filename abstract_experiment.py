@@ -39,6 +39,8 @@ class AbstractExperiment:
     path_budget_evaluation_nofeatures = ''
     path_budget_evaluation_base = ''
     path_budget_evaluation_result = ''
+    path_budget_evaluation_cost_rawaucs = ''
+    path_budget_evaluation_nofeatures_rawaucs = ''
     target = ''
 
     def __init__(self, dataset_name, experiment_number, experiment_name):
@@ -304,7 +306,7 @@ class AbstractExperiment:
         df_cleaned_bin = pd.read_csv(self.path_bin)
 
         evaluator = ERCostEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target)
-        data_evaluated = evaluator.evaluate_all(budget_range)
+        df_aucs_raw, data_evaluated = evaluator.evaluate_all(budget_range)
 
         df_test = TestEvaluation(self.path_cost_ig_test, self.path_bin, self.target).get_auc_for_budget_range(budget_range)
 
@@ -312,7 +314,9 @@ class AbstractExperiment:
         df_evaluated = pd.concat(data_evaluated, axis='columns')
         df_evaluated.to_csv(self.path_budget_evaluation_cost)
 
-    def evaluate_ranking_nofeatures(self):
+        df_aucs_raw.to_pickle(self.path_budget_evaluation_cost_rawaucs)
+
+    def evaluate_ranking_nofeatures(self, feature_range):
         """
         Creates a csv with auc, CI for each condition (1-4). index: number of features (nofeatures)
         :return:
@@ -322,13 +326,15 @@ class AbstractExperiment:
         df_cleaned_bin = pd.read_csv(self.path_bin)
 
         evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target)
-        data_evaluated = evaluator.evaluate_all()
+        df_aucs_raw, data_evaluated = evaluator.evaluate_all(feature_range)
 
-        df_test = TestEvaluation(self.path_cost_ig_test, self.path_bin, self.target).get_auc_for_nofeatures_range()
+        df_test = TestEvaluation(self.path_cost_ig_test, self.path_bin, self.target).get_auc_for_nofeatures_range(feature_range)
 
         data_evaluated[ERCondition.TEST] = df_test
         df_evaluated = pd.concat(data_evaluated, axis='columns')
         df_evaluated.to_csv(self.path_budget_evaluation_nofeatures)
+
+        df_aucs_raw.to_pickle(self.path_budget_evaluation_nofeatures_rawaucs)
 
 
 

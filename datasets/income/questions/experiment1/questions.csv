@@ -28,15 +28,6 @@ sex==Male,What is the percentage of people working in the USA who *are male*?
 "hours.per.week_(0.902, 33.667]_0","If a person working in the USA *spend more than 34 hours per week at work*, what is the probability that this person earns more than $50,000 per year?"
 "hours.per.week_(0.902, 33.667]_1","If a person working in the USA *spends less than 34 hours per week at work*, what is the probability that this person earns more than $50,000 per year?"
 "hours.per.week_(0.902, 33.667]",What is the percentage of people working in the USA who *spend less than 34 hours per week at work*?
-native.country_China_0,"If a person working in the USA *is not from China*, what is the probability that this person earns more than $50,000 per year?"
-native.country_China_1,"If a person working in the USA *is from China*, what is the probability that this person earns more than $50,000 per year?"
-native.country_China,What is the percentage of people working in the USA who *are from China*?
-native.country_Cuba_0,"If a person working in the USA *is not from Cuba*, what is the probability that this person earns more than $50,000 per year?"
-native.country_Cuba_1,"If a person working in the USA *is from Cuba*, what is the probability that this person earns more than $50,000 per year?"
-native.country_Cuba,What is the percentage of people working in the USA who *are from Cuba*?
-native.country_Greece_0,"If a person working in the USA *is not from Greece*, what is the probability that this person earns more than $50,000 per year?"
-native.country_Greece_1,"If a person working in the USA *is from Greece*, what is the probability that this person earns more than $50,000 per year?"
-native.country_Greece,What is the percentage of people working in the USA who *are from Greece*?
 native.country_Ireland_0,"If a person working in the USA *is not from Ireland*, what is the probability that this person earns more than $50,000 per year?"
 native.country_Ireland_1,"If a person working in the USA *is from Ireland*, what is the probability that this person earns more than $50,000 per year?"
 native.country_Ireland,What is the percentage of people working in the USA who *are from Ireland*?
