@@ -38,6 +38,8 @@ class ExperimentStudent(AbstractExperiment):
         self.path_cost_ig_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_result = '{}evaluation/student_result.csv'.format(self.base_path, experiment_name)
+
+        self.path_descriptions_domain = '{}evaluation/experts_domain/student_descriptions_domain.csv'.format(self.base_path)
         self.target = 'G3'
 
 
@@ -115,6 +117,13 @@ paid==yes                1    1    0    0    1    2    0    0    0     0     1  
             for f in counted:
                 df_counted[i].loc[f] = counted[f]
         df_counted = df_counted.fillna(0)
+
+        # only for joining feature names with readable names
+        # df_descriptions = pd.read_csv(self.path_descriptions_domain, header=0)
+        # df_joined = pd.merge(df_descriptions, df_counted, left_on='Feature', right_index=True)
+        # df_joined = df_joined.drop(['No', 'Feature', 'Cost', 'Description'], axis=1)
+        # df_joined = df_joined.set_index('Name')
+
         df_counted.to_csv(self.path_budget_evaluation_result_domain)
 
 
