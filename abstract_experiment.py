@@ -12,7 +12,7 @@ from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 from application.CSFSConditionEvaluation import TestEvaluation
-from application.EvaluationRanking import ERParser, EREvaluator, ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
+from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
 import pandas as pd
@@ -305,7 +305,7 @@ class AbstractExperiment:
         df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
         df_cleaned_bin = pd.read_csv(self.path_bin)
 
-        evaluator = ERCostEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target)
+        evaluator = ERCostEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target, dataset_name=self.dataset_name)
         df_aucs_raw, data_evaluated = evaluator.evaluate_all(budget_range)
 
         df_test = TestEvaluation(self.path_cost_ig_test, self.path_bin, self.target).get_auc_for_budget_range(budget_range)
@@ -325,7 +325,7 @@ class AbstractExperiment:
         df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
         df_cleaned_bin = pd.read_csv(self.path_bin)
 
-        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target)
+        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target, dataset_name=self.dataset_name)
         df_aucs_raw, data_evaluated = evaluator.evaluate_all(feature_range)
 
         df_test = TestEvaluation(self.path_cost_ig_test, self.path_bin, self.target).get_auc_for_nofeatures_range(feature_range)

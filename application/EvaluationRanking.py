@@ -17,6 +17,27 @@ class ERCondition:
         return [ERCondition.LAYPERSON, ERCondition.DOMAIN, ERCondition.EXPERT]
 
 
+class ERFilterer:
+
+    def __init__(self, dataset_name, condition):
+        self.dataset_name = dataset_name
+        self.condition = condition
+
+    def get_filtered_result(self, df_evaluation_result):
+        """
+        Removes all conditions but condition from df_result
+        :param condition: int
+        :return: df
+        """
+        df_result_filtered = df_evaluation_result[(df_evaluation_result['condition'] == self.condition) & (df_evaluation_result['dataset_name'] == self.dataset_name)]
+        index_keep = df_result_filtered['name'].str.lower() != 'test'
+        df_result_filtered = df_result_filtered[index_keep]
+        print('Filterer removed {} rows'.format(len(df_evaluation_result) - len(df_result_filtered)))
+        if len(df_result_filtered) == 0:
+            # no answers available
+            return pd.DataFrame()
+        return df_result_filtered
+
 class ERParser:
     def __init__(self, df_evaluation_base):
         """
@@ -69,12 +90,13 @@ class EREvaluator:
 70   0.639263   0.598034  0.618649  0.0148
     """
 
-    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target):
+    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target, dataset_name):
         self.df_evaluation_result = df_evaluation_result
         self.df_evaluation_base = df_evaluation_base
         self.df_cleaned_bin = df_cleaned_bin
         self.parser = ERParser(df_evaluation_base)
         self.target = target
+        self.dataset_name = dataset_name
 
     def evaluate(self, budget_range, condition):
         pass
@@ -85,10 +107,8 @@ class EREvaluator:
         :param condition: int
         :return: df
         """
-        df_result_filtered = self.df_evaluation_result[self.df_evaluation_result['condition'] == condition]
-        if len(df_result_filtered) == 0:
-            # no answers available
-            return pd.DataFrame()
+        filterer = ERFilterer(self.dataset_name, condition)
+        df_result_filtered = filterer.get_filtered_result(self.df_evaluation_result)
         return df_result_filtered
 
     def _get_df_evaluated(self, df):
