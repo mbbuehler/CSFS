@@ -10,6 +10,7 @@ from scipy.optimize import curve_fit
 from CSFSEvaluator import CSFSEvaluator
 from CSFSLoader import CSFSLoader
 from CSFSSelector import CSFSAllFeaturesNoisySelector, CSFSBestActualSelector, CSFSRandomSelector
+from util.util_folders import create_if_not_exist_rec
 
 cmap = plt.get_cmap('jet_r')
 
@@ -167,9 +168,10 @@ def visualise_results(dataset_name, dataset_class, N_features, N_samples, fit_cu
     #     mode = match.group(3)
     #     dataset_class = 'artificial{}x{}_{}'.format(set_no, version, mode)
 
-    if not os.path.isdir('plots/{}/'.format(dataset_class)):
-            os.mkdir('plots/{}/'.format(dataset_class))
-    fig1.savefig('plots/{}/noisy_mean_{}.png'.format(dataset_class, dataset_name), dpi=100)
+
+    create_if_not_exist_rec(['plots', dataset_name], dataset_class) # folders
+
+    fig1.savefig('plots/{}/{}/noisy_mean_{}features.png'.format(dataset_name, dataset_class, "_".join(list(map(str, N_features)))), dpi=100)
     plt.hold(False)
     plt.clf()
 

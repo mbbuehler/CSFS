@@ -15,14 +15,14 @@ class ExperimentIncome(AbstractExperiment):
         self.path_cleaned = '{}cleaned/{}/income_clean.csv'.format(self.base_path, experiment_name)
         self.path_bin = '{}cleaned/{}/income_clean_bin.csv'.format(self.base_path, experiment_name)
         self.path_meta = '{}cleaned/{}/income_clean_bin_meta.csv'.format(self.base_path, experiment_name)
-        # self.path_answers_raw = '{}results/{}/answers_raw.xlsx'.format(self.base_path, experiment_name)
-        # self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)
-        # self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(self.base_path, experiment_name)
-        # self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
-        # self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
+        self.path_answers_raw = '{}results/{}/answers_raw.xlsx'.format(self.base_path, experiment_name)
+        self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)
+        self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(self.base_path, experiment_name)
+        self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
+        self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
         # self.path_csfs_std = '{}results/{}/csfs_std.csv'.format(self.base_path, experiment_name)
-        # self.path_questions = '{}questions/{}/questions_high-school.csv'.format(self.base_path, experiment_name) # experiment2 for experiment3
-        # self.path_flock_result = '{}results/{}/flock_auc.csv'.format(self.base_path, experiment_name)
+        self.path_questions = '{}questions/{}/questions.csv'.format(self.base_path, experiment_name)
+        self.path_flock_result = '{}results/{}/flock_auc.csv'.format(self.base_path, experiment_name)
         #
         # self.path_cost_ig_test = 'application/conditions/test/income.csv'
         # self.path_cost_ig_expert = 'application/conditions/expert/income.csv'
@@ -56,7 +56,7 @@ class ExperimentIncome(AbstractExperiment):
 if __name__ == '__main__':
     experiment = ExperimentIncome('income', 1, 'experiment1')
 
-    N_Features = range(5, 118, 3)
+    N_Features = range(3, 17, 2)
     n_samples = 100 # number of repetitions to calculate average auc score for samples)
     # experiment.set_up_basic_folder_structure()
     # experiment.set_up_experiment_folder_structure('experiment1')
@@ -65,10 +65,12 @@ if __name__ == '__main__':
     # experiment.get_metadata()
     # experiment.evaluate_crowd_all_answers()
      # experiment.drop_analysis(N_Features, n_samples)
-    # experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
-    # experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
-    # experiment.evaluate_crowd_all_answers()
-    experiment.drop_analysis(N_Features, n_samples)
+    experiment.evaluate_flock(N_Features, n_samples, range(3, 100, 1))
+    experiment.evaluate_csfs_auc()
+
+    # experiment.drop_analysis(N_Features, n_samples)
+    # N_Features = [65, 80, 95, 116]
+    # N_Features = [5, 17, 32, 50]
     # experiment.drop_evaluation(N_Features, n_samples)
     #budget_range = range(10, 180, 10)
     # experiment.evaluate_budget(budget_range)

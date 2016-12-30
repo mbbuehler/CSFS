@@ -1,9 +1,13 @@
+from collections import Counter
+
 import numpy as np
 import pandas as pd
+from tabulate import tabulate
 
 from CSFSCrowdCleaner import CSFSCrowdCleaner, CSFSCrowdAggregator, CSFSCrowdAnalyser
 from CSFSDataPreparator import DataPreparator
 from abstract_experiment import AbstractExperiment
+from application.EvaluationRanking import ERFilterer, ERCondition, ERParser
 
 
 class ExperimentStudent(AbstractExperiment):
@@ -26,10 +30,16 @@ class ExperimentStudent(AbstractExperiment):
 
         self.path_cost_ig_test = 'application/conditions/test/student.csv'
         self.path_cost_ig_expert = 'application/conditions/expert/student.csv'
-        self.path_budget_evaluation = '{}evaluation/budget_evaluation.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_cost = '{}evaluation/budget_evaluation_cost.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_nofeatures = '{}evaluation/budget_evaluation_nofeatures.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_cost_rawaucs = '{}evaluation/budget_evaluation_cost_rawaucs.pickle'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_nofeatures_rawaucs = '{}evaluation/budget_evaluation_nofeatures_rawaucs.pickle'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_result_domain = '{}evaluation/experts_domain/result_domain.csv'.format(self.base_path)
         self.path_cost_ig_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_result = '{}evaluation/student_result.csv'.format(self.base_path, experiment_name)
+
+        self.path_descriptions_domain = '{}evaluation/experts_domain/student_descriptions_domain.csv'.format(self.base_path)
         self.target = 'G3'
 
 
@@ -77,6 +87,48 @@ class ExperimentStudent(AbstractExperiment):
         df_combined = CSFSCrowdAnalyser().get_combined_df(self.path_answers_aggregated, self.path_meta)
         df_combined.to_csv(self.path_answers_metadata, index=True)
 
+    def domain_evaluation(self):
+        """
+        saves df with columns: rank (e.g. first rank counted paid==yes once), index: features, values: counts
+                                1    2    3    4    5    6    7    8    9    10    11    12    13    14    15
+---------------------  ---  ---  ---  ---  ---  ---  ---  ---  ---  ----  ----  ----  ----  ----  ----
+Pstatus==T               0    0    0    0    0    1    1    2    2     0     0     1     0     0     0
+failures_(-0.003, 1]     1    2    0    1    1    0    0    1    0     0     0     0     1     0     0
+paid==yes                1    1    0    0    1    2    0    0    0     0     1     0     0     1     0
+        :return:
+        """
+        df = pd.read_csv(self.path_budget_evaluation_result, names=['dataset_name', 'condition', 'name', 'token', 'comment', 'date'])
+        df = ERFilterer(self.dataset_name, ERCondition.DOMAIN).get_filtered_result(df)
+        tokens = list(df['token'])
+        df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
+        parser = ERParser(df_evaluation_base)
+
+        feature_lists = list()
+        for token in tokens:
+            features = list(parser.get_ordered_features(token)['Feature'])
+            feature_lists.append(features)
+        features_all = set(feature_lists[0])
+        n = len(features_all) # number of features
+        m = len(feature_lists) # number of responses
+        data = {i+1:[feature_lists[l][i] for l in range(m)] for i in range(n)}
+        df_counted = pd.DataFrame(index=features_all, columns=[i for i in data])
+        for i in data:
+            counted = Counter(data[i])
+            for f in counted:
+                df_counted[i].loc[f] = counted[f]
+        df_counted = df_counted.fillna(0)
+
+        # only for joining feature names with readable names
+        # df_descriptions = pd.read_csv(self.path_descriptions_domain, header=0)
+        # df_joined = pd.merge(df_descriptions, df_counted, left_on='Feature', right_index=True)
+        # df_joined = df_joined.drop(['No', 'Feature', 'Cost', 'Description'], axis=1)
+        # df_joined = df_joined.set_index('Name')
+
+        df_counted.to_csv(self.path_budget_evaluation_result_domain)
+
+
+
+
 
 
 if __name__ == '__main__':
@@ -96,9 +148,12 @@ if __name__ == '__main__':
     # experiment.evaluate_crowd_all_answers()
     # experiment.drop_evaluation(N_Features, n_samples)
     budget_range = range(10, 180, 10)
+    no_features = range(1, 14)
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)
-    experiment.evaluate_domain(budget_range)
+    # experiment.evaluate_ranking_cost(budget_range)
+    # experiment.evaluate_ranking_nofeatures(no_features)
         #
     # experiment.evaluate_csfs_auc()
+    experiment.domain_evaluation()

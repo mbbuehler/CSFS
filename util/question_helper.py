@@ -21,7 +21,7 @@ def create_0_1(features):
     #     print('What is the percentage of secondary education students **? Give your best guess (between 0 and 1).')
 
 def display_questions():
-    path = '../datasets/student/questions/experiment2_por/questions.csv'
+    path = '../datasets/income/questions/experiment1/questions.csv'
     questions = pd.read_csv(path, header=None)
     for q in questions[1]:
         print(q)
@@ -30,67 +30,104 @@ def display_questions():
 if __name__ == '__main__':
     # display_questions()
     # todo: create questions for student
-    features = ['Mjob_other', 'higher==yes', 'absences_(21.333, 32]', 'failures_(-0.003, 1]', 'paid==yes', 'Fjob_teacher', 'Medu_(-0.004, 1.333]', 'health_(2.333, 3.667]', 'failures_(2, 3]', 'famsize==LE3', 'age_(19.667, 22]', 'studytime_(0.997, 2]', 'Pstatus==T', 'failures_(1, 2]', 'Mjob_at_home']
+    features = """marital.status_Married-civ-spouse
+relationship_Husband
+marital.status_Never-married
+education.num_(11, 16]
+relationship_Own-child
+sex==Male
+education.num_(6, 11]
+age_(41.333, 65.667]
+age_(16.927, 41.333]
+hours.per.week_(0.902, 33.667]
+native.country_China
+native.country_Cuba
+native.country_Greece
+native.country_Ireland
+capital.loss_(2904, 4356]
+education_Assoc-acdm
+occupation_Armed-Forces
+native.country_Hungary
+education_Assoc-voc
+native.country_Scotland
+income==>50K"""
+    features = features.split('\n')
     # create_question_templates(len(features))
-    # create_0_1(features)
+    create_0_1(features)
 
-    questions = ["'s mother works in teaching, health care, civil services (e.g. administrative or police) or at home",
-                "'s mother works in an other field than teaching, health care, civil services (e.g. administrative or police) or at home",
-                 "whose mothers work in an other field than teaching, health care, civil services (e.g. administrative or police) or at home",
-                 ' does not want to take higher education',
-                 ' wants to take higher education',
-                 'willing to take higher education',
-                 ' has few or a medium number of absences at school',
-                 ' has many absences at school',
-                 'having many absences at school',
-                 ' has failed more than one class',
-                 ' has failed a maximum of one class',
-                 'having failed a maximum of one class',
-                 ' has taken no extra paid lessons',
-                 ' has taken extra paid lessons',
-                 'having taken extra paid lessons',
-                 "'s father is not a teacher",
-                 "'s father is a teacher",
-                 'whose father is a teacher',
-                 "'s mother had more than Primary education until 4th grade",
-                 "'s mother had Primary education until 4th grade or less",
-                 "whose mothers had Primary education until 4th grade or less",
-                 "'s health status is either high or low",
-                 "'s health status is average",
-                 "whose health status is average",
-                 " has failed less than three classes",
-                 " has failed three classes or more",
-                 "having failed three classes or more",
-                 "'s family size is greater than three",
-                 "'s family size is less or equal to three",
-                 "with a family size less or equal to three",
-                 " belongs to the younger or middle-aged part of the class (19 years or younger)",
-                 " belongs to the older part of the class (older than 19 years)",
-                 "belonging to the older part of the class (older than 19 years)",
-                 " studies at least an average time (more than 5 hours per week)",
-                 " studies little (5 hours per week or less)",
-                 "studying little (5 hours per week or less)",
-                 "'s parents live apart",
-                 "'s parents live together",
-                 "whose parents live together",
-                 " has failed either fewer classes than average or more classes than average (less than 2 or more than 2 classes)",
-                 " has failed an average number of classes (two classes)",
-                 "having failed an average number of classes (two classes)",
-                 "'s mother does not work at home",
-                 "'s mother works at home",
-                 "whose mothers work at home",
-
-                 ]
+    questions = [
+        'is not married to a civilian (the person can be married to a member of the US military)',
+        'is married to a civilian',
+        'are married to a civilian',
+        'is not a husband',
+        'is a husband',
+        'are husbands',
+        'was married or is still married',
+        'has never been married',
+        'have never been married',
+        'has spent less than 11 years of his/her life on education', # in education?
+        'has spent 11 or more years of his/her life on education',
+        'have spent 11 or more years of their lives on education',
+        'has no children',
+        'has at least one child',
+        'have at least one child',
+        'is not male',
+        'is male',
+        'are male', # take out?
+        'has spent less than 6 or more than 11 years of his/her life on education',
+        'has spent between 6 and 11 years of his/her life on education',
+        'have spent between 6 and 11 years of their lives on education',
+        'is younger than 41 years or older than 66 years',
+        'is between 41 and 66 years old',
+        'are between 41 and 66 years old',
+        'is older than 41 years',
+        'is younger than 41 years',
+        'are younger than 41 years',
+        'works more than 34 hours per week',
+        'works less than 34 hours per week',
+        'work less than 34 hours per week',
+        'is not from China',
+        'is from China',
+        'are from China',
+        'is not from Cuba',
+        'is from Cuba',
+        'are from Cuba',
+        'is not from Greece',
+        'is from Greece',
+        'are from Greece',
+        'is not from Ireland',
+        'is from Ireland',
+        'are from Ireland',
+        'has no capital loss or a capital loss lower than $2900 from the purchase and sale of stocks, bonds, and other assets',
+        'has a capital loss higher than $2900 from the purchase and sale of stocks, bonds, and other assets',
+        'have a capital loss higher than $2900 from the purchase and sale of stocks, bonds, and other assets',
+        "does not have an associate's degree",
+        "has an associate's degree",
+        "have an associate's degree",
+        'does not work for the US military',
+        'works for the US military',
+        'work for the US military',
+        'is not from Hungary',
+        'is from Hungary',
+        'are from Hungary',
+        'does not have a vocational degree',
+        'has a vocational degree',
+        'have a vocational degree',
+        'is not from Scotland',
+        'is from Scotland',
+        'are from Scotland',
+    ]
 
     for i in range(0, len(questions), 3):
-        print('If a secondary education *student{}*, what is the probability that the student’s final grade is in the better half of the class?'.format(questions[i]))
-        print('If a secondary education *student{}*, what is the probability that the student’s final grade is in the better half of the class?'.format(questions[i+1]))
-        print('What is the percentage of secondary education students *{}*?'.format(questions[i+2]))
+        print('If a person working in the USA *{}*, what is the probability that this person earns more than $50,000 per year?'.format(questions[i]))
+        print('If a person working in the USA *{}*, what is the probability that this person earns more than $50,000 per year?'.format(questions[i+1]))
+        print('What is the percentage of people working in the USA who *{}*?'.format(questions[i+2]))
+    print('What is the percentage of people working in the USA who *earn more than $50,000 per year*?')
 
 
     # features = ['electricity consumption per person_[26.757, 1320.325]',
     #             'electricity consumption_(55576666666.667, 3890000000000]',
     #             'region_5']
     # create_question_templates(len(features))
-
-    # display_questions()
+    print('---')
+    display_questions()

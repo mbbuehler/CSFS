@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import scipy.stats as st
 
-from application.CSFSConditionEvaluation import AucForBudgetCalculator
+from application.CSFSConditionEvaluation import AucForBudgetCalculator, AUCForOrderedFeaturesCalculator
 
 class ERCondition:
     LAYPERSON = 1 # AMT Turkers
@@ -16,6 +16,27 @@ class ERCondition:
     def get_all():
         return [ERCondition.LAYPERSON, ERCondition.DOMAIN, ERCondition.EXPERT]
 
+
+class ERFilterer:
+
+    def __init__(self, dataset_name, condition):
+        self.dataset_name = dataset_name
+        self.condition = condition
+
+    def get_filtered_result(self, df_evaluation_result):
+        """
+        Removes all conditions but condition from df_result
+        :param condition: int
+        :return: df
+        """
+        df_result_filtered = df_evaluation_result[(df_evaluation_result['condition'] == self.condition) & (df_evaluation_result['dataset_name'] == self.dataset_name)]
+        index_keep = df_result_filtered['name'].str.lower() != 'test'
+        df_result_filtered = df_result_filtered[index_keep]
+        print('Filterer removed {} rows'.format(len(df_evaluation_result) - len(df_result_filtered)))
+        if len(df_result_filtered) == 0:
+            # no answers available
+            return pd.DataFrame()
+        return df_result_filtered
 
 class ERParser:
     def __init__(self, df_evaluation_base):
@@ -69,20 +90,16 @@ class EREvaluator:
 70   0.639263   0.598034  0.618649  0.0148
     """
 
-    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target):
+    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target, dataset_name):
         self.df_evaluation_result = df_evaluation_result
         self.df_evaluation_base = df_evaluation_base
         self.df_cleaned_bin = df_cleaned_bin
         self.parser = ERParser(df_evaluation_base)
         self.target = target
+        self.dataset_name = dataset_name
 
-
-    def _get_aucs(self, row, budget_range):
-        token = row.token
-        df_features_ranked = self.parser.get_ordered_features(token)
-        evaluator = AucForBudgetCalculator(df_features_ranked, self.df_cleaned_bin, self.target)
-        df_aucs = evaluator.get_auc_for_budget_range(budget_range) # df with one col: AUC and index= cost
-        return df_aucs
+    def evaluate(self, budget_range, condition):
+        pass
 
     def _get_filtered_result(self, condition):
         """
@@ -90,21 +107,21 @@ class EREvaluator:
         :param condition: int
         :return: df
         """
-        return self.df_evaluation_result[self.df_evaluation_result['condition']==condition]
+        filterer = ERFilterer(self.dataset_name, condition)
+        df_result_filtered = filterer.get_filtered_result(self.df_evaluation_result)
+        return df_result_filtered
 
-    def evaluate(self, budget_range, condition):
-        df_result_filtered = self._get_filtered_result(condition)
-        if len(df_result_filtered) == 0:
-            # no answers available
-            return pd.DataFrame()
-
-        list_budget_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()]
-        df_budget_aucs = pd.concat(list_budget_aucs, axis='columns').transpose() # df with columns index= x times 'AUC' and columns=cost
-        mean = np.mean(df_budget_aucs)
-        std = np.std(df_budget_aucs)
+    def _get_df_evaluated(self, df):
+        """
+        df with columns index= x times 'AUC' and columns=cost or no_features
+        :param df:
+        :return:
+        """
+        mean = np.mean(df)
+        std = np.std(df)
         # http://stackoverflow.com/questions/15033511/compute-a-confidence-interval-from-sample-data
         # The underlying assumptions for both are that the sample (array a) was drawn independently from a normal distribution with unknown standard deviation
-        ci_intervals = [st.t.interval(0.95, len(df_budget_aucs[cost])-1, loc=np.mean(df_budget_aucs[cost]), scale=st.sem(df_budget_aucs[cost])) for cost in df_budget_aucs]
+        ci_intervals = [st.t.interval(0.95, len(df[cost])-1, loc=np.mean(df[cost]), scale=st.sem(df[cost])) for cost in df]
         ci_low = [e[0] for e in ci_intervals]
         ci_high = [e[1] for e in ci_intervals]
 
@@ -117,9 +134,60 @@ class EREvaluator:
         :param budget_range:
         :return:dict
         """
-        data = {condition: self.evaluate(budget_range, condition) for condition in ERCondition.get_all()}
+        raw_data = dict()
+        evaluated = dict()
+        for condition in ERCondition.get_all():
+            raw, evaluated[condition] = self.evaluate(budget_range, condition)
+            raw_data[condition] = [list(raw[cost]) for cost in raw]
+            # aucs_raw is dict with key: condition (int) and val: dataframe with costs as columns and auc as values
 
-        return data
+        df_raw = pd.DataFrame(raw_data, index=budget_range)
+        return df_raw, evaluated
+
+
+
+class ERCostEvaluator(EREvaluator):
+
+    def evaluate(self, budget_range, condition):
+        """
+
+        :param budget_range:
+        :param condition:
+        :return: df_budget_aucs (raw df with columns = cost, index all 'auc') and df_evaluated (df with CI usw.)
+        """
+        df_result_filtered = self._get_filtered_result(condition)
+
+        list_budget_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()]
+        df_budget_aucs = pd.concat(list_budget_aucs, axis='columns').transpose() # df with columns index= x times 'AUC' and columns=cost
+        df_evaluated = self._get_df_evaluated(df_budget_aucs)
+        return df_budget_aucs, df_evaluated
+
+
+    def _get_aucs(self, row, budget_range):
+        token = row.token
+        df_features_ranked = self.parser.get_ordered_features(token)
+        evaluator = AucForBudgetCalculator(df_features_ranked, self.df_cleaned_bin, self.target)
+        df_aucs = evaluator.get_auc_for_budget_range(budget_range) # df with one col: AUC and index= cost
+        return df_aucs
+
+
+
+class ERNofeaturesEvaluator(EREvaluator):
+
+    def evaluate(self, budget_range, condition):
+        df_result_filtered = self._get_filtered_result(condition)
+
+        list_nofeature_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()]
+        df_nofeatures_aucs = pd.concat(list_nofeature_aucs, axis='columns').transpose() # df with columns index= x times 'AUC' and columns=cost
+        df_evaluated = self._get_df_evaluated(df_nofeatures_aucs)
+        return df_nofeatures_aucs, df_evaluated
+
+    def _get_aucs(self, row, budget_range):
+        token = row.token
+        df_features_ranked = self.parser.get_ordered_features(token)
+        evaluator = AUCForOrderedFeaturesCalculator(df_features_ranked, self.df_cleaned_bin, self.target)
+        df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
+        return df_aucs
 
 
 
