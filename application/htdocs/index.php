@@ -43,7 +43,7 @@
 //        var_dump($S);
 
         $data = get_data($dataset_name, $condition);
-        $task = get_task('student', $condition);
+        $task = get_task($dataset_name, $condition);
         if (empty($data) || empty($task)) {
             die('No data found. Please use correct parameters for dataset_name and condition.');
         }
