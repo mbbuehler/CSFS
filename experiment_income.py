@@ -19,7 +19,7 @@ class ExperimentIncome(AbstractExperiment):
         self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)
         self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(self.base_path, experiment_name)
         self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
-        # self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
+        self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
         # self.path_csfs_std = '{}results/{}/csfs_std.csv'.format(self.base_path, experiment_name)
         self.path_questions = '{}questions/{}/questions.csv'.format(self.base_path, experiment_name)
         self.path_flock_result = '{}results/{}/flock_auc.csv'.format(self.base_path, experiment_name)
@@ -56,18 +56,18 @@ class ExperimentIncome(AbstractExperiment):
 if __name__ == '__main__':
     experiment = ExperimentIncome('income', 1, 'experiment1')
 
-    N_Features = range(5, 118, 3)
+    N_Features = range(3, 17, 2)
     n_samples = 100 # number of repetitions to calculate average auc score for samples)
     # experiment.set_up_basic_folder_structure()
     # experiment.set_up_experiment_folder_structure('experiment1')
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    experiment.evaluate_crowd_all_answers()
-     # experiment.drop_analysis(N_Features, n_samples)
-    # experiment.evaluate_flock(N_Features, n_samples, range(3, 100, 1))
-    # experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
     # experiment.evaluate_crowd_all_answers()
+     # experiment.drop_analysis(N_Features, n_samples)
+    experiment.evaluate_flock(N_Features, n_samples, range(3, 100, 1))
+    experiment.evaluate_csfs_auc()
+
     # experiment.drop_analysis(N_Features, n_samples)
     # N_Features = [65, 80, 95, 116]
     # N_Features = [5, 17, 32, 50]
