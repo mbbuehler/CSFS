@@ -64,21 +64,8 @@ class CSFSCrowdCleaner:
     def __init__(self, path_questions, path_answers, target):
         self.df_questions = pd.read_csv(path_questions, header=None)
         self.df_questions.columns = ['feature', 'question'] # as column names are missing, we add them here. (internal use only)
-        self.df_questions2 = pd.read_csv('datasets/olympia/questions/experiment2-4_all/questions_mod.csv', header=None)
-        self.df_questions2.columns = ['feature', 'question']
-
-
         self.df_answers = pd.read_excel(path_answers)
         self.target = target
-
-    # def questions_to_features(self):
-    #     """
-    #     Returns the cleaned crowd answers with the corresponding features
-    #     :return:
-    #     """
-    #     df_clean = self.get_clean_df(self.df_answers)
-    #     df = self.questions_to_features(self.df_questions, df_clean)
-    #     return df
 
     def remove_spammers(self, df_clean):
         """
@@ -87,11 +74,14 @@ class CSFSCrowdCleaner:
         :return:
         """
         len_original = len(df_clean)
+        print(len_original)
         answer_users_count = df_clean.groupby('feature').answerUser.apply(lambda x: x.value_counts()).reset_index()
+
         # df_spammed: df with columns: 'feature', 'level_1', 'answerUser', e.g. 'medals', 'ACS3r2S', 10
         df_spammed = answer_users_count[answer_users_count['answerUser']>1].sort_values(by='answerUser', ascending=False)
 
         df_spammed.columns = ['feature', 'answerUser', 'count']
+        # print(tabulate(df_spammed))
 
         # print(len(df_clean))
         for i,row in df_spammed.iterrows():
@@ -112,33 +102,47 @@ class CSFSCrowdCleaner:
         :return:
         """
         def get_triple_question(e):
-            soup = BeautifulSoup(e, 'lxml')
-            question_dirty = soup.find('i').contents[0]
-            question_clean = re.sub('[\n\t]', '', question_dirty)
-            result = [question_clean]
-
+            e = e.replace('\n', '') # remove new lines
+            result = list()
             is_triple = e.count('::')==3
-            if is_triple:
-                index_second_start = e.index('::')+10
-                if '100' in e[:index_second_start]: # we have to go one further
-                    index_second_start += 2
+            if is_triple: # normal question
+                match = re.search(r'<i>(.*)</i>.*%.*?(\w.*\?).*%.*?(\w.*\?)', e.rstrip())
+                if match and match.group(3):
+                    q1 = match.group(1).strip()
+                    q2 = match.group(2).strip()
+                    q3 = match.group(3).strip()
+                    result += [q1, q2, q3]
+                else:
+                    print('not found three questions!')
+                    print(e)
+                    exit()
+            else: # is target question (only one)
+                match = re.search(r'<i>(.*\?)', e.rstrip())
+                q1 = match.group(1).strip()
+                result.append(q1)
 
-                assert e[index_second_start]=='I' # makes sure we do not introduce bugs for other questions
-                index_second_end = index_second_start + e[index_second_start:].index(':')
-                question2 = e[index_second_start:index_second_end]
 
 
-
-                index_third_start = index_second_end + e[index_second_end:].index(':')+10
-                if ")" in e[index_third_start]:
-                    index_third_start += 1 # second last questions has 100%, too
-
-                index_third_end = index_third_start + e[index_third_start:].index(':')
-                question3 = e[index_third_start:index_third_end]
-                # if ")" in question3[:5]:
-                #     print(e)
-                result.append(question2)
-                result.append(question3)
+            #     index_second_start = e.index('::')+10
+            #     if '100' in e[:index_second_start]: # we have to go one further
+            #         index_second_start += 2
+            #
+            #     assert e[index_second_start]=='I' # makes sure we do not introduce bugs for other questions
+            #     index_second_end = index_second_start + e[index_second_start:].index(':')
+            #     question2 = e[index_second_start:index_second_end]
+            #
+            #
+            #
+            #     index_third_start = index_second_end + e[index_second_end:].index(':')+10
+            #     if ")" in e[index_third_start]:
+            #         index_third_start += 1 # second last questions has 100%, too
+            #
+            #     index_third_end = index_third_start + e[index_third_start:].index(':')
+            #     question3 = e[index_third_start:index_third_end]
+            #     # if ")" in question3[:5]:
+            #     #     print(e)
+            #     result.append(question2)
+            #     result.append(question3)
             return result
 
         def get_answers(e):
@@ -152,8 +156,11 @@ class CSFSCrowdCleaner:
 
         # questions = df_answers.question.apply(get_question())
         questions = df_answers.answer.apply(get_triple_question) # yes, we indeed need to search answer column
+        print(len(questions))
         answers = df_answers.answer.apply(get_answers)
+        print(len(answers))
         answer_users = df_answers.answerUser.apply(get_answer_user)
+        print(len(answer_users))
 
         final_questions = list()
         final_answers = list()
