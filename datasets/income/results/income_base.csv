@@ -1,0 +1,18 @@
+No,Cost,Feature,Name,Description
+1,,"age_(16.927, 41.333]",between 17 and 41 years old,The person is between 17 and 41 years old.
+2,,"age_(41.333, 65.667]",older than 41 years,The person is older 17 and 41 years old.
+3,,"capital.loss_(2904, 4356]",capital loss higher than $2900,"The person lost more than $2900 from the purchase and sale of stocks, bonds, and other assets last year."
+4,,"education.num_(11, 16]",11+ years of education,The person spent 11 or more years of his/her life on education.
+5,,"education.num_(6, 11]",6-11 years of education,The person spent between 6 and 11 years of his/her life on education.
+6,,education_Assoc-acdm,has an associate's degree,"The person has an associate's degree. This means the person participated in an academic program at the undergraduate level, which usually lasts for two years. The person does not have a higher degree, such as a Bachelor's or Master's degree."
+7,,education_Assoc-voc,has a vocational degree,"The person has a vocational degree. This means the person participated in a career or trade-specific degree, which usually lasts for two years. The person does not have a higher degree, such as a Bachelor's or Master's degree."
+8,,"hours.per.week_(0.902, 33.667]",works less than 34 hours per week,The person works less than 34 hours per week. House work does not count as working hours.
+9,,marital.status_Married-civ-spouse,married to a civilian,The person is married and his/her spouse is not in the army.
+10,,marital.status_Never-married,never married,The person has never been married. The person may be or have been in a relationship.
+11,,native.country_Hungary,from Hungary,The person is from Hungary. The person can be an American with family roots in Hungary.
+12,,native.country_Ireland,from Ireland,The person is from Ireland. The person can be an American with family roots in Ireland.
+13,,native.country_Scotland,from Scotland,The person is from Scotland. The person can be an American with family roots in Scotland.
+14,,occupation_Armed-Forces,works for US army,The person works for the US army. It is not known what exact position or job the person is occupied with.
+15,,relationship_Husband,is a husband,The person is male and married.
+16,,relationship_Own-child,has a child,The person has at least one child. The person can be in a stable relationship/marriage or live on his/her own.
+17,,sex==Male,is male,The person is male.
