@@ -74,13 +74,13 @@ class CSFSCrowdCleaner:
         :return:
         """
         len_original = len(df_clean)
-        print(len_original)
         answer_users_count = df_clean.groupby('feature').answerUser.apply(lambda x: x.value_counts()).reset_index()
 
         # df_spammed: df with columns: 'feature', 'level_1', 'answerUser', e.g. 'medals', 'ACS3r2S', 10
         df_spammed = answer_users_count[answer_users_count['answerUser']>1].sort_values(by='answerUser', ascending=False)
 
         df_spammed.columns = ['feature', 'answerUser', 'count']
+        df_spammed.to_csv('spammers.csv')
         # print(tabulate(df_spammed))
 
         # print(len(df_clean))
@@ -156,11 +156,8 @@ class CSFSCrowdCleaner:
 
         # questions = df_answers.question.apply(get_question())
         questions = df_answers.answer.apply(get_triple_question) # yes, we indeed need to search answer column
-        print(len(questions))
         answers = df_answers.answer.apply(get_answers)
-        print(len(answers))
         answer_users = df_answers.answerUser.apply(get_answer_user)
-        print(len(answer_users))
 
         final_questions = list()
         final_answers = list()
@@ -344,28 +341,41 @@ class CSFSCrowdAggregator:
             df_result = self.get_ig_df(df_metadata, self.target)
         return df_result
 
+class AnswerFilter:
+    """
+    Filters out answers that do not belong to xls
+    """
+    def __init__(self, df_raw):
+        self.df_raw = df_raw
+
+    def removeWhereContains(self, string):
+        """
+        Removes all rows that contain the string
+        :param string: "credit at a bank"
+        :return:
+        """
+        n_before = len(self.df_raw)
+        def contains_string(row):
+            return string in row['answer']
+        rows_remove = self.df_raw[self.df_raw.apply(contains_string, axis='columns')]
+        index_remove = rows_remove.index
+        df_filtered = self.df_raw.drop(index_remove)
+        print('min index / max removed: {} / {}'.format(min(rows_remove['id']), max(rows_remove['id'])))
+        n_after = len(df_filtered)
+        print('dropped {} rows'.format(n_before - n_after))
+        return df_filtered
+
 def run():
     """
     example call
     :return:
     """
-    experiment = 'experiment2'
-    base_path = 'datasets/olympia/'
-    path_answers = '{}results/{}/answers_combined.xlsx'.format(base_path, experiment)
-    path_questions = '{}questions/{}/featuresOlympia_hi_lo_combined.csv'.format(base_path, experiment)
-    target = 'medals'
+    experiment = 'experiment1'
+    base_path = 'datasets/income/'
+    path_answers = '{}results/{}/answers_raw2.xlsx'.format(base_path, experiment)
+    df_raw = pd.read_excel(path_answers)
+    df_filtered = AnswerFilter(df_raw).removeWhereContains("credit at a bank")
 
-    aggregator = CSFSCrowdAggregator(path_questions, path_answers, target)
-    df_aggregated = aggregator.get_aggregated_df()
-
-    out_path = '{}results/{}/aggregated_combined.csv'.format(base_path, experiment)
-    df_aggregated.to_csv(out_path, index=True)
-
-    true_path = '{}cleaned/{}/Olympic2016_raw_plus_bin_metadata.csv'.format(base_path, experiment)
-
-    analyse = CSFSCrowdAnalyser()
-    df_combined = analyse.get_combined_df(out_path, true_path)
-    df_combined.to_csv('{}results/{}/metadata_combined.csv'.format(base_path, experiment), index=True)
 
 
 def test():
@@ -382,5 +392,5 @@ def test():
 
 
 if __name__ == '__main__':
-    # run()
-    test()
+    run()
+    # test()

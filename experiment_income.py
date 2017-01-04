@@ -15,7 +15,7 @@ class ExperimentIncome(AbstractExperiment):
         self.path_cleaned = '{}cleaned/{}/income_clean.csv'.format(self.base_path, experiment_name)
         self.path_bin = '{}cleaned/{}/income_clean_bin.csv'.format(self.base_path, experiment_name)
         self.path_meta = '{}cleaned/{}/income_clean_bin_meta.csv'.format(self.base_path, experiment_name)
-        self.path_answers_raw = '{}results/{}/answers_raw.xlsx'.format(self.base_path, experiment_name)
+        self.path_answers_raw = '{}results/{}/answers_raw2.xlsx'.format(self.base_path, experiment_name)
         self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)
         self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(self.base_path, experiment_name)
         self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
@@ -63,10 +63,10 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    # experiment.evaluate_crowd_all_answers()
+    experiment.evaluate_crowd_all_answers()
      # experiment.drop_analysis(N_Features, n_samples)
     #experiment.evaluate_flock(N_Features, n_samples, range(3, 100, 1))
-    experiment.evaluate_csfs_auc()
+    # experiment.evaluate_csfs_auc()
 
     # experiment.drop_analysis(N_Features, n_samples)
     # N_Features = [65, 80, 95, 116]
