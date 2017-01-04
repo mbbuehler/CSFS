@@ -80,6 +80,18 @@ function handle_post($dataset_name, $condition){
     
 }
 
+function get_ip(){
+    $ip = "";
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+    $ip = $_SERVER['HTTP_CLIENT_IP'];
+} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+} else {
+    $ip = $_SERVER['REMOTE_ADDR'];
+}
+return $ip;
+}
+
 function save_ranking($dataset_name, $condition, $data){
     $name = $data['name'];
     $output_token = $data['output_token'];
@@ -89,9 +101,11 @@ function save_ranking($dataset_name, $condition, $data){
     
     $comment = $data['comment'];
     
+    $ip = get_ip();    
+    
     $conn = get_connection();
-    $sql = "INSERT INTO result (dataset_name, cond, name, output_token, comment)
-VALUES ('".$dataset_name."', '".$condition."', '".$name."','".$output_token."', '".$comment."')";
+    $sql = "INSERT INTO result (dataset_name, cond, name, output_token, comment, ip)
+VALUES ('".$dataset_name."', '".$condition."', '".$name."','".$output_token."', '".$comment."', '".$ip."')";
     
     if ($conn->query($sql) === TRUE) {
         

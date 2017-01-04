@@ -59,7 +59,7 @@
             $result_token = handle_post($dataset_name, $condition);
 //     $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
             ?>
-            <h1><?php echo $S['THANKS']; ?>, <?php echo $name; ?>!</h1>
+            <h1><?php echo $S['THANKS']; ?>!</h1>
             <p><?php echo $S['TASK_AFTER_SUBMIT']; ?>
                 <img width="50px" src="images/thumb-up.jpeg" title="saved"/>
             </p>
