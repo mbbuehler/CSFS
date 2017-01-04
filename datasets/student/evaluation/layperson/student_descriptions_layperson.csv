@@ -12,5 +12,5 @@ No,Cost,Feature,Name,Description
 11,20,famsize==LE3,Small family,You get the information whether the student's family size is rather small (less or equal to three) (YES) or bigger than that (NO).
 12,30,"health_(2.333, 3.667]",Average health status,"You get the information whether the student has an average health status (not bad, but also not exceptional) (YES) or another health status (NO)."
 13,20,higher==yes,Higher education,You get the information whether the student said that he/she would like to pursue higher education after finishing high school (YES) or not (NO).
-14,20,paid==yes,Extra paid classes,You get the information whether the student takes extra-curricular paid classes (besides the mandatory ones) (YES) or not (NO).
+14,20,paid==yes,Extra paid classes,You get the information whether the student takes extra-curricular paid classes (optional classes besides the mandatory ones) (YES) or not (NO).
 15,30,"studytime_(0.997, 2]",Studies little,You get the information whether the student spends less than five hours per week studying (YES) or more than that (NO). It might be that the student is lazy or simply quickly understands the matter.
