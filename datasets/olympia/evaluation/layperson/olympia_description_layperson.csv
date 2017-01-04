@@ -1,14 +1,14 @@
 No,Cost,Feature,Name,Description
-1,0,"education expenditures_(4.133, 5.6]",average education expenditures,"The country spends between 4% and 6% of its GDP on education. This is a rather average value, neither especially little nor very much."
-2,0,"electricity consumption per person_(4244.0286, 48501.33]",high electricity consumption per person,The country has a high electricity consumption per person (more than 4200kWh per person).
-3,0,"electricity consumption per person_[26.757, 1320.325]",low electricity consumption per person,The country has a low electricity consumption per person (less than 1300kWh per person). 
-4,0,"electricity consumption_(55576666666.667, 3890000000000]",high total electricity consumption,The country has a high total electricity consumption (more than 56 billion kWh).
-5,0,"electricity consumption_[90210000, 7952000000]",low total electricity consumption,The country has a low total electricity consumption (less than 8 billion kWh).
-6,0,"exports_(77193333333.333, 1580000000000]",high total exports,The country has high total exports (more than $77 billion).
-7,0,"exports_[1163000, 10071333333.333]",low total exports,The country has low exports (less than $10 billion).
-8,0,"inflation rate_(1.9, 4.2]",average inflation rate,"The country has an inflation rate between 2% and 4% of GDP. This is a rather average value, neither especially little nor very much."
-9,0,"internet users_[14400, 1167666.667]",low number of Internet users,"The country has a low number of Internet users (less than 1,168,000)."
-10,0,"public debt_(61.733, 226.1]",high public debt,The country has high public debt (more than 62% GDP).
-11,0,region_3,in Asia,The country belongs to Asia.
-12,0,region_5,in Sub Saharan region,"The country belongs to the Sub Saharan Africa region, that is all countries south of the Sarah desert."
-13,0,"unemployment rate_[0.3, 6.433]",Low unemployment rate,The country has a low unemployment rate (less than 6%).
+1,0,"education expenditures_(4.133, 5.6]",medium education expenditures,"You get the information whether the country spends between 4% and 6% of its GDP on education (YES) or less/more than that (NO). 4% - 6% is a rather average value, neither especially little nor very much."
+2,0,"electricity consumption per person_(4244.0286, 48501.33]",high electricity consumption per person,You get the information whether the country has a high electricity consumption per person (more than 4200kWh per person) (YES) or less than that (NO).
+3,0,"electricity consumption per person_[26.757, 1320.325]",low electricity consumption per person,You get the information whether the country has a low electricity consumption per person (less than 1300kWh per person) (YES) or more than that (NO). 
+4,0,"electricity consumption_(55576666666.667, 3890000000000]",high total electricity consumption,You get the information whether the country has a high total electricity consumption (more than 56 billion kWh) (YES) or less than that (NO).
+5,0,"electricity consumption_[90210000, 7952000000]",low total electricity consumption,You get the information whether the country has a low total electricity consumption (less than 8 billion kWh) (YES) or more than that (NO).
+6,0,"exports_(77193333333.333, 1580000000000]",high total exports,You get the information whether the country has high total exports (more than $77 billion) (YES) or less than that (NO).
+7,0,"exports_[1163000, 10071333333.333]",low total exports,You get the information whether the country has low exports (less than $10 billion) (YES) or more than that (NO).
+8,0,"inflation rate_(1.9, 4.2]",average inflation rate,"You get the information whether the country has an inflation rate between 2% and 4% of GDP (YES) or less/more than that (NO). This is a rather average value, neither especially little nor very much."
+9,0,"internet users_[14400, 1167666.667]",low number of Internet users,"You get the information whether the country has a low number of Internet users (less than 1,168,000) (YES) or more than that (NO)."
+10,0,"public debt_(61.733, 226.1]",high public debt,You get the information whether the country has high public debt (more than 62% of GDP) (YES) or less than that (NO).
+11,0,region_3,in Asia,You get the information whether the country belongs to Asia (YES) or to another region (NO).
+12,0,region_5,in Sub Saharan region,"You get the information whether the country belongs to the Sub Saharan Africa region, that is all countries south of the Sarah desert (YES) or to another region (NO)."
+13,0,"unemployment rate_[0.3, 6.433]",low unemployment rate,You get the information whether the country has a low unemployment rate (less than 6%) (YES) or more than that (NO).
