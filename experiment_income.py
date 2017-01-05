@@ -63,7 +63,7 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    experiment.evaluate_crowd_all_answers()
+    # experiment.evaluate_crowd_all_answers()
      # experiment.drop_analysis(N_Features, n_samples)
     #experiment.evaluate_flock(N_Features, n_samples, range(3, 100, 1))
     # experiment.evaluate_csfs_auc()
@@ -72,10 +72,11 @@ if __name__ == '__main__':
     # N_Features = [65, 80, 95, 116]
     # N_Features = [5, 17, 32, 50]
     # experiment.drop_evaluation(N_Features, n_samples)
-    #budget_range = range(10, 180, 10)
+    budget_range = range(10, 180, 10)
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)
-     #experiment.evaluate_domain(budget_range)
+    # experiment.evaluate_ranking_cost(budget_range)
+    # experiment.evaluate_ranking_nofeatures(N_Features)
         #
     # experiment.evaluate_csfs_auc()

@@ -301,7 +301,7 @@ class AbstractExperiment:
         :return:
         """
         # load answer df and cost_ig df
-        df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'date'])
+        df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'ip', 'date'])
         df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
         df_cleaned_bin = pd.read_csv(self.path_bin)
 
@@ -321,7 +321,7 @@ class AbstractExperiment:
         Creates a csv with auc, CI for each condition (1-4). index: number of features (nofeatures)
         :return:
         """   # load answer df and cost_ig df
-        df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'date'])
+        df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'ip', 'date'])
         df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
         df_cleaned_bin = pd.read_csv(self.path_bin)
 

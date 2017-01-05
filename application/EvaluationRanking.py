@@ -3,6 +3,7 @@ import re
 import numpy as np
 import pandas as pd
 import scipy.stats as st
+from tabulate import tabulate
 
 from application.CSFSConditionEvaluation import AucForBudgetCalculator, AUCForOrderedFeaturesCalculator
 
@@ -19,9 +20,17 @@ class ERCondition:
 
 class ERFilterer:
 
-    def __init__(self, dataset_name, condition):
+    def __init__(self, dataset_name, condition, remove_test=False):
+        """
+
+        :param dataset_name:
+        :param condition:
+        :param remove_test: whether to remove rows with 'test' in the name field
+        :return:
+        """
         self.dataset_name = dataset_name
         self.condition = condition
+        self.remove_test = remove_test
 
     def get_filtered_result(self, df_evaluation_result):
         """
@@ -30,9 +39,10 @@ class ERFilterer:
         :return: df
         """
         df_result_filtered = df_evaluation_result[(df_evaluation_result['condition'] == self.condition) & (df_evaluation_result['dataset_name'] == self.dataset_name)]
-        index_keep = df_result_filtered['name'].str.lower() != 'test'
-        df_result_filtered = df_result_filtered[index_keep]
-        print('Filterer removed {} rows'.format(len(df_evaluation_result) - len(df_result_filtered)))
+        if self.remove_test:
+            index_keep = df_result_filtered['name'].str.lower() != 'test'
+            df_result_filtered = df_result_filtered[index_keep]
+        print('Filterer removed {} rows from {} rows'.format(len(df_evaluation_result) - len(df_result_filtered), len(df_evaluation_result)))
         if len(df_result_filtered) == 0:
             # no answers available
             return pd.DataFrame()
@@ -137,6 +147,7 @@ class EREvaluator:
         raw_data = dict()
         evaluated = dict()
         for condition in ERCondition.get_all():
+            print("> Evaluating condition {}".format(condition))
             raw, evaluated[condition] = self.evaluate(budget_range, condition)
             raw_data[condition] = [list(raw[cost]) for cost in raw]
             # aucs_raw is dict with key: condition (int) and val: dataframe with costs as columns and auc as values
@@ -156,6 +167,8 @@ class ERCostEvaluator(EREvaluator):
         :return: df_budget_aucs (raw df with columns = cost, index all 'auc') and df_evaluated (df with CI usw.)
         """
         df_result_filtered = self._get_filtered_result(condition)
+        if len(df_result_filtered) == 0:
+            return None
 
         list_budget_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()]
         df_budget_aucs = pd.concat(list_budget_aucs, axis='columns').transpose() # df with columns index= x times 'AUC' and columns=cost

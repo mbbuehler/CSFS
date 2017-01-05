@@ -97,7 +97,7 @@ failures_(-0.003, 1]     1    2    0    1    1    0    0    1    0     0     0  
 paid==yes                1    1    0    0    1    2    0    0    0     0     1     0     0     1     0
         :return:
         """
-        df = pd.read_csv(self.path_budget_evaluation_result, names=['dataset_name', 'condition', 'name', 'token', 'comment', 'date'])
+        df = pd.read_csv(self.path_budget_evaluation_result, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'ip', 'date'])
         df = ERFilterer(self.dataset_name, ERCondition.DOMAIN).get_filtered_result(df)
         tokens = list(df['token'])
         df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
@@ -152,8 +152,8 @@ if __name__ == '__main__':
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)
-    # experiment.evaluate_ranking_cost(budget_range)
-    # experiment.evaluate_ranking_nofeatures(no_features)
+    experiment.evaluate_ranking_cost(budget_range)
+    experiment.evaluate_ranking_nofeatures(no_features)
         #
     # experiment.evaluate_csfs_auc()
-    experiment.domain_evaluation()
+    # experiment.domain_evaluation()
