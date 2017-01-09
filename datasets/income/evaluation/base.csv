@@ -1,0 +1,18 @@
+No,Feature,IG median,Cost,Description
+1,"age_(16.927, 41.333]",0.0537958171,0,You get the information whether the person is between 17 and 41 years old (YES) or younger / older (NO).
+2,"age_(41.333, 65.667]",0.0303051448,0,You get the information whether the person is older than 41 years (YES) or younger than that (NO).
+3,"capital.loss_(2904, 4356]",0.0116212069,0,"You get the information whether the person lost more than $2900 from the purchase and sale of stocks, bonds, and other assets last year (YES) or less than that (NO)."
+4,"education.num_(11, 16]",0.0865146841,0,You get the information whether the person spent 11 or more years of his/her life on education (YES) or less than that (NO).
+5,"education.num_(6, 11]",0,0,You get the information whether the person spent between 6 and 11 years of his/her life on education (YES) or less / more than that (NO)..
+6,education_Assoc-acdm,0.0450662733,0,"You get the information whether the person has an associate's degree, but no higher degree, such as Bachelor's or Master's degree (YES) or not (NO). Associate's degrees are awarded to people who participate in an academic program at the undergraduate level, which usually lasts for two years."
+7,education_Assoc-voc,0.0562146288,0,"You get the information whether the person has a vocational degree (YES) or not (NO). Vocational degrees are awarded to people who participate in a career or trade-specific degree, which usually lasts for two years."
+8,"hours.per.week_(0.902, 33.667]",0.054372166,0,You get the information whether the person works less than 34 hours per week (YES) or more than that (NO). House work does not count as working hours.
+9,marital.status_Married-civ-spouse,0.0124987797,0,You get the information whether the person is married and his/her spouse is not in the army (YES) or not (NO).
+10,marital.status_Never-married,-0.0130943157,0,You get the information whether the person has never been married (he/she may be or have been in a relationship) (YES) or has been married (NO). 
+11,native.country_Hungary,0.02490225,0,You get the information whether the person is from Hungary / is an American with family roots in Hungary (YES) or not (NO)
+12,native.country_Ireland,-0.026144465,0,You get the information whether the person is from Ireland / is an American with family roots in Ireland (YES) or not (NO).
+13,native.country_Scotland,-0.026144465,0,You get the information whether the person is from Scotland / is an American with family roots in Scotland (YES) or not (NO).
+14,occupation_Armed-Forces,0.0089659695,0,You get the information whether the person works for the US army (regardless of what rank he/she holds or what job the person is occupied with) (YES) or does not work for the army (NO).
+15,relationship_Husband,-0.0130722325,0,You get the information whether the person is male and married (YES) or female / not married (NO).
+16,relationship_Own-child,-0.0141855087,0,"You get the information whether the person has at least one child (he/she can be in a stable relationship, be married or live on his/her own) (YES) or has no children (NO)."
+17,sex==Male,-0.0130943157,0,You get the information whether the person is male or female.

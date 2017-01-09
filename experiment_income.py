@@ -28,8 +28,13 @@ class ExperimentIncome(AbstractExperiment):
         # self.path_cost_ig_expert = 'application/conditions/expert/income.csv'
         # self.path_budget_evaluation = '{}budget/{}/budget_evaluation.csv'.format(self.base_path, experiment_name)
         # self.path_cost_ig_base = '{}evaluation/income_base.csv'.format(self.base_path, experiment_name)
-        # self.path_budget_evaluation_base = '{}evaluation/income_base.csv'.format(self.base_path, experiment_name)
-        # self.path_budget_evaluation_result = '{}evaluation/income_result.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_base = '{}evaluation/base.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_result = '{}evaluation/result.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_cost = '{}evaluation/budget_evaluation_cost.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_nofeatures = '{}evaluation/budget_evaluation_nofeatures.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_cost_rawaucs = '{}evaluation/budget_evaluation_cost_rawaucs.pickle'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_nofeatures_rawaucs = '{}evaluation/budget_evaluation_nofeatures_rawaucs.pickle'.format(self.base_path, experiment_name)
+
         self.target = 'income==>50K'
 
 
@@ -73,6 +78,7 @@ if __name__ == '__main__':
     # N_Features = [5, 17, 32, 50]
     # experiment.drop_evaluation(N_Features, n_samples)
     budget_range = range(10, 180, 10)
+    no_features = range(1, 18)
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)

@@ -36,7 +36,18 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_flock_result = 'datasets/olympia/results/{}/flock_auc.csv'.format(experiment_name)
         self.path_cost_ig_test = 'application/conditions/test/olympia.csv'
         self.path_cost_ig_expert = 'application/conditions/expert/olympia.csv'
-        self.path_budget_evaluation = 'datasets/olympia/budget/{}/budget_evaluation.csv'.format(experiment_name)
+        # self.path_budget_evaluation = 'datasets/olympia/budget/{}/budget_evaluation.csv'.format(experiment_name)
+
+
+        self.path_budget_evaluation_cost = '{}evaluation/budget_evaluation_cost.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_nofeatures = '{}evaluation/budget_evaluation_nofeatures.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_cost_rawaucs = '{}evaluation/budget_evaluation_cost_rawaucs.pickle'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_nofeatures_rawaucs = '{}evaluation/budget_evaluation_nofeatures_rawaucs.pickle'.format(self.base_path, experiment_name)
+        # self.path_budget_evaluation_result_domain = '{}evaluation/experts_domain/result_domain.csv'.format(self.base_path)
+        # self.path_cost_ig_base = '{}evaluation/base.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_base = '{}evaluation/base.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_result = '{}evaluation/result.csv'.format(self.base_path, experiment_name)
+
         self.target = 'medals'
 
 
@@ -156,5 +167,9 @@ if __name__ == '__main__':
     # experiment.evaluate_flock()
     # experiment.evaluate_csfs_auc(fake_till_n=25)
 
+
     budget_range = range(10, 160, 10)
-    experiment.evaluate_budget(budget_range)
+    no_features = range(1, 14)
+    # experiment.evaluate_ranking_cost(budget_range)
+    experiment.evaluate_ranking_nofeatures(no_features)
+    # experiment.evaluate_budget(budget_range)

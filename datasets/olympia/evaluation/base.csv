@@ -1,0 +1,14 @@
+No,Feature,IG median,Cost,Description
+1,"education expenditures_(4.133, 5.6]",0.0156642891,0,"You get the information whether the country spends between 4% and 6% of its GDP on education (YES) or less/more than that (NO). 4% - 6% is a rather average value, neither especially little nor very much."
+2,"electricity consumption per person_(4244.0286, 48501.33]",0.027975259,0,You get the information whether the country has a high electricity consumption per person (more than 4200kWh per person) (YES) or less than that (NO).
+3,"electricity consumption per person_[26.757, 1320.325]",0.0296659876,0,You get the information whether the country has a low electricity consumption per person (less than 1300kWh per person) (YES) or more than that (NO). 
+4,"electricity consumption_(55576666666.667, 3890000000000]",0.0605898189,0,You get the information whether the country has a high total electricity consumption (more than 56 billion kWh) (YES) or less than that (NO).
+5,"electricity consumption_[90210000, 7952000000]",0.0612650003,0,You get the information whether the country has a low total electricity consumption (less than 8 billion kWh) (YES) or more than that (NO).
+6,"exports_(77193333333.333, 1580000000000]",0.0518606416,0,You get the information whether the country has high total exports (more than $77 billion) (YES) or less than that (NO).
+7,"exports_[1163000, 10071333333.333]",0.0797049895,0,You get the information whether the country has low exports (less than $10 billion) (YES) or more than that (NO).
+8,"inflation rate_(1.9, 4.2]",-0.0084464082,0,"You get the information whether the country has an inflation rate between 2% and 4% of GDP (YES) or less/more than that (NO). This is a rather average value, neither especially little nor very much."
+9,"internet users_[14400, 1167666.667]",0.0925672948,0,"You get the information whether the country has a low number of Internet users (less than 1,168,000) (YES) or more than that (NO)."
+10,"public debt_(61.733, 226.1]",-0.0114248032,0,You get the information whether the country has high public debt (more than 62% of GDP) (YES) or less than that (NO).
+11,region_3,-0.0050704569,0,You get the information whether the country belongs to Asia (YES) or to another region (NO).
+12,region_5,0.0137241165,0,"You get the information whether the country belongs to the Sub Saharan Africa region, that is all countries south of the Sarah desert (YES) or to another region (NO)."
+13,"unemployment rate_[0.3, 6.433]",0.0187218206,0,You get the information whether the country has a low unemployment rate (less than 6%) (YES) or more than that (NO).
