@@ -5,6 +5,7 @@ import sys
 
 import pickle
 import scipy.stats as st
+import statsmodels
 from joblib import Parallel, delayed
 from tabulate import tabulate
 
@@ -20,6 +21,7 @@ from util.util_features import get_features_from_questions
 import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
+import statsmodels.stats.weightstats as ssw
 
 class AbstractExperiment:
 
@@ -45,6 +47,7 @@ class AbstractExperiment:
     path_budget_evaluation_cost_rawaucs = ''
     path_budget_evaluation_nofeatures_rawaucs = ''
     path_final_evaluation_aucs = ''
+    path_final_evaluation_aggregated = ''
     target = ''
 
     def __init__(self, dataset_name, experiment_number, experiment_name):
@@ -357,11 +360,24 @@ class AbstractExperiment:
         df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
 
         evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped)
-        raw_data, evaluated = evaluator.evaluate_all_to_dict(feature_range) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
-        print(raw_data)
+        raw_data = evaluator.evaluate_all_to_dict(feature_range) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
         pickle.dump(raw_data, open(self.path_final_evaluation_aucs, 'wb'))
 
-
+    def final_evaluation_visualisation(self, feature_range):
+        raw_data = pickle.load(open(self.path_final_evaluation_aucs, 'rb'))
+        data_aggregated = dict()
+        for condition in raw_data:
+            data = {
+                'mean': [np.mean(raw_data[condition][nofeature]) for nofeature in raw_data[condition]],
+                'ci_lo': [ssw.DescrStatsW(raw_data[condition][nofeature]).tconfint_mean()[0] for nofeature in raw_data[condition]],
+                'ci_hi': [ssw.DescrStatsW(raw_data[condition][nofeature]).tconfint_mean()[1] for nofeature in raw_data[condition]],
+                'std': [np.std(raw_data[condition][nofeature]) for nofeature in raw_data[condition]],
+            }
+            df = pd.DataFrame(data)
+            data_aggregated[condition] = df
+        df_combined = pd.concat(data_aggregated, axis='columns')
+        df_combined.index = feature_range
+        df_combined.to_pickle(self.path_final_evaluation_aggregated)
 
     def get_figure_budget_evaluation(self, df_budget_evaluation):
         """

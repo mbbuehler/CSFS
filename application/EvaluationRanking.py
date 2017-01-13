@@ -146,13 +146,12 @@ class EREvaluator:
 
     def evaluate_all_to_dict(self, budget_range):
         raw_data = dict()
-        evaluated = dict()
         for condition in ERCondition.get_all():
             print("> Evaluating condition {}".format(condition))
             raw = self.evaluate(budget_range, condition)
             raw_data[condition] = raw
             # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
-        return raw_data, evaluated
+        return raw_data
 
     def evaluate_all(self, budget_range):
         """
