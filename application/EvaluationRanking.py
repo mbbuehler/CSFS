@@ -123,7 +123,7 @@ class EREvaluator:
         :param condition: int
         :return: df
         """
-        filterer = ERFilterer(self.dataset_name, condition)
+        filterer = ERFilterer(self.dataset_name, condition, remove_test=True)
         df_result_filtered = filterer.get_filtered_result(self.df_evaluation_result)
         return df_result_filtered
 

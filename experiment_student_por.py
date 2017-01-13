@@ -37,8 +37,8 @@ class ExperimentStudent(AbstractExperiment):
         self.path_budget_evaluation_nofeatures_rawaucs = '{}evaluation/budget_evaluation_nofeatures_rawaucs.pickle'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_result_domain = '{}evaluation/experts_domain/result_domain.csv'.format(self.base_path)
         self.path_cost_ig_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
-        self.path_budget_evaluation_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
-        self.path_budget_evaluation_result = '{}evaluation/student_result.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_base = '{}evaluation/base.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_result = '{}evaluation/result.csv'.format(self.base_path, experiment_name)
 
         self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
 
@@ -146,7 +146,7 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    experiment.evaluate_crowd_all_answers(fake_features=fake_features)
+    # experiment.evaluate_crowd_all_answers(fake_features=fake_features)
      # experiment.drop_analysis(N_Features, n_samples)
     # experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
     # experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
