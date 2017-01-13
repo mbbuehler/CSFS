@@ -372,6 +372,7 @@ class AbstractExperiment:
                 'ci_lo': [ssw.DescrStatsW(raw_data[condition][nofeature]).tconfint_mean()[0] for nofeature in raw_data[condition]],
                 'ci_hi': [ssw.DescrStatsW(raw_data[condition][nofeature]).tconfint_mean()[1] for nofeature in raw_data[condition]],
                 'std': [np.std(raw_data[condition][nofeature]) for nofeature in raw_data[condition]],
+                'count': [np.count_nonzero(raw_data[condition][nofeature]) for nofeature in raw_data[condition]],
             }
             df = pd.DataFrame(data)
             data_aggregated[condition] = df
