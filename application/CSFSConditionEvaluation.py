@@ -60,11 +60,15 @@ class AUCForOrderedFeaturesCalculator(AUCCalculator):
         return auc
 
     def get_auc_for_nofeatures_range(self, n_range):
-        result = {n: self.get_auc_for_nofeatures(n) for n in n_range}
+        result = self.get_auc_for_nofeatures_range_dict(n_range)
         result = pd.DataFrame.from_dict(result, orient='index')
         result.transpose()
         result.columns = ['auc']
         return result.sort_index()
+
+    def get_auc_for_nofeatures_range_dict(self, n_range):
+        result = {n: self.get_auc_for_nofeatures(n) for n in n_range}
+        return result
 
 class Evaluation(metaclass=ABCMeta):
     def __init__(self, path_cost_ig, path_cleaned_bin, target):

@@ -1,14 +1,14 @@
-No,,IG median,Cost,
-1,"education expenditures_(4.133, 5.6]",0.0562146288,30,If the country spends 
-2,"electricity consumption per person_(4244.0286, 48501.33]",0.0896596952,20,
-3,"electricity consumption per person_[26.757, 1320.325]",0.0579934015,20,
-4,"electricity consumption_(55576666666.667, 3890000000000]",0.0896596952,20,
-5,"electricity consumption_[90210000, 7952000000]",0.153404817,20,
-6,"exports_(77193333333.333, 1580000000000]",0.0896596952,30,
-7,"exports_[1163000, 10071333333.333]",0.0896596952,30,
-8,"inflation rate_(1.9, 4.2]",-0.0290494055,20,
-9,"internet users_[14400, 1167666.667]",0.2490224996,40,
-10,"public debt_(61.733, 226.1]",-0.0290494055,30,
-11,region_3,-0.0152767017,10,
-12,region_5,0.0498044999,10,
-13,"unemployment rate_[0.3, 6.433]",0.04811151,30,
+No,Cost,Feature,Name,Description
+1,0,"education expenditures_(4.133, 5.6]",moderate education expenditures,"Binary [yes / no] If the country spends between 4% and 6% of its GDP on education, the value for this feature is YES. If it spends less than 4% or more than 6% of GDP on education, the value for this feature is NO. 4% - 6% is a rather average value, neither especially little nor very much."
+2,0,"electricity consumption per person_(4244.0286, 48501.33]",high electricity consumption per person,"Binary [yes / no] If the country has a high electricity consumption per person (more than 4200kWh per person), the value for this feature is YES. If its electricity consumption per person is lower than that, the value for this feature is NO."
+3,0,"electricity consumption per person_[26.757, 1320.325]",low electricity consumption per person,"Binary [yes / no] If the country has a low electricity consumption per person (less than 1300kWh per person), the value for this feature is YES. If its electricity consumption per person is higher than that, the value for this feature is NO."
+4,0,"electricity consumption_(55576666666.667, 3890000000000]",high total electricity consumption,"Binary [yes / no] If the country has a high total electricity consumption (more than 56 billion kWh), the value for this feature is YES. If its total electricity consumption is less than that, the value for this features is NO."
+5,0,"electricity consumption_[90210000, 7952000000]",low total electricity consumption,"Binary [yes / no] If the country has a low total electricity consumption (less than 8 billion kWh), the value for this feature is YES. If its total electricity consumption is higher than that, the value for this feature is NO."
+6,0,"exports_(77193333333.333, 1580000000000]",high total exports,"Binary [yes / no] If the country has high total exports (more than $77 billion), the value for this feature is YES. If its total exports are lower than $77 billion, the value for this feature is NO."
+7,0,"exports_[1163000, 10071333333.333]",low total exports,"Binary [yes / no] If the country has low exports (less than $10 billion), the value for this feature is YES. If its total exports are higher than $10 billion, the value for this feature is NO."
+8,0,"inflation rate_(1.9, 4.2]",average inflation rate,"Binary [yes / no] If the country has an inflation rate between 2% and 4% of GDP, the value for this feature is YES. If its inflation rate is less than 2% or more than 4%, the value for this feature is NO. 2% - 4%  is a rather average value, neither especially little nor very much."
+9,0,"internet users_[14400, 1167666.667]",low number of Internet users,"Binary [yes / no] If the country has a low number of Internet users (less than 1,168,000), the value for this feature is YES. If its number of Internet users is higher than 1,168,000, the value for this feature is NO."
+10,0,"public debt_(61.733, 226.1]",high public debt,"Binary [yes / no] If the country has high public debt (more than 62% of GDP), the value for this feature is YES. It its public debt is lower than 62% of GDP, the value for this feature is NO."
+11,0,region_3,in Asia,"Binary [yes / no] If the country belongs to Asia (YES), the value for this feature is YES, else NO."
+12,0,region_5,in Sub Saharan region,"Binary [yes / no] If the country belongs to the Sub Saharan Africa region, the value for this feature is YES, else NO. The Sub Saharan Africa region encompasses all countries south of the Sahara desert."
+13,0,"unemployment rate_[0.3, 6.433]",low unemployment rate,"Binary [yes / no] If the country has a low unemployment rate (less than 6%), the value for this feature is YES. If its unemployment rate is higher than 6%, the value for this feature is NO."

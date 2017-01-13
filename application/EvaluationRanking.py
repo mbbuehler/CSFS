@@ -1,4 +1,5 @@
 import re
+from sys import stdout
 
 import numpy as np
 import pandas as pd
@@ -6,16 +7,19 @@ import scipy.stats as st
 from tabulate import tabulate
 
 from application.CSFSConditionEvaluation import AucForBudgetCalculator, AUCForOrderedFeaturesCalculator
+from infoformulas_listcomp import _H, IG_from_series
+
 
 class ERCondition:
     LAYPERSON = 1 # AMT Turkers
     DOMAIN = 2 # e.g. Teachers
     EXPERT = 3 # Upwork
-    TEST = 4
+    CSFS = 4
+    RANDOM = 5
 
     @staticmethod
     def get_all():
-        return [ERCondition.LAYPERSON, ERCondition.DOMAIN, ERCondition.EXPERT]
+        return [ERCondition.LAYPERSON, ERCondition.DOMAIN, ERCondition.EXPERT, ERCondition.CSFS, ERCondition.RANDOM]
 
 
 class ERFilterer:
@@ -100,13 +104,15 @@ class EREvaluator:
 70   0.639263   0.598034  0.618649  0.0148
     """
 
-    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target, dataset_name):
+    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target, dataset_name, df_answers_grouped, bootstrap_n=12):
         self.df_evaluation_result = df_evaluation_result
         self.df_evaluation_base = df_evaluation_base
         self.df_cleaned_bin = df_cleaned_bin
         self.parser = ERParser(df_evaluation_base)
         self.target = target
         self.dataset_name = dataset_name
+        self.df_answers_grouped = df_answers_grouped
+        self.bootstrap_n = bootstrap_n
 
     def evaluate(self, budget_range, condition):
         pass
@@ -138,20 +144,23 @@ class EREvaluator:
         df_evaluated = pd.DataFrame(dict(auc=mean, std=std, ci_lo=ci_low, ci_hi=ci_high))
         return df_evaluated
 
+    def evaluate_all_to_dict(self, budget_range):
+        raw_data = dict()
+        evaluated = dict()
+        for condition in ERCondition.get_all():
+            print("> Evaluating condition {}".format(condition))
+            raw = self.evaluate(budget_range, condition)
+            raw_data[condition] = raw
+            # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
+        return raw_data, evaluated
+
     def evaluate_all(self, budget_range):
         """
         returns {condition: DF, } e.g. {2: Df}
         :param budget_range:
         :return:dict
         """
-        raw_data = dict()
-        evaluated = dict()
-        for condition in ERCondition.get_all():
-            print("> Evaluating condition {}".format(condition))
-            raw, evaluated[condition] = self.evaluate(budget_range, condition)
-            raw_data[condition] = [list(raw[cost]) for cost in raw]
-            # aucs_raw is dict with key: condition (int) and val: dataframe with costs as columns and auc as values
-
+        raw_data, evaluated = self.evaluate_all_to_dict(budget_range)
         df_raw = pd.DataFrame(raw_data, index=budget_range)
         return df_raw, evaluated
 
@@ -167,13 +176,11 @@ class ERCostEvaluator(EREvaluator):
         :return: df_budget_aucs (raw df with columns = cost, index all 'auc') and df_evaluated (df with CI usw.)
         """
         df_result_filtered = self._get_filtered_result(condition)
-        if len(df_result_filtered) == 0:
-            return None
-
         list_budget_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()]
         df_budget_aucs = pd.concat(list_budget_aucs, axis='columns').transpose() # df with columns index= x times 'AUC' and columns=cost
         df_evaluated = self._get_df_evaluated(df_budget_aucs)
         return df_budget_aucs, df_evaluated
+
 
 
     def _get_aucs(self, row, budget_range):
@@ -187,13 +194,67 @@ class ERCostEvaluator(EREvaluator):
 
 class ERNofeaturesEvaluator(EREvaluator):
 
-    def evaluate(self, budget_range, condition):
-        df_result_filtered = self._get_filtered_result(condition)
+    # def evaluate_to_dict(self, budget_range, condition):
+    #     df_result_filtered = self._get_filtered_result(condition)
+    #     list_nofeatures_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()] # list of dfs with index=nofeature and one column 'auc'
+    #     result = {int(nofeature): list() for nofeature in list_nofeatures_aucs[0].index}
+    #     for nofeature in result:
+    #         result[nofeature] = [float(df.loc[nofeature]) for df in list_nofeatures_aucs]
+    #     return result
 
-        list_nofeature_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()]
-        df_nofeatures_aucs = pd.concat(list_nofeature_aucs, axis='columns').transpose() # df with columns index= x times 'AUC' and columns=cost
-        df_evaluated = self._get_df_evaluated(df_nofeatures_aucs)
-        return df_nofeatures_aucs, df_evaluated
+
+    def evaluate(self, budget_range, condition):
+        if condition < 4: # ranking conditions
+            df_result_filtered = self._get_filtered_result(condition)
+            list_nofeatures_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()] # list of dfs with index=nofeature and one column 'auc'
+            result = {int(nofeature): list() for nofeature in list_nofeatures_aucs[0].index}
+            for nofeature in result:
+                result[nofeature] = [float(df.loc[nofeature]) for df in list_nofeatures_aucs]
+
+        elif condition == 4: #csfs condition
+            def bootstrap_row(row):
+                row['p'] = np.random.choice(list(row['p']), replace=True, size=self.bootstrap_n)
+                row['p|f=0'] = np.random.choice(list(row['p']), replace=True, size=self.bootstrap_n)
+                row['p|f=1'] = np.random.choice(list(row['p']), replace=True, size=self.bootstrap_n)
+                return row
+            def aggregate(row):
+                row['p'] = np.median(row['p'])
+                row['p|f=0'] = np.median(row['p|f=0'])
+                row['p|f=1'] = np.median(row['p|f=1'])
+                return row
+            def calc_ig(row, p_target):
+                h_x = _H([p_target, 1-p_target])
+                row['IG'] = IG_from_series(row, h_x=h_x, identifier='p')
+                return row
+
+            result = {nofeatures: list() for nofeatures in budget_range}
+
+            for i in range(100): # number of iterations for bootstrapping -> is number of aucs calculated
+                # bootstrap answers
+                df_answers_bootstrapped = self.df_answers_grouped.apply(bootstrap_row, axis='columns')
+                df_aggregated = df_answers_bootstrapped.apply(aggregate, axis='columns')
+                df_aggregated = df_aggregated.apply(calc_ig, axis='columns', p_target=df_aggregated.loc[self.target]['p'])
+                df_aggregated = df_aggregated.drop(self.target)
+                df_ordered = df_aggregated.sort_values('IG', ascending=False)
+                # reset index
+                df_ordered['Feature'] = df_ordered.index
+                df_ordered = df_ordered.reset_index()
+                evaluator = AUCForOrderedFeaturesCalculator(df_ordered, self.df_cleaned_bin, self.target)
+                df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
+                for nofeature in df_aucs.index:
+                    result[nofeature].append(df_aucs.loc[nofeature]['auc'])
+        elif condition == 5: # random
+            features = list(self.df_answers_grouped.drop(self.target).index)
+            df_ordered = pd.DataFrame({'Feature': features})
+            result = {nofeatures: list() for nofeatures in budget_range}
+            for i in range(100):
+                df_shuffled = df_ordered.sample(frac=1).reset_index(drop=True)
+
+                evaluator = AUCForOrderedFeaturesCalculator(df_shuffled, self.df_cleaned_bin, self.target)
+                df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
+                for nofeature in df_aucs.index:
+                    result[nofeature].append(df_aucs.loc[nofeature]['auc'])
+        return result
 
     def _get_aucs(self, row, budget_range):
         token = row.token

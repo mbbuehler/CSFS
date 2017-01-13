@@ -112,7 +112,7 @@
                         <input type="hidden" name="comment" id="comment"/>
                         <div class="form-group">
                             <label for="comment"><?php echo $S['LABEL_COMMENT']; ?>:</label>
-                            <textarea class="form-control" rows="5" id="commentarea"></textarea>
+                            <textarea class="form-control" rows="5" id="commentarea" <?php if($condition==2) { echo 'placeholder="Hast du beruflich / in deiner Freizeit mit dem Thema zu tun?"';}?>></textarea>
                         </div>
 
                     </div>
