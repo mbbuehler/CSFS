@@ -21,6 +21,7 @@ class ExperimentStudent(AbstractExperiment):
         self.path_meta = '{}cleaned/{}/student-por_clean_bin_meta.csv'.format(self.base_path, experiment_name)
         self.path_answers_raw = '{}results/{}/answers_raw.xlsx'.format(self.base_path, experiment_name)
         self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)
+        self.path_answers_clean_grouped = '{}results/{}/answers_clean_grouped.pickle'.format(self.base_path, experiment_name)
         self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(self.base_path, experiment_name)
         self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
         self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
@@ -38,6 +39,8 @@ class ExperimentStudent(AbstractExperiment):
         self.path_cost_ig_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_result = '{}evaluation/student_result.csv'.format(self.base_path, experiment_name)
+
+        self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
 
         self.path_descriptions_domain = '{}evaluation/experts_domain/student_descriptions_domain.csv'.format(self.base_path)
         self.target = 'G3'
@@ -73,19 +76,21 @@ class ExperimentStudent(AbstractExperiment):
         df = preparator.prepare(df, columns_to_ignore=[self.target])
         df.to_csv(self.path_bin, index=False)
 
-    def evaluate_crowd_all_answers(self):
-        """
-        Aggregates crowd answers and evaluates for all crowd answers
-        :return:
-        """
-        df_clean = CSFSCrowdCleaner(self.path_questions, self.path_answers_raw, self.target).clean()
-        df_clean.to_csv(self.path_answers_clean, index=True)
-
-        df_aggregated = CSFSCrowdAggregator(df_clean, target=self.target, mode=CSFSCrowdAggregator.Mode.EXTENDED, fake_features={'G3': 0.5}).aggregate()
-        df_aggregated.to_csv(self.path_answers_aggregated, index=True)
-
-        df_combined = CSFSCrowdAnalyser().get_combined_df(self.path_answers_aggregated, self.path_meta)
-        df_combined.to_csv(self.path_answers_metadata, index=True)
+    # def evaluate_crowd_all_answers(self):
+    #     """
+    #     Aggregates crowd answers and evaluates for all crowd answers
+    #     :return:
+    #     """
+    #     df_clean = CSFSCrowdCleaner(self.path_questions, self.path_answers_raw, self.target).clean()
+    #     df_clean.to_csv(self.path_answers_clean, index=True)
+    #     print(df_clean)
+    #     exit()
+    #
+    #     df_aggregated = CSFSCrowdAggregator(df_clean, target=self.target, mode=CSFSCrowdAggregator.Mode.EXTENDED, ).aggregate()
+    #     df_aggregated.to_csv(self.path_answers_aggregated, index=True)
+    #
+    #     df_combined = CSFSCrowdAnalyser().get_combined_df(self.path_answers_aggregated, self.path_meta)
+    #     df_combined.to_csv(self.path_answers_metadata, index=True)
 
     def domain_evaluation(self):
         """
@@ -133,7 +138,7 @@ paid==yes                1    1    0    0    1    2    0    0    0     0     1  
 
 if __name__ == '__main__':
     experiment = ExperimentStudent('student', 2, 'experiment2_por')
-
+    fake_features={'G3': 0.5}
     N_Features = [3, 5, 7, 9, 11]
     n_samples = 100 # number of repetitions to calculate average auc score for samples)
     # experiment.set_up_basic_folder_structure()
@@ -141,19 +146,20 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    # experiment.evaluate_crowd_all_answers()
+    experiment.evaluate_crowd_all_answers(fake_features=fake_features)
      # experiment.drop_analysis(N_Features, n_samples)
     # experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
     # experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
-    # experiment.evaluate_crowd_all_answers()
+    # experiment.evaluate_crowd_all_answers(fake_features=fake_features)
     # experiment.drop_evaluation(N_Features, n_samples)
     budget_range = range(10, 180, 10)
-    no_features = range(1, 14)
+    feature_range = range(1, 14)
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)
-    experiment.evaluate_ranking_cost(budget_range)
-    experiment.evaluate_ranking_nofeatures(no_features)
+    # experiment.evaluate_ranking_cost(budget_range)
+    # experiment.evaluate_ranking_nofeatures(no_features)
         #
     # experiment.evaluate_csfs_auc()
     # experiment.domain_evaluation()
+    experiment.final_evaluation(feature_range)

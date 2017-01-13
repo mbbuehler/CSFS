@@ -2,12 +2,14 @@ import os
 import numpy as np
 import pandas as pd
 import sys
+
+import pickle
 import scipy.stats as st
 from joblib import Parallel, delayed
 from tabulate import tabulate
 
 import CSFSLoader
-from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdCleaner, CSFSCrowdAnalyser
+from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdCleaner, CSFSCrowdAnalyser, CSFSCrowdAnswergrouper
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from analysis_noisy_means_drop import _conduct_analysis, visualise_results
@@ -27,6 +29,7 @@ class AbstractExperiment:
     path_meta = ''
     path_answers_raw = ''
     path_answers_clean = ''
+    path_answers_clean_grouped = ''
     path_answers_aggregated = ''
     path_answers_metadata = ''
     path_csfs_auc = ''
@@ -41,6 +44,7 @@ class AbstractExperiment:
     path_budget_evaluation_result = ''
     path_budget_evaluation_cost_rawaucs = ''
     path_budget_evaluation_nofeatures_rawaucs = ''
+    path_final_evaluation_aucs = ''
     target = ''
 
     def __init__(self, dataset_name, experiment_number, experiment_name):
@@ -172,15 +176,20 @@ class AbstractExperiment:
             df_sample = df_sample.append(samples)
         return df_sample
 
-    def evaluate_crowd_all_answers(self):
+    def evaluate_crowd_all_answers(self, mode=CSFSCrowdAggregator.Mode.EXTENDED, fake_features={}):
         """
         Aggregates crowd answers and evaluates for all crowd answers
         :return:
         """
         df_clean = CSFSCrowdCleaner(self.path_questions, self.path_answers_raw, self.target).clean()
+        for f in fake_features:
+            df_clean = df_clean.append({'answer': fake_features[f], 'answerUser': 'FAKE', 'feature': f}, ignore_index=True)
         df_clean.to_csv(self.path_answers_clean, index=True)
 
-        df_aggregated = CSFSCrowdAggregator(df_clean, target=self.target, mode=CSFSCrowdAggregator.Mode.EXTENDED).aggregate()
+        df_clean_grouped = CSFSCrowdAnswergrouper.group(df_clean)
+        df_clean_grouped.to_pickle(self.path_answers_clean_grouped)
+
+        df_aggregated = CSFSCrowdAggregator(df_clean, target=self.target, mode=mode, fake_features=fake_features).aggregate()
         df_aggregated.to_csv(self.path_answers_aggregated, index=True)
 
         df_combined = CSFSCrowdAnalyser().get_combined_df(self.path_answers_aggregated, self.path_meta)
@@ -336,7 +345,21 @@ class AbstractExperiment:
 
         df_aucs_raw.to_pickle(self.path_budget_evaluation_nofeatures_rawaucs)
 
+    def final_evaluation(self, feature_range):
+        """
+        Final evaluation. Takes tokens for condition 1-4 and outputs aucs for #features
+        :param feature_range: list(int)
+        :return: saves final_evaluation_aucs.pickle
+        """
+        df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'ip', 'date'])
+        df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
+        df_cleaned_bin = pd.read_csv(self.path_bin)
+        df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
 
+        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped)
+        raw_data, evaluated = evaluator.evaluate_all_to_dict(feature_range) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
+        print(raw_data)
+        pickle.dump(raw_data, open(self.path_final_evaluation_aucs, 'wb'))
 
 
 

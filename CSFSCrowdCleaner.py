@@ -365,6 +365,44 @@ class AnswerFilter:
         print('dropped {} rows'.format(n_before - n_after))
         return df_filtered
 
+class CSFSCrowdAnswergrouper:
+
+    @staticmethod
+    def group(df_clean):
+        """
+        :param df_clean:
+             answer      answerUser                  feature
+0        0.1  A1KUAL8PN2X8PK  health_(2.333, 3.667]_0
+1        0.3   AMA18W8F60Y2J  health_(2.333, 3.667]_0
+2        0.6  A1F1OZ54G177D8  health_(2.333, 3.667]_0
+3        0.4   ANVAFB99K5RKP  health_(2.333, 3.667]_0
+4        0.6  A3D46S3V9SYXTT  health_(2.333, 3.667]_0
+
+:returns
+                      p                  p|f=0                 p|f=1
+--------------------  -------------------------------------------------------------------------
+Fjob_teacher          [0.1,..., 0.1]    [0.6,..., 0.8]         [0.8,... , 0.9]
+Medu_(-0.004, 1.333]  [0.1,..., 0.1]    [0.6,..., 0.8]         [0.8,... , 0.9]
+...
+"""
+        data = {}
+        for i, row in df_clean.iterrows():
+            if row['feature'][-2:] == '_0':
+                feature = row['feature'][:-2]
+                column = 'p|f=0'
+            elif row['feature'][-2:] == '_1':
+                feature = row['feature'][:-2]
+                column = 'p|f=1'
+            else:
+                feature = row['feature']
+                column = 'p'
+            if feature not in data:
+                data[feature] = {'p': list(), 'p|f=0': list(), 'p|f=1': list()}
+            data[feature][column].append(row['answer'])
+        df_grouped = pd.DataFrame(data).transpose()
+        return df_grouped
+
+
 def run():
     """
     example call
