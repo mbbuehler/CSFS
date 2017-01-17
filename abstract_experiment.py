@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 import sys
-
+import scipy.stats
 import pickle
 import scipy.stats as st
 import statsmodels
@@ -28,6 +28,7 @@ class AbstractExperiment:
     path_raw = ''
     path_cleaned = ''
     path_bin = ''
+    path_autocorrelation = ''
     path_meta = ''
     path_answers_raw = ''
     path_answers_clean = ''
@@ -347,6 +348,25 @@ class AbstractExperiment:
         df_evaluated.to_csv(self.path_budget_evaluation_nofeatures)
 
         df_aucs_raw.to_pickle(self.path_budget_evaluation_nofeatures_rawaucs)
+
+    def autocorrelation(self):
+        """
+        Calculcates Kendall-Tau Correlation for binary features
+        :return:
+        """
+        # For all features calculate kendall's tau with every other feature.
+        df_bin = pd.read_csv(self.path_bin)
+        features = sorted(list(df_bin.columns))
+        df_correlation = pd.DataFrame({f: [0] * len(features) for f in features}, index=features)
+        for f1 in features:
+            for f2 in features:
+                if f1 == f2:
+                    break
+                x = list(df_bin[f1])
+                y = list(df_bin[f2])
+                corr, p = scipy.stats.kendalltau(x, y)
+                df_correlation.loc[f1, f2] = "{} (p={:.3f})".format(corr, p)
+        df_correlation.to_csv(self.path_autocorrelation, index=True)
 
     def final_evaluation(self, feature_range):
         """
