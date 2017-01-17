@@ -18,6 +18,7 @@ class ExperimentIncome(AbstractExperiment):
         self.path_meta = '{}cleaned/{}/income_clean_bin_meta.csv'.format(self.base_path, experiment_name)
         self.path_answers_raw = '{}results/{}/answers_raw2.xlsx'.format(self.base_path, experiment_name)
         self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)
+        self.path_answers_clean_grouped = '{}results/{}/answers_clean_grouped.pickle'.format(self.base_path, experiment_name)
         self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(self.base_path, experiment_name)
         self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
         self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
@@ -35,6 +36,9 @@ class ExperimentIncome(AbstractExperiment):
         self.path_budget_evaluation_nofeatures = '{}evaluation/budget_evaluation_nofeatures.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_cost_rawaucs = '{}evaluation/budget_evaluation_cost_rawaucs.pickle'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_nofeatures_rawaucs = '{}evaluation/budget_evaluation_nofeatures_rawaucs.pickle'.format(self.base_path, experiment_name)
+
+        self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
+        self.path_final_evaluation_aggregated = '{}evaluation/final_evaluation_aggregated.pickle'.format(self.base_path)
 
         self.target = 'income==>50K'
 
@@ -69,7 +73,7 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    # experiment.evaluate_crowd_all_answers()
+    experiment.evaluate_crowd_all_answers()
      # experiment.drop_analysis(N_Features, n_samples)
     #experiment.evaluate_flock(N_Features, n_samples, range(3, 100, 1))
     # experiment.evaluate_csfs_auc()
@@ -85,6 +89,8 @@ if __name__ == '__main__':
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)
     # experiment.evaluate_ranking_cost(budget_range)
     # experiment.evaluate_ranking_nofeatures(N_Features)
-    experiment.autocorrelation()
+    # experiment.autocorrelation()
+    experiment.final_evaluation(feature_range=no_features)
+    experiment.final_evaluation_visualisation(feature_range=no_features)
         #
     # experiment.evaluate_csfs_auc()

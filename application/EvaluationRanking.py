@@ -213,8 +213,8 @@ class ERNofeaturesEvaluator(EREvaluator):
         elif condition == 4: #csfs condition
             def bootstrap_row(row):
                 row['p'] = np.random.choice(list(row['p']), replace=True, size=self.bootstrap_n)
-                row['p|f=0'] = np.random.choice(list(row['p']), replace=True, size=self.bootstrap_n)
-                row['p|f=1'] = np.random.choice(list(row['p']), replace=True, size=self.bootstrap_n)
+                row['p|f=0'] = np.random.choice(list(row['p|f=0']), replace=True, size=self.bootstrap_n)
+                row['p|f=1'] = np.random.choice(list(row['p|f=1']), replace=True, size=self.bootstrap_n)
                 return row
             def aggregate(row):
                 row['p'] = np.median(row['p'])
@@ -227,13 +227,13 @@ class ERNofeaturesEvaluator(EREvaluator):
                 return row
 
             result = {nofeatures: list() for nofeatures in budget_range}
-
+            p_target = self.df_answers_grouped['p'].loc[self.target][0]
+            df_answers_tmp = self.df_answers_grouped.drop(self.target) # need to drop target
             for i in range(100): # number of iterations for bootstrapping -> is number of aucs calculated
                 # bootstrap answers
-                df_answers_bootstrapped = self.df_answers_grouped.apply(bootstrap_row, axis='columns')
+                df_answers_bootstrapped = df_answers_tmp.apply(bootstrap_row, axis='columns')
                 df_aggregated = df_answers_bootstrapped.apply(aggregate, axis='columns')
-                df_aggregated = df_aggregated.apply(calc_ig, axis='columns', p_target=df_aggregated.loc[self.target]['p'])
-                df_aggregated = df_aggregated.drop(self.target)
+                df_aggregated = df_aggregated.apply(calc_ig, axis='columns', p_target=p_target)
                 df_ordered = df_aggregated.sort_values('IG', ascending=False)
                 # reset index
                 df_ordered['Feature'] = df_ordered.index
@@ -242,6 +242,7 @@ class ERNofeaturesEvaluator(EREvaluator):
                 df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
                 for nofeature in df_aucs.index:
                     result[nofeature].append(df_aucs.loc[nofeature]['auc'])
+
         elif condition == 5: # random
             features = list(self.df_answers_grouped.drop(self.target).index)
             df_ordered = pd.DataFrame({'Feature': features})
