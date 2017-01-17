@@ -74,6 +74,7 @@ if __name__ == '__main__':
     # experiment.bin_binarise()
     # experiment.get_metadata()
     experiment.evaluate_crowd_all_answers()
+    exit()
      # experiment.drop_analysis(N_Features, n_samples)
     #experiment.evaluate_flock(N_Features, n_samples, range(3, 100, 1))
     # experiment.evaluate_csfs_auc()

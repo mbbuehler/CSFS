@@ -103,10 +103,11 @@ class CSFSCrowdCleaner:
         """
         def get_triple_question(e):
             e = e.replace('\n', '') # remove new lines
+            # print(e)
             result = list()
             is_triple = e.count('::')==3
             if is_triple: # normal question
-                match = re.search(r'<i>(.*)</i>.*%.*?(\w.*\?).*%.*?(\w.*\?)', e.rstrip())
+                match = re.search(r'<i>(.*)</i>.*?%.*?(\w.*\?.*)::.*?%.*?(\w.*\?.*)::', e.rstrip())
                 if match and match.group(3):
                     q1 = match.group(1).strip()
                     q2 = match.group(2).strip()
@@ -117,11 +118,15 @@ class CSFSCrowdCleaner:
                     print(e)
                     exit()
             else: # is target question (only one)
-                match = re.search(r'<i>(.*\?)', e.rstrip())
+                match = re.search(r'<i>(.*\?.*)</i>', e.rstrip())
                 q1 = match.group(1).strip()
                 result.append(q1)
 
-
+            # print(q1)
+            # if is_triple:
+            #     print(q2)
+            #     print(q3)
+            # input()
 
             #     index_second_start = e.index('::')+10
             #     if '100' in e[:index_second_start]: # we have to go one further
@@ -198,6 +203,9 @@ class CSFSCrowdCleaner:
             x = " ".join(x.split())
             # print(x)
             return x
+        # print(df_clean.head())
+        # print(df_questions.head())
+
         df_clean['question'] = df_clean['question'].apply(clean_string)
         df_questions['question'] = df_questions['question'].apply(clean_string)
 
@@ -206,6 +214,8 @@ class CSFSCrowdCleaner:
         df_lost = df_clean.drop(df_merged.index)
         print('Lost {} answers when merging questions and features'.format(len(df_lost)))
         # print('indeces lost: {}'.format(list(df_lost.index)))
+        # print(tabulate(df_lost.head(100), headers='keys'))
+        # exit()
 
         df_merged = df_merged.drop('question', axis='columns')
         return df_merged

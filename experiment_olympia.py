@@ -29,6 +29,7 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_meta = 'datasets/olympia/cleaned/{}/olympic_allyears_plus_bin_meta.csv'.format(experiment_name)
         self.path_answers_raw = 'datasets/olympia/results/{}/answers_raw_mod.xlsx'.format(experiment_name)
         self.path_answers_clean = 'datasets/olympia/results/{}/answers_clean.csv'.format(experiment_name)
+        self.path_answers_clean_grouped = '{}results/{}/answers_clean_grouped.pickle'.format(self.base_path, experiment_name)
         self.path_answers_aggregated = 'datasets/olympia/results/{}/answers_aggregated.csv'.format(experiment_name)
         self.path_answers_metadata = 'datasets/olympia/results/{}/answers_metadata.csv'.format(experiment_name)
         self.path_csfs_auc = 'datasets/olympia/results/{}/csfs_auc.csv'.format(experiment_name)
@@ -48,6 +49,9 @@ class ExperimentOlympia(AbstractExperiment):
         # self.path_cost_ig_base = '{}evaluation/base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_base = '{}evaluation/base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_result = '{}evaluation/result.csv'.format(self.base_path, experiment_name)
+
+        self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
+        self.path_final_evaluation_aggregated = '{}evaluation/final_evaluation_aggregated.pickle'.format(self.base_path)
 
         self.target = 'medals'
 
@@ -164,7 +168,7 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    # experiment.evaluate_crowd_all_answers()
+    experiment.evaluate_crowd_all_answers()
     # experiment.evaluate_flock()
     # experiment.evaluate_csfs_auc(fake_till_n=25)
 
@@ -174,4 +178,6 @@ if __name__ == '__main__':
     # experiment.evaluate_ranking_cost(budget_range)
     # experiment.evaluate_ranking_nofeatures(no_features)
     # experiment.evaluate_budget(budget_range)
-    experiment.autocorrelation()
+    # experiment.autocorrelation()
+    experiment.final_evaluation(no_features)
+    experiment.final_evaluation_visualisation(no_features)
