@@ -232,3 +232,4 @@ if __name__ == '__main__':
     # experiment.evaluate_crowd_all_answers()
     # experiment.evaluate_flock()
     # experiment.evaluate_csfs_auc()
+    experiment.autocorrelation()

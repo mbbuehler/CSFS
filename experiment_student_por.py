@@ -18,7 +18,7 @@ class ExperimentStudent(AbstractExperiment):
         self.path_raw = '{}raw/{}/student-por.csv'.format(self.base_path, experiment_name)
         self.path_cleaned = '{}cleaned/{}/student-por_clean.csv'.format(self.base_path, experiment_name)
         self.path_bin = '{}cleaned/{}/student-por_clean_bin.csv'.format(self.base_path, experiment_name)
-        self.path_autocorrelation = '{}cleaned/{}/stduent-por_bin_autocorrelation.csv'.format(self.base_path, experiment_name)
+        self.path_autocorrelation = '{}cleaned/{}/student-por_bin_autocorrelation.csv'.format(self.base_path, experiment_name)
         self.path_meta = '{}cleaned/{}/student-por_clean_bin_meta.csv'.format(self.base_path, experiment_name)
         self.path_answers_raw = '{}results/{}/answers_raw.xlsx'.format(self.base_path, experiment_name)
         self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)

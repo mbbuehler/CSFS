@@ -14,6 +14,7 @@ class ExperimentIncome(AbstractExperiment):
         self.path_raw = '{}raw/{}/income.csv'.format(self.base_path, experiment_name)
         self.path_cleaned = '{}cleaned/{}/income_clean.csv'.format(self.base_path, experiment_name)
         self.path_bin = '{}cleaned/{}/income_clean_bin.csv'.format(self.base_path, experiment_name)
+        self.path_autocorrelation = '{}cleaned/{}/income_bin_autocorrelation.csv'.format(self.base_path, experiment_name)
         self.path_meta = '{}cleaned/{}/income_clean_bin_meta.csv'.format(self.base_path, experiment_name)
         self.path_answers_raw = '{}results/{}/answers_raw2.xlsx'.format(self.base_path, experiment_name)
         self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)
@@ -84,5 +85,6 @@ if __name__ == '__main__':
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)
     # experiment.evaluate_ranking_cost(budget_range)
     # experiment.evaluate_ranking_nofeatures(N_Features)
+    experiment.autocorrelation()
         #
     # experiment.evaluate_csfs_auc()

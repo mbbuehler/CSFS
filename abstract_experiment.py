@@ -357,15 +357,15 @@ class AbstractExperiment:
         # For all features calculate kendall's tau with every other feature.
         df_bin = pd.read_csv(self.path_bin)
         features = sorted(list(df_bin.columns))
-        df_correlation = pd.DataFrame({f: [0] * len(features) for f in features}, index=features)
+        df_correlation = pd.DataFrame({f: [np.nan] * len(features) for f in features}, index=features)
         for f1 in features:
             for f2 in features:
-                if f1 == f2:
-                    break
                 x = list(df_bin[f1])
                 y = list(df_bin[f2])
                 corr, p = scipy.stats.kendalltau(x, y)
                 df_correlation.loc[f1, f2] = "{} (p={:.3f})".format(corr, p)
+                if f1 == f2:
+                    break
         df_correlation.to_csv(self.path_autocorrelation, index=True)
 
     def final_evaluation(self, feature_range):
