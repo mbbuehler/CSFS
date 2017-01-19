@@ -216,18 +216,23 @@ class AbstractExperiment:
         Plots three bar charts for each feature showing the distribution of the answers for p, p|f=0 and p|f=1
         :return:
         """
-        def plot_feature(row):
-            answers_p = list(row['p'])
-            answer_pf0 = list(row['p|f=0'])
-            answer_pf1 = list(row['p|f=1'])
-            plotly.offline.plot({
-                "data": [go.Bar(x=np.linspace(0,1,10), y=answers_p)],
-                "layout": go.Layout(title=row.name)
-            }, image='png', auto_open=False, filename=row.name+'.png')
-            exit()
+        def get_trace(series, condition):
+            return go.Bar(x=np.linspace(0, 1, 10), y=list(series))
+
+        def plot_feature(row, output_path_base):
+            fig = plotly.tools.make_subplots(rows=1, cols=3)
+
+            conditions = ['p', 'p|f=0', 'p|f=1']
+            for i in range(len(conditions)):
+                trace = get_trace(row[conditions[i]], conditions[i])
+                fig.append_trace(trace, 1, i+1)
+            fig['layout'].update(title='Test')
+
+            plotly.offline.plot(fig, auto_open=False, filename="{}{}.html".format(output_path_base, row.name))
+            print("{}{}.html".format(output_path_base, row.name))
         df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
-        print(df_answers_grouped.head())
-        df_answers_grouped.apply(plot_feature, axis='columns')
+        # print(df_answers_grouped.head())
+        df_answers_grouped.apply(plot_feature, axis='columns', output_path_base=self.path_answers_plots)
 
 
 
