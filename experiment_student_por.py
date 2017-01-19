@@ -165,7 +165,7 @@ if __name__ == '__main__':
         #
     # experiment.evaluate_csfs_auc()
     # experiment.domain_evaluation()
-    # experiment.final_evaluation(feature_range, bootstrap_n=20)
-    # experiment.final_evaluation_visualisation(feature_range)
+    experiment.final_evaluation(feature_range, bootstrap_n=20, repetitions=100)
+    experiment.final_evaluation_visualisation(feature_range)
     # experiment.autocorrelation()
-    experiment.crowd_answers_plot()
+    # experiment.crowd_answers_plot()

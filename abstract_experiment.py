@@ -398,7 +398,7 @@ class AbstractExperiment:
                     break
         df_correlation.to_csv(self.path_autocorrelation, index=True)
 
-    def final_evaluation(self, feature_range, bootstrap_n=12):
+    def final_evaluation(self, feature_range, bootstrap_n=12, repetitions=100):
         """
         Final evaluation. Takes tokens for condition 1-4 and outputs aucs for #features
         :param feature_range: list(int)
@@ -409,7 +409,7 @@ class AbstractExperiment:
         df_cleaned_bin = pd.read_csv(self.path_bin)
         df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
 
-        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=bootstrap_n)
+        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=bootstrap_n, repetitions=repetitions)
         raw_data = evaluator.evaluate_all_to_dict(feature_range) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
         pickle.dump(raw_data, open(self.path_final_evaluation_aucs, 'wb'))
 

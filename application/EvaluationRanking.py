@@ -104,7 +104,7 @@ class EREvaluator:
 70   0.639263   0.598034  0.618649  0.0148
     """
 
-    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target, dataset_name, df_answers_grouped, bootstrap_n=12):
+    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target, dataset_name, df_answers_grouped, bootstrap_n=12, repetitions=100):
         self.df_evaluation_result = df_evaluation_result
         self.df_evaluation_base = df_evaluation_base
         self.df_cleaned_bin = df_cleaned_bin
@@ -113,6 +113,7 @@ class EREvaluator:
         self.dataset_name = dataset_name
         self.df_answers_grouped = df_answers_grouped
         self.bootstrap_n = bootstrap_n
+        self.repetitions = repetitions
 
     def evaluate(self, budget_range, condition):
         pass
@@ -212,9 +213,12 @@ class ERNofeaturesEvaluator(EREvaluator):
 
         elif condition == 4: #csfs condition
             def bootstrap_row(row):
-                row['p'] = np.random.choice(list(row['p']), replace=True, size=self.bootstrap_n)
-                row['p|f=0'] = np.random.choice(list(row['p|f=0']), replace=True, size=self.bootstrap_n)
-                row['p|f=1'] = np.random.choice(list(row['p|f=1']), replace=True, size=self.bootstrap_n)
+                p = list(row['p'])
+                pf0 = list(row['p|f=0'])
+                pf1 = list(row['p|f=1'])
+                row['p'] = np.random.choice(p, replace=True, size=self.bootstrap_n)
+                row['p|f=0'] = np.random.choice(pf0, replace=True, size=self.bootstrap_n)
+                row['p|f=1'] = np.random.choice(pf1, replace=True, size=self.bootstrap_n)
                 return row
             def aggregate(row):
                 row['p'] = np.median(row['p'])
@@ -229,7 +233,7 @@ class ERNofeaturesEvaluator(EREvaluator):
             result = {nofeatures: list() for nofeatures in budget_range}
             p_target = self.df_answers_grouped['p'].loc[self.target][0]
             df_answers_tmp = self.df_answers_grouped.drop(self.target) # need to drop target
-            for i in range(100): # number of iterations for bootstrapping -> is number of aucs calculated
+            for i in range(self.repetitions): # number of iterations for bootstrapping -> is number of aucs calculated
                 # bootstrap answers
                 df_answers_bootstrapped = df_answers_tmp.apply(bootstrap_row, axis='columns')
                 df_aggregated = df_answers_bootstrapped.apply(aggregate, axis='columns')
