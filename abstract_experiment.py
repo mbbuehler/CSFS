@@ -9,7 +9,7 @@ import statsmodels.stats.weightstats as ssw
 from joblib import Parallel, delayed
 import plotly
 import plotly.graph_objs as go
-
+from tabulate import tabulate
 
 import CSFSLoader
 from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdCleaner, CSFSCrowdAnalyser, CSFSCrowdAnswergrouper
@@ -408,8 +408,10 @@ class AbstractExperiment:
         df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
         df_cleaned_bin = pd.read_csv(self.path_bin)
         df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
+        df_actual_metadata = pd.read_csv(self.path_answers_metadata, index_col=0, header=[0, 1])
+        df_actual_metadata = df_actual_metadata['actual']
 
-        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=bootstrap_n, repetitions=repetitions)
+        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, df_actual_metadata=df_actual_metadata, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=bootstrap_n, repetitions=repetitions)
         raw_data = evaluator.evaluate_all_to_dict(feature_range) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
         pickle.dump(raw_data, open(self.path_final_evaluation_aucs, 'wb'))
 

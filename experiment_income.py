@@ -16,7 +16,7 @@ class ExperimentIncome(AbstractExperiment):
         self.path_bin = '{}cleaned/{}/income_clean_bin.csv'.format(self.base_path, experiment_name)
         self.path_autocorrelation = '{}cleaned/{}/income_bin_autocorrelation.csv'.format(self.base_path, experiment_name)
         self.path_meta = '{}cleaned/{}/income_clean_bin_meta.csv'.format(self.base_path, experiment_name)
-        self.path_answers_raw = '{}results/{}/answers_raw2.xlsx'.format(self.base_path, experiment_name)
+        self.path_answers_raw = '{}results/{}/answers_raw3.xlsx'.format(self.base_path, experiment_name)
         self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)
         self.path_answers_clean_grouped = '{}results/{}/answers_clean_grouped.pickle'.format(self.base_path, experiment_name)
         self.path_answers_plots = '{}results/{}/visualisations/'.format(self.base_path, experiment_name)
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     # experiment.bin_binarise()
     # experiment.get_metadata()
     # experiment.evaluate_crowd_all_answers()
-
+    # exit()
      # experiment.drop_analysis(N_Features, n_samples)
     #experiment.evaluate_flock(N_Features, n_samples, range(3, 100, 1))
     # experiment.evaluate_csfs_auc()

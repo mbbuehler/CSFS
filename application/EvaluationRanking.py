@@ -16,10 +16,11 @@ class ERCondition:
     EXPERT = 3 # Upwork
     CSFS = 4
     RANDOM = 5
+    ACTUAL = 6
 
     @staticmethod
     def get_all():
-        return [ERCondition.LAYPERSON, ERCondition.DOMAIN, ERCondition.EXPERT, ERCondition.CSFS, ERCondition.RANDOM]
+        return [ERCondition.LAYPERSON, ERCondition.DOMAIN, ERCondition.EXPERT, ERCondition.CSFS, ERCondition.RANDOM, ERCondition.ACTUAL]
 
 
 class ERFilterer:
@@ -104,10 +105,11 @@ class EREvaluator:
 70   0.639263   0.598034  0.618649  0.0148
     """
 
-    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target, dataset_name, df_answers_grouped, bootstrap_n=12, repetitions=100):
+    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target, dataset_name, df_answers_grouped, df_actual_metadata, bootstrap_n=12, repetitions=100, ):
         self.df_evaluation_result = df_evaluation_result
         self.df_evaluation_base = df_evaluation_base
         self.df_cleaned_bin = df_cleaned_bin
+        self.df_actual_metadata = df_actual_metadata
         self.parser = ERParser(df_evaluation_base)
         self.target = target
         self.dataset_name = dataset_name
@@ -204,14 +206,14 @@ class ERNofeaturesEvaluator(EREvaluator):
 
 
     def evaluate(self, budget_range, condition):
-        if condition < 4: # ranking conditions
+        if condition in [ERCondition.LAYPERSON, ERCondition.DOMAIN, ERCondition.EXPERT]: # ranking conditions
             df_result_filtered = self._get_filtered_result(condition)
             list_nofeatures_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()] # list of dfs with index=nofeature and one column 'auc'
             result = {int(nofeature): list() for nofeature in list_nofeatures_aucs[0].index}
             for nofeature in result:
                 result[nofeature] = [float(df.loc[nofeature]) for df in list_nofeatures_aucs]
 
-        elif condition == 4: #csfs condition
+        elif condition == ERCondition.CSFS: #csfs condition
             def bootstrap_row(row):
                 p = list(row['p'])
                 pf0 = list(row['p|f=0'])
@@ -242,13 +244,12 @@ class ERNofeaturesEvaluator(EREvaluator):
                 # reset index
                 df_ordered['Feature'] = df_ordered.index
                 df_ordered = df_ordered.reset_index()
-                print(tabulate(df_ordered))
                 evaluator = AUCForOrderedFeaturesCalculator(df_ordered, self.df_cleaned_bin, self.target)
                 df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
                 for nofeature in df_aucs.index:
                     result[nofeature].append(df_aucs.loc[nofeature]['auc'])
 
-        elif condition == 5: # random
+        elif condition == ERCondition.RANDOM: # random
             features = list(self.df_answers_grouped.drop(self.target).index)
             df_ordered = pd.DataFrame({'Feature': features})
             result = {nofeatures: list() for nofeatures in budget_range}
@@ -259,6 +260,18 @@ class ERNofeaturesEvaluator(EREvaluator):
                 df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
                 for nofeature in df_aucs.index:
                     result[nofeature].append(df_aucs.loc[nofeature]['auc'])
+
+        elif condition == ERCondition.ACTUAL: # using IGs from actual values
+            result = {nofeatures: -1 for nofeatures in budget_range}
+            df = self.df_actual_metadata.drop(self.target)
+            df_ordered = df.sort_values('IG', ascending=False)
+            # reset index
+            df_ordered['Feature'] = df_ordered.index
+            df_ordered = df_ordered.reset_index()
+            evaluator = AUCForOrderedFeaturesCalculator(df_ordered, self.df_cleaned_bin, self.target)
+            df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
+            for nofeature in df_aucs.index:
+                result[nofeature] = [df_aucs.loc[nofeature]['auc']] # list only used to keep same format as other conditions
         return result
 
     def _get_aucs(self, row, budget_range):

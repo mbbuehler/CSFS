@@ -149,7 +149,7 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    experiment.evaluate_crowd_all_answers(fake_features=fake_features)
+    # experiment.evaluate_crowd_all_answers(fake_features=fake_features)
      # experiment.drop_analysis(N_Features, n_samples)
     # experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
     # experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
