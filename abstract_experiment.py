@@ -1,13 +1,15 @@
 import os
+import pickle
+import sys
+
 import numpy as np
 import pandas as pd
-import sys
 import scipy.stats
-import pickle
-import scipy.stats as st
-import statsmodels
+import statsmodels.stats.weightstats as ssw
 from joblib import Parallel, delayed
-from tabulate import tabulate
+import plotly
+import plotly.graph_objs as go
+
 
 import CSFSLoader
 from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdCleaner, CSFSCrowdAnalyser, CSFSCrowdAnswergrouper
@@ -18,10 +20,7 @@ from application.CSFSConditionEvaluation import TestEvaluation
 from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
-import pandas as pd
-import numpy as np
-import plotly.graph_objs as go
-import statsmodels.stats.weightstats as ssw
+
 
 class AbstractExperiment:
 
@@ -33,6 +32,7 @@ class AbstractExperiment:
     path_answers_raw = ''
     path_answers_clean = ''
     path_answers_clean_grouped = ''
+    path_answers_plots = ''
     path_answers_aggregated = ''
     path_answers_metadata = ''
     path_csfs_auc = ''
@@ -211,6 +211,25 @@ class AbstractExperiment:
         df = df.append([data]*n, ignore_index=True) # need to append it several times in order to allow random selection
         return df
 
+    def crowd_answers_plot(self):
+        """
+        Plots three bar charts for each feature showing the distribution of the answers for p, p|f=0 and p|f=1
+        :return:
+        """
+        def plot_feature(row):
+            answers_p = list(row['p'])
+            answer_pf0 = list(row['p|f=0'])
+            answer_pf1 = list(row['p|f=1'])
+            plotly.offline.plot({
+                "data": [go.Bar(x=np.linspace(0,1,10), y=answers_p)],
+                "layout": go.Layout(title=row.name)
+            }, image='png', auto_open=False, filename=row.name+'.png')
+            exit()
+        df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
+        print(df_answers_grouped.head())
+        df_answers_grouped.apply(plot_feature, axis='columns')
+
+
 
     def evaluate_csfs_auc(self, fake_features={}, fake_till_n=-1):
         df_data = self._get_dataset_bin()
@@ -368,7 +387,7 @@ class AbstractExperiment:
                     break
         df_correlation.to_csv(self.path_autocorrelation, index=True)
 
-    def final_evaluation(self, feature_range):
+    def final_evaluation(self, feature_range, bootstrap_n=12):
         """
         Final evaluation. Takes tokens for condition 1-4 and outputs aucs for #features
         :param feature_range: list(int)
@@ -379,7 +398,7 @@ class AbstractExperiment:
         df_cleaned_bin = pd.read_csv(self.path_bin)
         df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
 
-        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped)
+        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=bootstrap_n)
         raw_data = evaluator.evaluate_all_to_dict(feature_range) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
         pickle.dump(raw_data, open(self.path_final_evaluation_aucs, 'wb'))
 
