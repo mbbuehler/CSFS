@@ -255,7 +255,6 @@ class ERNofeaturesEvaluator(EREvaluator):
             result = {nofeatures: list() for nofeatures in budget_range}
             for i in range(100):
                 df_shuffled = df_ordered.sample(frac=1).reset_index(drop=True)
-
                 evaluator = AUCForOrderedFeaturesCalculator(df_shuffled, self.df_cleaned_bin, self.target)
                 df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
                 for nofeature in df_aucs.index:
@@ -280,8 +279,6 @@ class ERNofeaturesEvaluator(EREvaluator):
         evaluator = AUCForOrderedFeaturesCalculator(df_features_ranked, self.df_cleaned_bin, self.target)
         df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
         return df_aucs
-
-
 
 def test():
     token = '0:13,1:14,2:1,3:3,4:4,5:7,6:11,7:5,8:12,9:15,10:6,11:2,12:8,13:9,14:10|e7cf0fccca7858d47a96c82837e6d439'
