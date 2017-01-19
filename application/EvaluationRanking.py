@@ -242,6 +242,7 @@ class ERNofeaturesEvaluator(EREvaluator):
                 # reset index
                 df_ordered['Feature'] = df_ordered.index
                 df_ordered = df_ordered.reset_index()
+                print(tabulate(df_ordered))
                 evaluator = AUCForOrderedFeaturesCalculator(df_ordered, self.df_cleaned_bin, self.target)
                 df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
                 for nofeature in df_aucs.index:
