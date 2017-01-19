@@ -217,22 +217,28 @@ class AbstractExperiment:
         :return:
         """
         def get_trace(series, condition):
-            return go.Bar(x=np.linspace(0, 1, 10), y=list(series))
+            return go.Bar(x=np.linspace(0, 1, 11), y=list(series))
 
-        def plot_feature(row, output_path_base):
-            fig = plotly.tools.make_subplots(rows=1, cols=3)
 
-            conditions = ['p', 'p|f=0', 'p|f=1']
+
+        df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
+
+        features = list(df_answers_grouped.index)
+        conditions = ['p', 'p|f=0', 'p|f=1']
+        subplot_titles = ["{} {}".format(f, c) for f in features for c in conditions ]
+        fig = plotly.tools.make_subplots(rows=len(features), cols=3, subplot_titles=subplot_titles)
+        row_index=1
+        for index, row in df_answers_grouped.iterrows():
             for i in range(len(conditions)):
                 trace = get_trace(row[conditions[i]], conditions[i])
-                fig.append_trace(trace, 1, i+1)
-            fig['layout'].update(title='Test')
+                fig.append_trace(trace, row_index, i+1)
+            row_index += 1
+        fig['layout'].update(showlegend=False, height=2500, width=1200, title='Crowd Answers for {} ({})'.format(self.dataset_name, self.experiment_name))
 
-            plotly.offline.plot(fig, auto_open=False, filename="{}{}.html".format(output_path_base, row.name))
-            print("{}{}.html".format(output_path_base, row.name))
-        df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
-        # print(df_answers_grouped.head())
-        df_answers_grouped.apply(plot_feature, axis='columns', output_path_base=self.path_answers_plots)
+        plotly.offline.plot(fig, auto_open=False, filename="{}{}.html".format(self.path_answers_plots, self.dataset_name))
+        from IPython.display import Image
+        Image('a-simple-plot.png')
+
 
 
 
