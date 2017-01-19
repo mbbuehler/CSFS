@@ -23,6 +23,7 @@ class ExperimentStudent(AbstractExperiment):
         self.path_answers_raw = '{}results/{}/answers_raw.xlsx'.format(self.base_path, experiment_name)
         self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)
         self.path_answers_clean_grouped = '{}results/{}/answers_clean_grouped.pickle'.format(self.base_path, experiment_name)
+        self.path_answers_plot = '{}results/{}/visualisations/'.format(self.base_path, experiment_name)
         self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(self.base_path, experiment_name)
         self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
         self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
@@ -164,6 +165,7 @@ if __name__ == '__main__':
         #
     # experiment.evaluate_csfs_auc()
     # experiment.domain_evaluation()
-    experiment.final_evaluation(feature_range)
-    experiment.final_evaluation_visualisation(feature_range)
+    # experiment.final_evaluation(feature_range, bootstrap_n=20)
+    # experiment.final_evaluation_visualisation(feature_range)
     # experiment.autocorrelation()
+    experiment.crowd_answers_plot()
