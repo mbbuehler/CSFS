@@ -53,6 +53,7 @@ class ExperimentOlympia(AbstractExperiment):
 
         self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
         self.path_final_evaluation_aggregated = '{}evaluation/final_evaluation_aggregated.pickle'.format(self.base_path)
+        self.path_final_evaluation_combined = '{}evaluation/final_evaluation_combined.csv'.format(self.base_path)
 
         self.target = 'medals'
 
@@ -173,13 +174,14 @@ if __name__ == '__main__':
     # experiment.evaluate_flock()
     # experiment.evaluate_csfs_auc(fake_till_n=25)
 
-
-    budget_range = range(10, 160, 10)
     no_features = range(1, 14)
+    bootstrap_n = 12
+    repetitions = 20
     # experiment.evaluate_ranking_cost(budget_range)
     # experiment.evaluate_ranking_nofeatures(no_features)
     # experiment.evaluate_budget(budget_range)
     # experiment.autocorrelation()
-    experiment.final_evaluation(no_features, bootstrap_n=12, repetitions=20)
-    experiment.final_evaluation_visualisation(no_features)
+    # experiment.final_evaluation(no_features, bootstrap_n=12, repetitions=20)
+    # experiment.final_evaluation_visualisation(no_features)
     # experiment.crowd_answers_plot()
+    experiment.final_evaluation_combine(no_features, bootstrap_n=bootstrap_n, repetitions=repetitions)

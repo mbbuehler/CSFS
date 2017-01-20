@@ -40,6 +40,7 @@ class ExperimentIncome(AbstractExperiment):
 
         self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
         self.path_final_evaluation_aggregated = '{}evaluation/final_evaluation_aggregated.pickle'.format(self.base_path)
+        self.path_final_evaluation_combined = '{}evaluation/final_evaluation_combined.csv'.format(self.base_path)
 
         self.target = 'income==>50K'
 
@@ -86,13 +87,17 @@ if __name__ == '__main__':
     # experiment.drop_evaluation(N_Features, n_samples)
     budget_range = range(10, 180, 10)
     no_features = range(1, 18)
+    bootstrap_n = 12
+    repetitions = 20
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)
     # experiment.evaluate_ranking_cost(budget_range)
     # experiment.evaluate_ranking_nofeatures(N_Features)
     # experiment.autocorrelation()
-    experiment.final_evaluation(feature_range=no_features, bootstrap_n=12, repetitions=20)
-    experiment.final_evaluation_visualisation(feature_range=no_features)
+    # experiment.final_evaluation(feature_range=no_features, bootstrap_n=12, repetitions=20)
+    # experiment.final_evaluation_visualisation(feature_range=no_features)
     # experiment.crowd_answers_plot()
     # experiment.evaluate_csfs_auc()
+
+    experiment.final_evaluation_combine(no_features, bootstrap_n=bootstrap_n, repetitions=repetitions)
