@@ -180,6 +180,6 @@ if __name__ == '__main__':
     # experiment.evaluate_ranking_nofeatures(no_features)
     # experiment.evaluate_budget(budget_range)
     # experiment.autocorrelation()
-    experiment.final_evaluation(no_features, bootstrap_n=12, repetitions=10)
+    experiment.final_evaluation(no_features, bootstrap_n=12, repetitions=20)
     experiment.final_evaluation_visualisation(no_features)
     # experiment.crowd_answers_plot()
