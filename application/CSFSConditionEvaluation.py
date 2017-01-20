@@ -2,9 +2,13 @@ from abc import abstractmethod, ABCMeta
 
 import numpy as np
 import pandas as pd
+import sys
 
 from CSFSEvaluator import CSFSEvaluator
 from application.CSFSFeatureRecommender import Recommender
+from infoformulas_listcomp import IG_from_series
+from infoformulas_listcomp import _H
+
 
 class AUCCalculator:
     """
@@ -126,7 +130,58 @@ class TestEvaluation(Evaluation):
 
 
 
+class FinalEvaluationCSFSCondition:
+    """
+    Evaluation for condition 4 (CSFS)
+    """
 
+    def __init__(self, df_cleaned_bin, target, dataset_name, df_answers_grouped, bootstrap_n=12, repetitions=100):
+        self.df_cleaned_bin = df_cleaned_bin
+        self.target = target
+        self.dataset_name = dataset_name
+        self.df_answers_grouped = df_answers_grouped
+        self.bootstrap_n = bootstrap_n
+        self.repetitions = repetitions
+
+    def evaluate(self, budget_range):
+        def bootstrap_row(row):
+            p = list(row['p'])
+            pf0 = list(row['p|f=0'])
+            pf1 = list(row['p|f=1'])
+            row['p'] = np.random.choice(p, replace=True, size=self.bootstrap_n)
+            row['p|f=0'] = np.random.choice(pf0, replace=True, size=self.bootstrap_n)
+            row['p|f=1'] = np.random.choice(pf1, replace=True, size=self.bootstrap_n)
+            return row
+
+        def aggregate(row):
+            row['p'] = np.median(row['p'])
+            row['p|f=0'] = np.median(row['p|f=0'])
+            row['p|f=1'] = np.median(row['p|f=1'])
+            return row
+        def calc_ig(row, p_target):
+            h_x = _H([p_target, 1-p_target])
+            row['IG'] = IG_from_series(row, h_x=h_x, identifier='p')
+            return row
+
+        result = {nofeatures: list() for nofeatures in budget_range}
+        p_target = self.df_answers_grouped['p'].loc[self.target][0]
+        df_answers_tmp = self.df_answers_grouped.drop(self.target) # need to drop target
+        for i in range(self.repetitions): # number of iterations for bootstrapping -> is number of aucs calculated
+            sys.stdout.write(str(i)+" ")
+            # bootstrap answers
+            df_answers_bootstrapped = df_answers_tmp.copy().apply(bootstrap_row, axis='columns')
+            df_aggregated = df_answers_bootstrapped.apply(aggregate, axis='columns')
+            df_aggregated = df_aggregated.apply(calc_ig, axis='columns', p_target=p_target)
+            df_ordered = df_aggregated.sort_values('IG', ascending=False)
+            # reset index
+            df_ordered['Feature'] = df_ordered.index
+            df_ordered = df_ordered.reset_index()
+
+            evaluator = AUCForOrderedFeaturesCalculator(df_ordered, self.df_cleaned_bin, self.target)
+            df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
+            for nofeature in df_aucs.index:
+                result[nofeature].append(df_aucs.loc[nofeature]['auc'])
+        return result
 
 
 def test():

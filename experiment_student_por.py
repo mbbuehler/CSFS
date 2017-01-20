@@ -44,6 +44,7 @@ class ExperimentStudent(AbstractExperiment):
 
         self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
         self.path_final_evaluation_aggregated = '{}evaluation/final_evaluation_aggregated.pickle'.format(self.base_path)
+        self.path_final_evaluation_combined = '{}evaluation/final_evaluation_combined.csv'.format(self.base_path)
 
         self.path_descriptions_domain = '{}evaluation/experts_domain/student_descriptions_domain.csv'.format(self.base_path)
         self.target = 'G3'
@@ -164,7 +165,8 @@ if __name__ == '__main__':
         #
     # experiment.evaluate_csfs_auc()
     # experiment.domain_evaluation()
-    experiment.final_evaluation(feature_range, bootstrap_n=12, repetitions=20)
-    experiment.final_evaluation_visualisation(feature_range)
+    # experiment.final_evaluation(feature_range, bootstrap_n=12, repetitions=20)
+    # experiment.final_evaluation_visualisation(feature_range)
     # experiment.autocorrelation()
     # experiment.crowd_answers_plot()
+    experiment.final_evaluation_combine(feature_range, bootstrap_n=12, repetitions=20)

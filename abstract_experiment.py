@@ -17,6 +17,7 @@ import CSFSLoader
 from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdCleaner, CSFSCrowdAnalyser, CSFSCrowdAnswergrouper
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
+from FinalEvaluation import FinalEvaluationCombiner
 from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 from application.CSFSConditionEvaluation import TestEvaluation
 from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
@@ -51,6 +52,7 @@ class AbstractExperiment:
     path_budget_evaluation_nofeatures_rawaucs = ''
     path_final_evaluation_aucs = ''
     path_final_evaluation_aggregated = ''
+    path_final_evaluation_combined = ''
     target = ''
 
     def __init__(self, dataset_name, experiment_number, experiment_name):
@@ -427,31 +429,6 @@ class AbstractExperiment:
                 'std': [np.std(raw_data[condition][nofeature]) for nofeature in raw_data[condition]],
                 'count': [np.count_nonzero(raw_data[condition][nofeature]) for nofeature in raw_data[condition]],
             }
-            # if condition==4:
-            #     nofeat = 3
-            #     print(stats.norm.interval(0.95, loc=data['mean'][nofeat-1], scale=data['std'][nofeat-1]/len(raw_data[condition][nofeat])))
-            #     print(data['mean'][nofeat-1])
-            #     print(data['std'][nofeat-1])
-            #     print(data['ci_lo'][nofeat-1])
-            #     print(data['ci_hi'][nofeat-1])
-            #     values = raw_data[condition][nofeat]
-            #     print(sorted(values))
-            #
-            #     z_critical = stats.norm.ppf(q = 0.95)  # Get the z-critical value*
-            #
-            #     print("z-critical value:")              # Check the z-critical value
-            #     print(z_critical)
-            #
-            #     pop_stdev = data['std'][nofeat-1]  # Get the population standard deviation
-            #
-            #     margin_of_error = z_critical * (pop_stdev/math.sqrt(len(raw_data[condition][nofeat])))
-            #
-            #     confidence_interval = (data['mean'][nofeat-1] - margin_of_error,
-            #                            data['mean'][nofeat-1] + margin_of_error)
-            #
-            #     print("Confidence interval:")
-            #     print(confidence_interval)
-            #     exit()
 
             df = pd.DataFrame(data)
             data_aggregated[condition] = df
@@ -459,3 +436,18 @@ class AbstractExperiment:
         df_combined.index = feature_range
         df_combined.to_pickle(self.path_final_evaluation_aggregated)
 
+    def final_evaluation_combine(self, feature_range, bootstrap_n=12, repetitions=20):
+        """
+        Combines conditions 1-4 to a file according to patrick's wishes:
+        number_of_features, dataset, ranking_strategy, user_id, AUC, AUC_95_CI_low, AUC_95_CI_high
+        :param feature_range: list(int)
+        :return:
+        """
+        df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'ip', 'date'])
+        df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
+        df_cleaned_bin = pd.read_csv(self.path_bin)
+        df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
+
+        combiner = FinalEvaluationCombiner(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=bootstrap_n, repetitions=repetitions)
+        df_combined = combiner.combine(feature_range)
+        df_combined.to_csv(self.path_final_evaluation_combined, index=False)
