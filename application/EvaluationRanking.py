@@ -5,6 +5,7 @@ from time import time
 import numpy as np
 import pandas as pd
 import scipy.stats as st
+import sys
 from joblib import Parallel, delayed
 from tabulate import tabulate
 
@@ -236,6 +237,7 @@ class ERNofeaturesEvaluator(EREvaluator):
             p_target = self.df_answers_grouped['p'].loc[self.target][0]
             df_answers_tmp = self.df_answers_grouped.drop(self.target) # need to drop target
             for i in range(self.repetitions): # number of iterations for bootstrapping -> is number of aucs calculated
+                sys.stdout.write(str(i)+" ")
                 # bootstrap answers
                 df_answers_bootstrapped = df_answers_tmp.copy().apply(bootstrap_row, axis='columns')
                 df_aggregated = df_answers_bootstrapped.apply(aggregate, axis='columns')
