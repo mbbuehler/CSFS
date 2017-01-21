@@ -8,6 +8,7 @@ from experiment_student_por import ExperimentStudent
 class MetaExperiment:
     def __init__(self):
         self.path_final_evaluation_combined = 'final_evaluation/combined.csv'
+        self.path_upwork_participants = 'participants.csv'
 
     def final_evaluation_combine_all(self):
         student = ExperimentStudent('student', 2, 'experiment2_por')
@@ -19,6 +20,8 @@ class MetaExperiment:
         df_olympia = pd.read_csv(olympia.path_final_evaluation_combined)
 
         df_combined_all = pd.concat([df_student, df_income, df_olympia])
+
+        # df_participants = pd.read_csv()
         df_combined_all.to_csv(self.path_final_evaluation_combined, index=False)
 
 
