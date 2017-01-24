@@ -53,7 +53,19 @@ class AbstractExperiment:
     path_final_evaluation_aucs = ''
     path_final_evaluation_aggregated = ''
     path_final_evaluation_combined = ''
+    path_auc_plots = ''
     target = ''
+
+    sec = 80
+    x = 1
+    # condition -> colour
+    colours = {1:'rgba(255, {}, {}, {})'.format(sec, sec, x),
+            2: 'rgba( {}, 255,  {}, {})'.format(sec, sec, x),
+                3: 'rgba( {},  {}, 255, {})'.format(sec, sec, x),
+                    4: 'rgba(0, 0, 0, {})'.format(x),
+                        5: 'rgba(100, 100, 100, {})'.format(x),
+                            6: 'rgba(200, 150, 0, {})'.format(x),
+                        }
 
     def __init__(self, dataset_name, experiment_number, experiment_name):
         self.dataset_name = dataset_name
@@ -221,9 +233,9 @@ class AbstractExperiment:
         :return:
         """
         def get_trace(series, condition):
-            return go.Bar(x=np.linspace(0, 1, 11), y=list(series))
-
-
+            return go.Histogram(
+                x=list(series),
+            )
 
         df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
 
@@ -239,12 +251,9 @@ class AbstractExperiment:
             row_index += 1
         fig['layout'].update(showlegend=False, height=2500, width=1200, title='Crowd Answers for {} ({})'.format(self.dataset_name, self.experiment_name))
 
-        plotly.offline.plot(fig, auto_open=False, filename="{}{}.html".format(self.path_answers_plots, self.dataset_name))
+        plotly.offline.plot(fig, auto_open=True, filename="{}{}.html".format(self.path_answers_plots, self.dataset_name))
         from IPython.display import Image
         Image('a-simple-plot.png')
-
-
-
 
     def evaluate_csfs_auc(self, fake_features={}, fake_till_n=-1):
         df_data = self._get_dataset_bin()
@@ -298,8 +307,6 @@ class AbstractExperiment:
         # print(df_csfs_auc)
         df_csfs_auc.to_csv(self.path_csfs_auc)
         df_csfs_std.to_csv(self.path_csfs_std)
-
-
 
     def evaluate_flock(self, N_features, n_samples=100, R=range(3, 100, 1)):
         """
@@ -417,6 +424,48 @@ class AbstractExperiment:
         evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, df_actual_metadata=df_actual_metadata, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=bootstrap_n, repetitions=repetitions)
         raw_data = evaluator.evaluate_all_to_dict(feature_range) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
         pickle.dump(raw_data, open(self.path_final_evaluation_aucs, 'wb'))
+
+    def crowd_auc_plot(self):
+        """
+        Plots a bar chart for each number of features and condition showing the distribution of AUCs
+        :return:
+        """
+        def get_name(nofeat, cond):
+            plural = nofeat > 1
+            return "{} features (condition {})".format(nofeat, cond) if plural else "{} feature (condition {})".format(nofeat, cond)
+
+        def get_trace(values, nofeat, cond):
+            name = get_name(nofeat, cond)
+            return go.Histogram(
+                name=name,
+                x=values,
+                histnorm='probability',
+                autobinx=False,
+                xbins=dict(
+                    start=0.5,
+                    end=1,
+                    size=0.025,
+                    ),
+                marker=dict(
+                    color=self.colours[cond]
+                ),)
+
+        aucs = pd.read_pickle(self.path_final_evaluation_aucs)
+        nofeatures = sorted(set([nofeat for nofeat in aucs[1]]))
+        conditions = [1, 2, 3, 4, 5]
+        subplot_titles = [get_name(no_feat, c) for no_feat in nofeatures for c in conditions]
+        fig = plotly.tools.make_subplots(rows=len(nofeatures), cols=len(conditions), subplot_titles=subplot_titles)
+        row_index=1
+        for no_feat in nofeatures:
+            for i in range(len(conditions)):
+                trace = get_trace(aucs[conditions[i]][no_feat], no_feat, conditions[i])
+                fig.append_trace(trace, row_index, i+1)
+            row_index += 1
+        fig['layout'].update(showlegend=False, height=2500, width=1200, title='AUC Histograms for {} ({})'.format(self.dataset_name, self.experiment_name))
+
+        plotly.offline.plot(fig, auto_open=True, filename="{}{}.html".format(self.path_auc_plots, self.dataset_name))
+        from IPython.display import Image
+        Image('a-simple-plot.png')
 
     def final_evaluation_visualisation(self, feature_range):
         raw_data = pickle.load(open(self.path_final_evaluation_aucs, 'rb'))
