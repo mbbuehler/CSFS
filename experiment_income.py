@@ -32,7 +32,7 @@ class ExperimentIncome(AbstractExperiment):
         # self.path_budget_evaluation = '{}budget/{}/budget_evaluation.csv'.format(self.base_path, experiment_name)
         # self.path_cost_ig_base = '{}evaluation/income_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_base = '{}evaluation/base.csv'.format(self.base_path, experiment_name)
-        self.path_budget_evaluation_result = '{}evaluation/result.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_result = 'final_evaluation/conditions1-3_result.csv'
         self.path_budget_evaluation_cost = '{}evaluation/budget_evaluation_cost.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_nofeatures = '{}evaluation/budget_evaluation_nofeatures.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_cost_rawaucs = '{}evaluation/budget_evaluation_cost_rawaucs.pickle'.format(self.base_path, experiment_name)

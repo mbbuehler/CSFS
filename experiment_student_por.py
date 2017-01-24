@@ -40,11 +40,12 @@ class ExperimentStudent(AbstractExperiment):
         self.path_budget_evaluation_result_domain = '{}evaluation/experts_domain/result_domain.csv'.format(self.base_path)
         self.path_cost_ig_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_base = '{}evaluation/base.csv'.format(self.base_path, experiment_name)
-        self.path_budget_evaluation_result = '{}evaluation/result.csv'.format(self.base_path, experiment_name)
+        self.path_budget_evaluation_result = 'final_evaluation/conditions1-3_result.csv'
 
         self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
         self.path_final_evaluation_aggregated = '{}evaluation/final_evaluation_aggregated.pickle'.format(self.base_path)
         self.path_final_evaluation_combined = '{}evaluation/final_evaluation_combined.csv'.format(self.base_path)
+        self.path_auc_plots = '{}evaluation/visualisation/histograms.html'.format(self.base_path)
 
         self.path_descriptions_domain = '{}evaluation/experts_domain/student_descriptions_domain.csv'.format(self.base_path)
         self.target = 'G3'
@@ -169,4 +170,5 @@ if __name__ == '__main__':
     # experiment.final_evaluation_visualisation(feature_range)
     # experiment.autocorrelation()
     # experiment.crowd_answers_plot()
-    experiment.final_evaluation_combine(feature_range, bootstrap_n=12, repetitions=20)
+    # experiment.final_evaluation_combine(feature_range, bootstrap_n=12, repetitions=20)
+    experiment.crowd_auc_plot()
