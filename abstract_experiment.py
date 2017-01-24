@@ -54,6 +54,7 @@ class AbstractExperiment:
     path_final_evaluation_aggregated = ''
     path_final_evaluation_combined = ''
     path_auc_plots = ''
+    path_comparison = ''
     target = ''
 
     sec = 80
@@ -72,6 +73,7 @@ class AbstractExperiment:
         self.number = experiment_number
         self.experiment_name = experiment_name
         self.base_path = 'datasets/{}/'.format(self.dataset_name)
+        self.path_comparison = '{}evaluation/comparison/'.format(self.base_path)
 
     def _create_if_nonexisting(self, path, folder):
             if folder not in os.listdir(path):
@@ -500,3 +502,32 @@ class AbstractExperiment:
         combiner = FinalEvaluationCombiner(df_evaluation_result, df_evaluation_base, df_cleaned_bin, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=bootstrap_n, repetitions=repetitions)
         df_combined = combiner.combine(feature_range)
         df_combined.to_csv(self.path_final_evaluation_combined, index=False)
+
+    def statistical_comparison(self, feature_range):
+        def get_df_compared(aucs, target_condition):
+            df = pd.DataFrame(columns=feature_range, index=conditions)
+            for c in conditions:
+                for no_feat in feature_range:
+                    a = aucs[c][no_feat]
+                    b = aucs[target_condition][no_feat]
+                    stats, p = scipy.stats.ttest_ind(a, b, equal_var=False)
+                    if 0.01 <= p < 0.05:
+                        value = "{}, p*={:.4f}".format(stats, p)
+                    elif p < 0.01:
+                        value = "{}, p**={:.4f}".format(stats, p)
+                    else:
+                        value = "{}, p={:.4f}".format(stats, p)
+
+                    df.loc[c, no_feat] = value
+
+            df.columns = ["f_count={}".format(no_feat) for no_feat in feature_range]
+            df.index = ["condition={}".format(ERCondition.get_string_identifier(c)) for c in conditions]
+            return df
+
+        conditions = [1, 2, 3, 4, 5]
+        aucs = pd.read_pickle(self.path_final_evaluation_aucs)
+        for c in conditions:
+            df = get_df_compared(aucs, c)
+            print(tabulate(df, headers='keys'))
+            path_out = "{}{}_{}-vs-others.csv".format(self.path_comparison, self.dataset_name, ERCondition.get_string_identifier(c))
+            df.to_csv(path_out, index=True)

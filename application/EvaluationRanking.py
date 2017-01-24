@@ -25,7 +25,9 @@ class ERCondition:
         LAYPERSON: 'lay',
         DOMAIN: 'domain expert',
         EXPERT: 'data scientist',
-        CSFS: 'CSFS'
+        CSFS: 'CSFS',
+        RANDOM: 'random',
+        ACTUAL: 'actual',
     }
 
     @staticmethod
@@ -37,6 +39,12 @@ class ERCondition:
         if condition in ERCondition.NAMES:
             return ERCondition.NAMES[condition]
         return 'n.a.'
+
+    @classmethod
+    def get_string_identifier(cls, condition):
+        name = cls.NAMES[condition]
+        name = name.lower()
+        return "_".join([s for s in name.split(' ')])
 
 
 class ERFilterer:
