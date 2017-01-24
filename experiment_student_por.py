@@ -23,7 +23,7 @@ class ExperimentStudent(AbstractExperiment):
         self.path_answers_raw = '{}results/{}/answers_raw.xlsx'.format(self.base_path, experiment_name)
         self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)
         self.path_answers_clean_grouped = '{}results/{}/answers_clean_grouped.pickle'.format(self.base_path, experiment_name)
-        self.path_answers_plots = '{}results/{}/visualisations/'.format(self.base_path, experiment_name)
+        self.path_answers_plots = '{}results/{}/visualisations/{}_histograms_answers.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(self.base_path, experiment_name)
         self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
         self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
@@ -45,7 +45,7 @@ class ExperimentStudent(AbstractExperiment):
         self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
         self.path_final_evaluation_aggregated = '{}evaluation/final_evaluation_aggregated.pickle'.format(self.base_path)
         self.path_final_evaluation_combined = '{}evaluation/final_evaluation_combined.csv'.format(self.base_path)
-        self.path_auc_plots = '{}evaluation/visualisation/histograms.html'.format(self.base_path)
+        self.path_auc_plots = '{}evaluation/visualisation/{}_histograms_aucs.html'.format(self.base_path, self.dataset_name)
 
         self.path_descriptions_domain = '{}evaluation/experts_domain/student_descriptions_domain.csv'.format(self.base_path)
         self.target = 'G3'
@@ -146,6 +146,7 @@ if __name__ == '__main__':
     fake_features={'G3': 0.5}
     N_Features = [3, 5, 7, 9, 11]
     n_samples = 100 # number of repetitions to calculate average auc score for samples)
+    auto_open_plots = False
     # experiment.set_up_basic_folder_structure()
     # experiment.set_up_experiment_folder_structure('experiment2_por')
     # experiment.preprocess_raw()
@@ -166,9 +167,9 @@ if __name__ == '__main__':
         #
     # experiment.evaluate_csfs_auc()
     # experiment.domain_evaluation()
-    # experiment.final_evaluation(feature_range, bootstrap_n=12, repetitions=20)
-    # experiment.final_evaluation_visualisation(feature_range)
     # experiment.autocorrelation()
-    # experiment.crowd_answers_plot()
-    # experiment.final_evaluation_combine(feature_range, bootstrap_n=12, repetitions=20)
-    experiment.crowd_auc_plot()
+    experiment.final_evaluation(feature_range, bootstrap_n=12, repetitions=20)
+    experiment.final_evaluation_visualisation(feature_range)
+    experiment.crowd_answers_plot(auto_open=auto_open_plots)
+    experiment.final_evaluation_combine(feature_range, bootstrap_n=12, repetitions=20)
+    experiment.crowd_auc_plot(auto_open=auto_open_plots)

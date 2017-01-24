@@ -227,7 +227,7 @@ class AbstractExperiment:
         df = df.append([data]*n, ignore_index=True) # need to append it several times in order to allow random selection
         return df
 
-    def crowd_answers_plot(self):
+    def crowd_answers_plot(self, auto_open=False):
         """
         Plots three bar charts for each feature showing the distribution of the answers for p, p|f=0 and p|f=1
         :return:
@@ -249,9 +249,9 @@ class AbstractExperiment:
                 trace = get_trace(row[conditions[i]], conditions[i])
                 fig.append_trace(trace, row_index, i+1)
             row_index += 1
-        fig['layout'].update(showlegend=False, height=2500, width=1200, title='Crowd Answers for {} ({})'.format(self.dataset_name, self.experiment_name))
+        fig['layout'].update(showlegend=False, height=2500, width=1200, title='Crowd Answers for {} ({})'.format(self.dataset_name, self.experiment_name),)
 
-        plotly.offline.plot(fig, auto_open=True, filename="{}{}.html".format(self.path_answers_plots, self.dataset_name))
+        plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_plots)
         from IPython.display import Image
         Image('a-simple-plot.png')
 
@@ -425,7 +425,7 @@ class AbstractExperiment:
         raw_data = evaluator.evaluate_all_to_dict(feature_range) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
         pickle.dump(raw_data, open(self.path_final_evaluation_aucs, 'wb'))
 
-    def crowd_auc_plot(self):
+    def crowd_auc_plot(self, auto_open=False):
         """
         Plots a bar chart for each number of features and condition showing the distribution of AUCs
         :return:
@@ -461,9 +461,9 @@ class AbstractExperiment:
                 trace = get_trace(aucs[conditions[i]][no_feat], no_feat, conditions[i])
                 fig.append_trace(trace, row_index, i+1)
             row_index += 1
-        fig['layout'].update(showlegend=False, height=2500, width=1200, title='AUC Histograms for {} ({})'.format(self.dataset_name, self.experiment_name))
+        fig['layout'].update(showlegend=False, height=2500, width=1200, title='AUC Histograms for {} ({})'.format(self.dataset_name, self.experiment_name),)
 
-        plotly.offline.plot(fig, auto_open=True, filename="{}{}.html".format(self.path_auc_plots, self.dataset_name))
+        plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_auc_plots)
         from IPython.display import Image
         Image('a-simple-plot.png')
 

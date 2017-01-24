@@ -19,7 +19,7 @@ class ExperimentIncome(AbstractExperiment):
         self.path_answers_raw = '{}results/{}/answers_raw3.xlsx'.format(self.base_path, experiment_name)
         self.path_answers_clean = '{}results/{}/answers_clean.csv'.format(self.base_path, experiment_name)
         self.path_answers_clean_grouped = '{}results/{}/answers_clean_grouped.pickle'.format(self.base_path, experiment_name)
-        self.path_answers_plots = '{}results/{}/visualisations/'.format(self.base_path, experiment_name)
+        self.path_answers_plots = '{}results/{}/visualisations/{}_histograms_answers.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_answers_aggregated = '{}results/{}/answers_aggregated.csv'.format(self.base_path, experiment_name)
         self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
         self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
@@ -41,6 +41,9 @@ class ExperimentIncome(AbstractExperiment):
         self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
         self.path_final_evaluation_aggregated = '{}evaluation/final_evaluation_aggregated.pickle'.format(self.base_path)
         self.path_final_evaluation_combined = '{}evaluation/final_evaluation_combined.csv'.format(self.base_path)
+
+        self.path_auc_plots = '{}evaluation/visualisation/{}_histograms_aucs.html'.format(self.base_path, self.dataset_name)
+
 
         self.target = 'income==>50K'
 
@@ -86,9 +89,10 @@ if __name__ == '__main__':
     # N_Features = [5, 17, 32, 50]
     # experiment.drop_evaluation(N_Features, n_samples)
     budget_range = range(10, 180, 10)
-    no_features = range(1, 18)
+    feature_range = range(1, 18)
     bootstrap_n = 12
     repetitions = 20
+    auto_open_plots = False
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)
@@ -99,5 +103,8 @@ if __name__ == '__main__':
     # experiment.final_evaluation_visualisation(feature_range=no_features)
     # experiment.crowd_answers_plot()
     # experiment.evaluate_csfs_auc()
-
-    experiment.final_evaluation_combine(no_features, bootstrap_n=bootstrap_n, repetitions=repetitions)
+    experiment.final_evaluation(feature_range, bootstrap_n=12, repetitions=20)
+    experiment.final_evaluation_visualisation(feature_range)
+    experiment.crowd_answers_plot(auto_open=auto_open_plots)
+    experiment.final_evaluation_combine(feature_range, bootstrap_n=bootstrap_n, repetitions=repetitions)
+    experiment.crowd_auc_plot(auto_open=auto_open_plots)

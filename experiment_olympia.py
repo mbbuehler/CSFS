@@ -30,7 +30,7 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_answers_raw = 'datasets/olympia/results/{}/answers_raw_mod.xlsx'.format(experiment_name)
         self.path_answers_clean = 'datasets/olympia/results/{}/answers_clean.csv'.format(experiment_name)
         self.path_answers_clean_grouped = '{}results/{}/answers_clean_grouped.pickle'.format(self.base_path, experiment_name)
-        self.path_answers_plots = '{}results/{}/visualisations/'.format(self.base_path, experiment_name)
+        self.path_answers_plots = '{}results/{}/visualisations/{}_histograms_answers.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_answers_aggregated = 'datasets/olympia/results/{}/answers_aggregated.csv'.format(experiment_name)
         self.path_answers_metadata = 'datasets/olympia/results/{}/answers_metadata.csv'.format(experiment_name)
         self.path_csfs_auc = 'datasets/olympia/results/{}/csfs_auc.csv'.format(experiment_name)
@@ -54,6 +54,9 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
         self.path_final_evaluation_aggregated = '{}evaluation/final_evaluation_aggregated.pickle'.format(self.base_path)
         self.path_final_evaluation_combined = '{}evaluation/final_evaluation_combined.csv'.format(self.base_path)
+
+        self.path_auc_plots = '{}evaluation/visualisation/{}_histograms_aucs.html'.format(self.base_path, self.dataset_name)
+
 
         self.target = 'medals'
 
@@ -174,9 +177,10 @@ if __name__ == '__main__':
     # experiment.evaluate_flock()
     # experiment.evaluate_csfs_auc(fake_till_n=25)
 
-    no_features = range(1, 14)
+    feature_range = range(1, 14)
     bootstrap_n = 12
     repetitions = 20
+    auto_open_plots = False
     # experiment.evaluate_ranking_cost(budget_range)
     # experiment.evaluate_ranking_nofeatures(no_features)
     # experiment.evaluate_budget(budget_range)
@@ -184,4 +188,8 @@ if __name__ == '__main__':
     # experiment.final_evaluation(no_features, bootstrap_n=12, repetitions=20)
     # experiment.final_evaluation_visualisation(no_features)
     # experiment.crowd_answers_plot()
-    experiment.final_evaluation_combine(no_features, bootstrap_n=bootstrap_n, repetitions=repetitions)
+    experiment.final_evaluation(feature_range, bootstrap_n=12, repetitions=20)
+    experiment.final_evaluation_visualisation(feature_range)
+    experiment.crowd_answers_plot(auto_open=auto_open_plots)
+    experiment.final_evaluation_combine(feature_range, bootstrap_n=bootstrap_n, repetitions=repetitions)
+    experiment.crowd_auc_plot(auto_open=auto_open_plots)
