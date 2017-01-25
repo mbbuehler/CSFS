@@ -21,6 +21,7 @@ from FinalEvaluation import FinalEvaluationCombiner
 from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 from application.CSFSConditionEvaluation import TestEvaluation
 from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
+from csfs_stats import hedges_g
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
 
@@ -504,20 +505,28 @@ class AbstractExperiment:
         df_combined.to_csv(self.path_final_evaluation_combined, index=False)
 
     def statistical_comparison(self, feature_range):
+        def get_p_str(p):
+            if p >= 0.05:
+                p_str = "p"
+            elif 0.01 <= p < 0.05:
+                p_str = "p*"
+            else:
+                p_str = "p**"
+            return "{}={:.4f}".format(p_str, p)
+
+
         def get_df_compared(aucs, target_condition):
             df = pd.DataFrame(columns=feature_range, index=conditions)
             for c in conditions:
                 for no_feat in feature_range:
                     a = aucs[c][no_feat]
                     b = aucs[target_condition][no_feat]
-                    stats, p = scipy.stats.ttest_ind(a, b, equal_var=False)
-                    if 0.01 <= p < 0.05:
-                        value = "{}, p*={:.4f}".format(stats, p)
-                    elif p < 0.01:
-                        value = "{}, p**={:.4f}".format(stats, p)
-                    else:
-                        value = "{}, p={:.4f}".format(stats, p)
-
+                    t, p = scipy.stats.ttest_ind(a, b, equal_var=False)
+                    g = hedges_g(a, b)
+                    t_str = "t={:.4f}".format(t)
+                    p_str = get_p_str(p)
+                    g_str = "g={:.4f}".format(g)
+                    value = "{} {} {}".format(t_str, p_str, g_str)
                     df.loc[c, no_feat] = value
 
             df.columns = ["f_count={}".format(no_feat) for no_feat in feature_range]
