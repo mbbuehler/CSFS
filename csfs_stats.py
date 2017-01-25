@@ -17,7 +17,7 @@ import numpy as np
 def hedges_g(x, y):
     """
     Calculcates Hedge's g for lists / sets with unequal length
-    source: https://en.wikipedia.org/wiki/Effect_size#Hedges.27_g
+    source: Hedge (1981) http://journals.sagepub.com/doi/pdf/10.3102/10769986006002107 and Wikipedia https://en.wikipedia.org/wiki/Effect_size#Hedges.27_g
     :param x: list/set
     :param y: list/set
     :return: float
