@@ -273,9 +273,6 @@ class ERNofeaturesEvaluator(EREvaluator):
                 df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
                 for nofeature in df_aucs.index:
                     result[nofeature].append(df_aucs.loc[nofeature]['auc'])
-            #     print(df_aucs['auc'])
-            #     print(tabulate(df_ordered))
-            # exit()
 
         elif condition == ERCondition.RANDOM: # random
             features = list(self.df_answers_grouped.drop(self.target).index)

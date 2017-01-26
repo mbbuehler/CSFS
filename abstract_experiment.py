@@ -60,6 +60,7 @@ class AbstractExperiment:
     path_no_answers_vs_auc = ''
     target = ''
     answer_range = range(1, 17)
+    feature_range = range(1,2)
     bootstrap_n = 12
     repetitions = 20
 
@@ -546,7 +547,7 @@ class AbstractExperiment:
             path_out = "{}{}_{}-vs-others.csv".format(self.path_comparison, self.dataset_name, ERCondition.get_string_identifier(c))
             df.to_csv(path_out, index=True)
 
-    def evaluate_no_answers(self, feature_range, answer_range, repetitions=20, auto_open=False):
+    def evaluate_no_answers(self):
         """
         Creates plots for answers in answer_range. samples answers without replacement and calculcates AUC
         { 2 features: {2answers: [], 3 answers: [], 4 answers: [],...}, 3 features: [2answers:[], 3answers:[]},...}
@@ -555,6 +556,10 @@ class AbstractExperiment:
         :param answer_range:
         :return:
         """
+        answer_range = self.answer_range
+        feature_range = self.feature_range
+        repetitions = self.repetitions
+
         df_cleaned_bin = pd.read_csv(self.path_bin)
         df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
         df_actual_metadata = pd.read_csv(self.path_answers_metadata, index_col=0, header=[0, 1])

@@ -179,5 +179,5 @@ if __name__ == '__main__':
     # experiment.final_evaluation_combine(feature_range, bootstrap_n=12, repetitions=20)
     # experiment.crowd_auc_plot(auto_open=auto_open_plots)
     # experiment.statistical_comparison(feature_range)
-    experiment.evaluate_no_answers(feature_range, answer_range, repetitions=repetitions, auto_open=False)
+    experiment.evaluate_no_answers()
     # experiment.evaluate_no_answers_get_fig(feature_range)
