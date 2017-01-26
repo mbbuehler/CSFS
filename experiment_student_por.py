@@ -159,6 +159,8 @@ if __name__ == '__main__':
     # experiment.drop_evaluation(N_Features, n_samples)
     budget_range = range(10, 180, 10)
     feature_range = range(1, 14)
+    repetitions = 20
+    answer_range = range(3, 17)
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)
@@ -173,4 +175,5 @@ if __name__ == '__main__':
     # experiment.crowd_answers_plot(auto_open=auto_open_plots)
     # experiment.final_evaluation_combine(feature_range, bootstrap_n=12, repetitions=20)
     # experiment.crowd_auc_plot(auto_open=auto_open_plots)
-    experiment.statistical_comparison(feature_range)
+    # experiment.statistical_comparison(feature_range)
+    experiment.evaluate_no_answers(feature_range, answer_range, repetitions=repetitions, auto_open=True)

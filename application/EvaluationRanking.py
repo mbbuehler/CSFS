@@ -129,7 +129,7 @@ class EREvaluator:
 70   0.639263   0.598034  0.618649  0.0148
     """
 
-    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target, dataset_name, df_answers_grouped, df_actual_metadata, bootstrap_n=12, repetitions=100, ):
+    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target, dataset_name, df_answers_grouped, df_actual_metadata, bootstrap_n=12, repetitions=100, replace=True):
         self.df_evaluation_result = df_evaluation_result
         self.df_evaluation_base = df_evaluation_base
         self.df_cleaned_bin = df_cleaned_bin
@@ -140,6 +140,7 @@ class EREvaluator:
         self.df_answers_grouped = df_answers_grouped
         self.bootstrap_n = bootstrap_n
         self.repetitions = repetitions
+        self.replace = replace # if true -> bootstrapping, else sampling without replacement
 
     def evaluate(self, budget_range, condition):
         pass

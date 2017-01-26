@@ -22,6 +22,7 @@ from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 from application.CSFSConditionEvaluation import TestEvaluation
 from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
 from csfs_stats import hedges_g
+from csfs_visualisations import CIVisualiser
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
 
@@ -540,3 +541,59 @@ class AbstractExperiment:
             print(tabulate(df, headers='keys'))
             path_out = "{}{}_{}-vs-others.csv".format(self.path_comparison, self.dataset_name, ERCondition.get_string_identifier(c))
             df.to_csv(path_out, index=True)
+
+    def evaluate_no_answers(self, feature_range, answer_range, repetitions=20, auto_open=False):
+        """
+        Creates plots for answers in answer_range. samples answers without replacement and calculcates AUC
+        { 2 features: {2answers: [], 3 answers: [], 4 answers: [],...}, 3 features: [2answers:[], 3answers:[]},...}
+        only for CSFS
+        :param feature_range:
+        :param answer_range:
+        :return:
+        """
+        feature_range = [3, 6]
+
+
+        df_cleaned_bin = pd.read_csv(self.path_bin)
+        df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
+        df_actual_metadata = pd.read_csv(self.path_answers_metadata, index_col=0, header=[0, 1])
+        df_actual_metadata = df_actual_metadata['actual']
+
+        result = {}
+        for no_answers in answer_range:
+            print('calculating. number of answers: ', no_answers)
+            evaluator = ERNofeaturesEvaluator(None, None, df_cleaned_bin, df_actual_metadata=df_actual_metadata, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=no_answers, repetitions=repetitions)
+            raw_data = evaluator.evaluate(feature_range, condition=ERCondition.CSFS) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
+            result[no_answers] = raw_data[ERCondition.CSFS]
+
+        result_restructured = dict()
+        for no_features in feature_range:
+            result_restructured[no_features] = {no_answers: result[no_answers][no_features] for no_answers in answer_range}
+        # {no_features: {no_answers: result[no_answers][no_features]} for no_features in feature_range for no_answers in answer_range }
+        result = result_restructured # { 2 features: {2answers: [], 3 answers: [], 4 answers: [],...}, 3 features: [2answers:[], 3answers:[]},...}
+
+        data_aggregated = dict()
+        for no_features in result:
+            print('aggregating. number of features: ', no_features)
+            data = {
+                'mean': [np.mean(result[no_features][no_answers]) for no_answers in answer_range],
+                'ci_lo': [ssw.DescrStatsW(result[no_features][no_answers]).tconfint_mean()[0] for no_answers in answer_range],
+                'ci_hi': [ssw.DescrStatsW(result[no_features][no_answers]).tconfint_mean()[1]for no_answers in answer_range],
+                'std': [np.std(result[no_features][no_answers]) for no_answers in answer_range],
+            }
+
+            df = pd.DataFrame(data)
+            data_aggregated[no_features] = df
+        df_combined = pd.concat(data_aggregated, axis='columns')
+
+        df_combined.index = answer_range
+
+        print(df_combined.head())
+
+        for no_features in feature_range:
+            filename = 'no_features_{}'.format(no_features)
+            fig = CIVisualiser.get_fig(df_combined, no_features, '#Features: {}'.format(no_features))
+            plotly.offline.plot(fig, auto_open=auto_open, filename=filename)
+            from IPython.display import Image
+            Image(filename+'.png')
+
