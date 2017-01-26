@@ -18,8 +18,7 @@ class ExperimentOlympia(AbstractExperiment):
 
     def __init__(self, dataset_name, experiment_number, experiment_name):
         super().__init__(dataset_name, experiment_number, experiment_name)
-        experiment_name = 'experiment3'
-        experiment_name = 'experiment4_extreme-cond-means'
+        self.feature_range = range(1, 14)
         experiment_name = 'experiment2-4_all'
 
         self.path_raw = 'datasets/olympia/raw/{}/Olympic2016_raw_allyears.csv'.format(experiment_name)
@@ -33,6 +32,8 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_answers_plots = '{}results/{}/visualisations/{}_histograms_answers.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_answers_aggregated = 'datasets/olympia/results/{}/answers_aggregated.csv'.format(experiment_name)
         self.path_answers_metadata = 'datasets/olympia/results/{}/answers_metadata.csv'.format(experiment_name)
+        self.path_no_answers_vs_auc = '{}results/{}/answers_vs_auc.pickle'.format(self.base_path, experiment_name)
+
         self.path_csfs_auc = 'datasets/olympia/results/{}/csfs_auc.csv'.format(experiment_name)
         self.path_csfs_std = 'datasets/olympia/results/{}/csfs_std.csv'.format(experiment_name)
         self.path_questions = 'datasets/olympia/questions/{}/questions_mod2.csv'.format(experiment_name) # experiment2 for experiment3
@@ -178,8 +179,6 @@ if __name__ == '__main__':
     # experiment.evaluate_csfs_auc(fake_till_n=25)
 
     feature_range = range(1, 14)
-    bootstrap_n = 12
-    repetitions = 20
     auto_open_plots = False
     # experiment.evaluate_ranking_cost(budget_range)
     # experiment.evaluate_ranking_nofeatures(no_features)
@@ -193,4 +192,6 @@ if __name__ == '__main__':
     # experiment.crowd_answers_plot(auto_open=auto_open_plots)
     # experiment.final_evaluation_combine(feature_range, bootstrap_n=bootstrap_n, repetitions=repetitions)
     # experiment.crowd_auc_plot(auto_open=auto_open_plots)
-    experiment.statistical_comparison(feature_range)
+    # experiment.statistical_comparison(feature_range)
+    # experiment.evaluate_no_answers(feature_range, answer_range, repetitions=repetitions, auto_open=False)
+    experiment.evaluate_no_answers_get_fig(feature_range)

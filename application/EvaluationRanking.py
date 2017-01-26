@@ -241,9 +241,9 @@ class ERNofeaturesEvaluator(EREvaluator):
                 p = list(row['p'])
                 pf0 = list(row['p|f=0'])
                 pf1 = list(row['p|f=1'])
-                row['p'] = np.random.choice(p, replace=True, size=self.bootstrap_n)
-                row['p|f=0'] = np.random.choice(pf0, replace=True, size=self.bootstrap_n)
-                row['p|f=1'] = np.random.choice(pf1, replace=True, size=self.bootstrap_n)
+                row['p'] = np.random.choice(p, replace=self.replace, size=self.bootstrap_n)
+                row['p|f=0'] = np.random.choice(pf0, replace=self.replace, size=self.bootstrap_n)
+                row['p|f=1'] = np.random.choice(pf1, replace=self.replace, size=self.bootstrap_n)
                 return row
             def aggregate(row):
                 row['p'] = np.median(row['p'])

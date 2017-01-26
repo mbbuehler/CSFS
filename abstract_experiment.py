@@ -57,7 +57,11 @@ class AbstractExperiment:
     path_final_evaluation_combined = ''
     path_auc_plots = ''
     path_comparison = ''
+    path_no_answers_vs_auc = ''
     target = ''
+    answer_range = range(1, 17)
+    bootstrap_n = 12
+    repetitions = 20
 
     sec = 80
     x = 1
@@ -551,9 +555,6 @@ class AbstractExperiment:
         :param answer_range:
         :return:
         """
-        feature_range = [3, 6]
-
-
         df_cleaned_bin = pd.read_csv(self.path_bin)
         df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
         df_actual_metadata = pd.read_csv(self.path_answers_metadata, index_col=0, header=[0, 1])
@@ -562,7 +563,7 @@ class AbstractExperiment:
         result = {}
         for no_answers in answer_range:
             print('calculating. number of answers: ', no_answers)
-            evaluator = ERNofeaturesEvaluator(None, None, df_cleaned_bin, df_actual_metadata=df_actual_metadata, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=no_answers, repetitions=repetitions)
+            evaluator = ERNofeaturesEvaluator(None, None, df_cleaned_bin, df_actual_metadata=df_actual_metadata, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=no_answers, repetitions=repetitions, replace=False)
             raw_data = evaluator.evaluate(feature_range, condition=ERCondition.CSFS) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
             result[no_answers] = raw_data[ERCondition.CSFS]
 
@@ -587,13 +588,18 @@ class AbstractExperiment:
         df_combined = pd.concat(data_aggregated, axis='columns')
 
         df_combined.index = answer_range
+        df_combined.to_pickle(self.path_no_answers_vs_auc)
 
-        print(df_combined.head())
+    def evaluate_no_answers_get_fig(self, feature_range, path_prefix=""):
+        """
+        Returns figure for a certain feature range
+        :param feature_range: list(int)
+        :return:
+        """
+        filename = '{}final_evaluation/{}_answers-vs-auc.html'.format(path_prefix, self.dataset_name)
+        df = pd.read_pickle(path_prefix+self.path_no_answers_vs_auc)
+        fig = CIVisualiser.get_fig(df, feature_range, 'number of answers sampled (without replacement)', y_title='AUC', title=self.dataset_name)
+        # plotly.offline.plot(fig, auto_open=True, filename=filename)
+        return fig
 
-        for no_features in feature_range:
-            filename = 'no_features_{}'.format(no_features)
-            fig = CIVisualiser.get_fig(df_combined, no_features, '#Features: {}'.format(no_features))
-            plotly.offline.plot(fig, auto_open=auto_open, filename=filename)
-            from IPython.display import Image
-            Image(filename+'.png')
 
