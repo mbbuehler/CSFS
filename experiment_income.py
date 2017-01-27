@@ -91,12 +91,6 @@ if __name__ == '__main__':
     # N_Features = [65, 80, 95, 116]
     # N_Features = [5, 17, 32, 50]
     # experiment.drop_evaluation(N_Features, n_samples)
-    budget_range = range(10, 180, 10)
-    feature_range = range(1, 18)
-    bootstrap_n = 12
-    repetitions = 20
-    auto_open_plots = False
-    answer_range = range(1, 17)
     # experiment.evaluate_budget(budget_range)
     # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
     # experiment.get_figure_budget_evaluation(df_budget_evaluation)
@@ -113,5 +107,5 @@ if __name__ == '__main__':
     # experiment.final_evaluation_combine(feature_range, bootstrap_n=bootstrap_n, repetitions=repetitions)
     # experiment.crowd_auc_plot(auto_open=auto_open_plots)
     # experiment.statistical_comparison(feature_range)
-    experiment.evaluate_no_answers(feature_range, answer_range, repetitions=repetitions, auto_open=False)
+    experiment.evaluate_no_answers()
     # experiment.evaluate_no_answers_get_fig(feature_range)

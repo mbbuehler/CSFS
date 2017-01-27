@@ -62,7 +62,7 @@ class AbstractExperiment:
     answer_range = range(1, 17)
     feature_range = range(1,2)
     bootstrap_n = 12
-    repetitions = 20
+    repetitions = 19
 
     sec = 80
     x = 1
@@ -565,6 +565,10 @@ class AbstractExperiment:
         df_actual_metadata = pd.read_csv(self.path_answers_metadata, index_col=0, header=[0, 1])
         df_actual_metadata = df_actual_metadata['actual']
 
+        # # feature_range = [2,3]
+        # # answer_range = [2,10]
+        # repetitions=5
+
         result = {}
         for no_answers in answer_range:
             print('calculating. number of answers: ', no_answers)
@@ -572,12 +576,14 @@ class AbstractExperiment:
             raw_data = evaluator.evaluate(feature_range, condition=ERCondition.CSFS) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
             result[no_answers] = raw_data[ERCondition.CSFS]
 
+        # result is dict: {no_answers: {NOFEATURES: [AUCS]}}
         result_restructured = dict()
         for no_features in feature_range:
             result_restructured[no_features] = {no_answers: result[no_answers][no_features] for no_answers in answer_range}
         # {no_features: {no_answers: result[no_answers][no_features]} for no_features in feature_range for no_answers in answer_range }
         result = result_restructured # { 2 features: {2answers: [], 3 answers: [], 4 answers: [],...}, 3 features: [2answers:[], 3answers:[]},...}
 
+        # print(result)
         data_aggregated = dict()
         for no_features in result:
             print('aggregating. number of features: ', no_features)
@@ -589,9 +595,11 @@ class AbstractExperiment:
             }
 
             df = pd.DataFrame(data)
+            # print(no_features)
+            # print(tabulate(df))
             data_aggregated[no_features] = df
         df_combined = pd.concat(data_aggregated, axis='columns')
-
+        # exit()
         df_combined.index = answer_range
         df_combined.to_pickle(self.path_no_answers_vs_auc)
 
@@ -603,7 +611,7 @@ class AbstractExperiment:
         """
         filename = '{}final_evaluation/{}_answers-vs-auc.html'.format(path_prefix, self.dataset_name)
         df = pd.read_pickle(path_prefix+self.path_no_answers_vs_auc)
-        fig = CIVisualiser.get_fig(df, feature_range, 'number of answers sampled (without replacement)', y_title='AUC', title=self.dataset_name)
+        fig = CIVisualiser.get_fig(df, feature_range, 'number of answers sampled (without replacement)', y_title='AUC', title="{} ({} repetitions)".format(self.dataset_name, self.repetitions))
         # plotly.offline.plot(fig, auto_open=True, filename=filename)
         return fig
 
