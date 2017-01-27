@@ -32,7 +32,7 @@ class CIVisualiser:
         :param x_title:
         :return:
         """
-        data_nested = [cls.get_traces(df[col_key], col_key, 'no_answers') for col_key in col_keys]
+        data_nested = [cls.get_traces(df[col_key], col_key) for col_key in col_keys]
         # print(data_nested)
         data = list()
         for group in data_nested:
