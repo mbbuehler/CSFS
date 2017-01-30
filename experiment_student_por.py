@@ -151,15 +151,14 @@ paid==yes                1    1    0    0    1    2    0    0    0     0     1  
 if __name__ == '__main__':
     experiment = ExperimentStudent('student', 2, 'experiment2_por')
     fake_features={'G3': 0.5}
-    N_Features = [3, 5, 7, 9, 11]
-    n_samples = 100 # number of repetitions to calculate average auc score for samples)
+
     auto_open_plots = False
     # experiment.set_up_basic_folder_structure()
     # experiment.set_up_experiment_folder_structure('experiment2_por')
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    # experiment.evaluate_crowd_all_answers(fake_features=fake_features)
+    experiment.evaluate_crowd_all_answers(fake_features=fake_features)
      # experiment.drop_analysis(N_Features, n_samples)
     # experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
     # experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
@@ -183,5 +182,5 @@ if __name__ == '__main__':
     # experiment.statistical_comparison(feature_range)
     # experiment.evaluate_no_answers()
     # experiment.evaluate_no_answers_get_fig(feature_range)
-    experiment.evaluate_answers_delta()
-    experiment.evaluate_answers_delta_plot(auto_open=True)
+    # experiment.evaluate_answers_delta()
+    # experiment.evaluate_answers_delta_plot(auto_open=True)

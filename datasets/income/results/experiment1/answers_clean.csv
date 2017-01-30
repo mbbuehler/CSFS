@@ -154,7 +154,7 @@
 182,0.1,A12R2U6TBB3OOG,native.country_Ireland
 183,0.2,A1F2YZD2VD1CTM,native.country_Ireland
 184,0.1,A3EER5EYR1W6TD,native.country_Ireland
-185,0.1,AEG93GFIOWMKV,native.country_Ireland
+185,1.0,AEG93GFIOWMKV,native.country_Ireland
 186,0.1,A30J1AQYJ3YTQP,native.country_Ireland
 187,0.1,A341FR20648KIN,native.country_Ireland
 188,0.4,A2YXL5GQ3LZUY0,native.country_Ireland
@@ -190,7 +190,7 @@
 221,0.3,A25YG9M911WA3T,relationship_Husband_0
 222,0.3,A1DHLXDMQ2L0MO,relationship_Husband_0
 225,0.3,A1YPKT2UPUQ464,relationship_Husband_0
-226,0.1,A8GWYS9O8FUEK,relationship_Husband_0
+226,1.0,A8GWYS9O8FUEK,relationship_Husband_0
 227,0.4,A3NYJXXESCY4BJ,relationship_Husband_0
 228,0.4,A3AT9S1CF9QV4K,relationship_Husband_0
 229,0.4,A2UIGDOLX5RV95,relationship_Husband_0
@@ -494,7 +494,7 @@
 582,0.4,A1HKB73TUJ5Z42,marital.status_Never-married
 583,0.3,AM3FJP29J6RXZ,marital.status_Never-married
 584,0.4,A3F710EVFD9MM2,marital.status_Never-married
-585,0.1,A2WA7JN5HGORA1,marital.status_Never-married
+585,1.0,A2WA7JN5HGORA1,marital.status_Never-married
 586,0.6,A3BL2ZEODD79AZ,marital.status_Never-married
 587,0.2,A1JCFEDLZZKNZ3,marital.status_Never-married
 588,0.4,A21SIPO89DP66I,marital.status_Never-married
@@ -555,7 +555,7 @@
 643,0.2,A19TL7AJ0FB1JG,"hours.per.week_(0.902, 33.667]_1"
 644,0.2,A1OSRB1Q63XXWZ,"hours.per.week_(0.902, 33.667]_1"
 645,0.1,A2O7P3NAOR9TUG,"hours.per.week_(0.902, 33.667]_1"
-646,0.1,A11R8G0FYA2UVQ,"hours.per.week_(0.902, 33.667]_1"
+646,1.0,A11R8G0FYA2UVQ,"hours.per.week_(0.902, 33.667]_1"
 647,0.1,A1ORP0J662SA5N,"hours.per.week_(0.902, 33.667]_1"
 648,0.1,A27PBC5O3Z5ZED,"hours.per.week_(0.902, 33.667]_1"
 649,0.1,A3PT813GVSQMRY,"hours.per.week_(0.902, 33.667]_1"
@@ -587,7 +587,7 @@
 675,0.3,A19TL7AJ0FB1JG,"hours.per.week_(0.902, 33.667]"
 676,0.3,A1OSRB1Q63XXWZ,"hours.per.week_(0.902, 33.667]"
 677,0.8,A2O7P3NAOR9TUG,"hours.per.week_(0.902, 33.667]"
-678,0.1,A11R8G0FYA2UVQ,"hours.per.week_(0.902, 33.667]"
+678,1.0,A11R8G0FYA2UVQ,"hours.per.week_(0.902, 33.667]"
 679,0.5,A1ORP0J662SA5N,"hours.per.week_(0.902, 33.667]"
 680,0.3,A27PBC5O3Z5ZED,"hours.per.week_(0.902, 33.667]"
 681,0.3,A3PT813GVSQMRY,"hours.per.week_(0.902, 33.667]"
@@ -614,7 +614,7 @@
 710,0.1,A3BP890CXV4UMN,native.country_Hungary_0
 711,0.4,A3V9JFVZQ2XF4Y,native.country_Hungary_0
 712,0.6,A3JK8V5HGH0472,native.country_Hungary_0
-713,0.1,A1VNYP58BTF4HX,native.country_Hungary_0
+713,1.0,A1VNYP58BTF4HX,native.country_Hungary_0
 714,0.8,AVI77MTGQS0T9,native.country_Hungary_0
 715,0.4,A3RLCGRXA34GC0,native.country_Hungary_0
 716,0.6,A3C9VI7QCLEVGT,native.country_Hungary_0
@@ -970,7 +970,7 @@
 1131,0.3,A23YHQJADTCAZY,marital.status_Married-civ-spouse_0
 1132,0.3,ATB9VOR75W6P3,marital.status_Married-civ-spouse_0
 1135,0.1,A20NITCOBY4775,marital.status_Married-civ-spouse_0
-1136,0.1,A3IB7YJHP04OHI,marital.status_Married-civ-spouse_0
+1136,1.0,A3IB7YJHP04OHI,marital.status_Married-civ-spouse_0
 1137,0.6,A341FR20648KIN,marital.status_Married-civ-spouse_0
 1138,0.5,AGFO2XH9ZK6BE,marital.status_Married-civ-spouse_0
 1139,0.4,A3DRKJIAWYMA9F,marital.status_Married-civ-spouse_0
@@ -1204,11 +1204,11 @@
 1409,0.9,AS3M818NX9EAI,"education.num_(6, 11]"
 1410,0.2,A13WWY2NOP6TC0,"education.num_(6, 11]"
 1411,0.1,A3T72ZETOLSOB1,"education.num_(6, 11]"
-1412,0.1,A2WA7JN5HGORA1,"education.num_(6, 11]"
+1412,1.0,A2WA7JN5HGORA1,"education.num_(6, 11]"
 1413,0.2,A3MS3L9ANU5ZSR,"education.num_(6, 11]"
 1414,0.5,A1FSPD1LIOXCN1,"education.num_(6, 11]"
 1415,0.6,A21EFJ972J40T6,"education.num_(6, 11]"
-1416,0.1,A3ULZGQA5AQMTD,"education.num_(6, 11]"
+1416,1.0,A3ULZGQA5AQMTD,"education.num_(6, 11]"
 1417,0.3,ATADQXPHL10Y8,"capital.loss_(2904, 4356]_0"
 1418,0.4,A1F1OZ54G177D8,"capital.loss_(2904, 4356]_0"
 1419,0.6,ANMXMEB55AGM6,"capital.loss_(2904, 4356]_0"

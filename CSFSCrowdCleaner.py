@@ -122,38 +122,11 @@ class CSFSCrowdCleaner:
                 q1 = match.group(1).strip()
                 result.append(q1)
 
-            # print(q1)
-            # if is_triple:
-            #     print(q2)
-            #     print(q3)
-            # input()
-
-            #     index_second_start = e.index('::')+10
-            #     if '100' in e[:index_second_start]: # we have to go one further
-            #         index_second_start += 2
-            #
-            #     assert e[index_second_start]=='I' # makes sure we do not introduce bugs for other questions
-            #     index_second_end = index_second_start + e[index_second_start:].index(':')
-            #     question2 = e[index_second_start:index_second_end]
-            #
-            #
-            #
-            #     index_third_start = index_second_end + e[index_second_end:].index(':')+10
-            #     if ")" in e[index_third_start]:
-            #         index_third_start += 1 # second last questions has 100%, too
-            #
-            #     index_third_end = index_third_start + e[index_third_start:].index(':')
-            #     question3 = e[index_third_start:index_third_end]
-            #     # if ")" in question3[:5]:
-            #     #     print(e)
-            #     result.append(question2)
-            #     result.append(question3)
             return result
 
         def get_answers(e):
             r = re.findall(r'::(\d+).\(\d+%\)', e)
-            # exit()
-            answer = [float(n[0])/10 for n in r]
+            answer = [float(n)/10 for n in r]
             return answer
 
         def get_answer_user(e):
@@ -409,7 +382,9 @@ Medu_(-0.004, 1.333]  [0.1,..., 0.1]    [0.6,..., 0.8]         [0.8,... , 0.9]
             if feature not in data:
                 data[feature] = {'p': list(), 'p|f=0': list(), 'p|f=1': list()}
             data[feature][column].append(row['answer'])
+
         df_grouped = pd.DataFrame(data).transpose()
+
         return df_grouped
 
 

@@ -121,6 +121,7 @@ class AnswerDeltaVisualiser:
         def f(row):
             row['diff IG range'] = [abs(np.min(row['IG'])-np.max(row['IG']))]
             row['IG std'] = [abs(np.std(row['IG']))]
+            row['p all'] = row['p'] + row['p|f=0'] + row['p|f=1']
             return row
         df = df.apply(f, axis='columns')
         conditions = df.columns
