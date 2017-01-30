@@ -125,6 +125,7 @@ class AnswerDeltaVisualiserBar:
             row['diff IG range'] = [abs(np.min(row['IG'])-np.max(row['IG']))]
             row['IG std'] = [abs(np.std(row['IG']))]
             row['p all'] = row['p'] + row['p|f=0'] + row['p|f=1']
+            row['median all'] = [np.median(row['p all'])]
             return row
         df = df.apply(f, axis='columns')
         conditions = df.columns
@@ -187,8 +188,8 @@ class AnswerDeltaVisualiserLinePlot:
     def get_figure(self, df):
         def f(row):
             # row['diff IG range'] = [abs(np.min(row['IG'])-np.max(row['IG']))]
-            # row['IG std'] = [abs(np.std(row['IG']))]
             row['p all'] = row['p'] + row['p|f=0'] + row['p|f=1']
+            row['median all'] = [abs(np.median(row['p all']))]
             return row
         df = df.apply(f, axis='columns')
         conditions = df.columns
