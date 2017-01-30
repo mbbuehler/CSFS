@@ -90,3 +90,23 @@ class CIVisualiser:
             )
 
         return [trace_auc, trace_ci_low, trace_ci_hi]
+
+
+class AnswerDeltaVisualiser:
+
+    def get_trace(self, df, condition):
+        return go.Bar(
+            x=df.index,
+            y=[np.mean(y) for y in df[condition]],
+            name=condition
+        )
+
+    def get_figure(self, df):
+        conditions = df.columns
+        data = [self.get_trace(df, condition) for condition in conditions]
+
+        layout = go.Layout(
+            barmode='group'
+        )
+        fig = go.Figure(data=data, layout=layout)
+        return fig

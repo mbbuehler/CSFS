@@ -22,7 +22,7 @@ from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 from application.CSFSConditionEvaluation import TestEvaluation
 from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
 from csfs_stats import hedges_g
-from csfs_visualisations import CIVisualiser
+from csfs_visualisations import CIVisualiser, AnswerDeltaVisualiser
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
 
@@ -40,6 +40,8 @@ class AbstractExperiment:
     path_answers_plots = ''
     path_answers_aggregated = ''
     path_answers_metadata = ''
+    path_answers_delta = ''
+    path_answers_delta_plot = ''
     path_csfs_auc = ''
     path_questions = ''
     path_flock_result = ''
@@ -614,5 +616,56 @@ class AbstractExperiment:
         fig = CIVisualiser.get_fig(df, feature_range, 'number of answers sampled (without replacement)', y_title='AUC', title="{} ({} repetitions)".format(self.dataset_name, self.repetitions))
         # plotly.offline.plot(fig, auto_open=True, filename=filename)
         return fig
+
+    def evaluate_answers_delta(self):
+        def calc_ig(row, p_target):
+            h_x = _H([p_target, 1-p_target])
+            row['IG'] = IG_from_series(row, h_x=h_x, identifier='p')
+            return row
+
+        def get_avg_values(no_answers, df_answers_grouped, df_actual, p_target):
+            conditions = ['p', 'p|f=0',  'p|f=1', 'IG']
+            delta = {c: list() for c in conditions}
+
+            for i in range(self.repetitions):
+                df_sampled = pd.DataFrame(index=df_answers_grouped.index, columns=df_answers_grouped.columns)
+                df_aggregated = pd.DataFrame(index=self.answer_range, columns=df_answers_grouped.columns)
+                for condition in df_answers_grouped.columns: # p, p|f=0 and p|f=1
+                    df_sampled[condition] = df_answers_grouped[condition].apply(lambda l: np.random.choice(list(l), no_answers, replace=False))
+                    df_sampled[condition] = df_sampled[condition].apply(lambda l: np.median(l))
+                df_sampled = df_sampled.apply(calc_ig, axis='columns', p_target=p_target)
+                """
+                                 p  p|f=0  p|f=1        IG
+        Fjob_teacher           0.1    0.5    0.7  0.011871
+        Medu_(-0.004, 1.333]   0.2    0.6    0.5  0.023240
+        Mjob_at_home           0.3    0.5    0.5  0.000000
+        Mjob_other             0.2    0.7    0.5  0.094967
+                """
+                df_actual.columns = df_sampled.columns # rename from 'mean', 'mean|f=0', 'mean|f=1', 'IG' to 'p', 'p|f=0' and 'p|f=1', 'IG'
+                df_diff = abs(df_actual - df_sampled)
+
+                for c in conditions:
+                    delta[c].append(np.mean(df_diff[c]))
+            series = pd.Series(delta)
+            return series
+
+
+        df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
+        p_target = df_answers_grouped['p'].loc[self.target][0]
+        df_answers_grouped = df_answers_grouped.drop(self.target)
+        df_actual = pd.read_csv(self.path_answers_metadata, index_col=0, header=[0, 1])['actual'].drop(self.target)
+
+        df_result = pd.DataFrame({no_answers: get_avg_values(no_answers, df_answers_grouped, df_actual, p_target) for no_answers in self.answer_range}).transpose()
+        df_result.to_pickle(self.path_answers_delta)
+
+    def evaluate_answers_delta_plot(self, auto_open=False):
+        df = pd.read_pickle(self.path_answers_delta)
+        fig = AnswerDeltaVisualiser().get_figure(df)
+        plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot)
+
+
+
+
+
 
 
