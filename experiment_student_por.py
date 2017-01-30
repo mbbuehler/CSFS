@@ -184,4 +184,4 @@ if __name__ == '__main__':
     # experiment.evaluate_no_answers()
     # experiment.evaluate_no_answers_get_fig(feature_range)
     # experiment.evaluate_answers_delta()
-    experiment.evaluate_answers_delta_plot()
+    experiment.evaluate_answers_delta_plot(auto_open=False)

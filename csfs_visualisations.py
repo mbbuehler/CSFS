@@ -94,6 +94,9 @@ class CIVisualiser:
 
 class AnswerDeltaVisualiser:
 
+    def __init__(self, title):
+        self.title = title
+
     def get_trace(self, df, condition):
         return go.Bar(
             x=df.index,
@@ -101,12 +104,23 @@ class AnswerDeltaVisualiser:
             name=condition
         )
 
+    def get_layout(self):
+        return go.Layout(
+            title=self.title,
+            xaxis=dict(
+                title='number of answers sampled per feature (without replacement)',
+            ),
+            yaxis=dict(
+                range=[0, 0.5],
+                title='delta (mean difference over all features)',
+            ),
+            barmode='group'
+        )
+
     def get_figure(self, df):
         conditions = df.columns
         data = [self.get_trace(df, condition) for condition in conditions]
 
-        layout = go.Layout(
-            barmode='group'
-        )
+        layout = self.get_layout()
         fig = go.Figure(data=data, layout=layout)
         return fig

@@ -660,7 +660,8 @@ class AbstractExperiment:
 
     def evaluate_answers_delta_plot(self, auto_open=False):
         df = pd.read_pickle(self.path_answers_delta)
-        fig = AnswerDeltaVisualiser().get_figure(df)
+        title = '{}: Number of Answers versus Actual Data ({} repetitions)'.format(self.dataset_name, self.repetitions)
+        fig = AnswerDeltaVisualiser(title=title).get_figure(df)
         plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot)
 
 

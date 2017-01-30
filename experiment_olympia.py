@@ -33,6 +33,8 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_answers_aggregated = 'datasets/olympia/results/{}/answers_aggregated.csv'.format(experiment_name)
         self.path_answers_metadata = 'datasets/olympia/results/{}/answers_metadata.csv'.format(experiment_name)
         self.path_no_answers_vs_auc = '{}results/{}/answers_vs_auc.pickle'.format(self.base_path, experiment_name)
+        self.path_answers_delta = '{}results/{}/answers_delta.pickle'.format(self.base_path, experiment_name)
+        self.path_answers_delta_plot = '{}results/{}/answers_delta_plot.html'.format(self.base_path, experiment_name)
 
         self.path_csfs_auc = 'datasets/olympia/results/{}/csfs_auc.csv'.format(experiment_name)
         self.path_csfs_std = 'datasets/olympia/results/{}/csfs_std.csv'.format(experiment_name)
@@ -177,8 +179,6 @@ if __name__ == '__main__':
     # experiment.evaluate_crowd_all_answers()
     # experiment.evaluate_flock()
     # experiment.evaluate_csfs_auc(fake_till_n=25)
-
-    feature_range = range(1, 14)
     auto_open_plots = False
     # experiment.evaluate_ranking_cost(budget_range)
     # experiment.evaluate_ranking_nofeatures(no_features)
@@ -193,5 +193,7 @@ if __name__ == '__main__':
     # experiment.final_evaluation_combine(feature_range, bootstrap_n=bootstrap_n, repetitions=repetitions)
     # experiment.crowd_auc_plot(auto_open=auto_open_plots)
     # experiment.statistical_comparison(feature_range)
-    experiment.evaluate_no_answers()
+    # experiment.evaluate_no_answers()
     # experiment.evaluate_no_answers_get_fig(feature_range)
+    experiment.evaluate_answers_delta()
+    experiment.evaluate_answers_delta_plot(auto_open=True)
