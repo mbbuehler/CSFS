@@ -629,7 +629,6 @@ class AbstractExperiment:
 
             for i in range(self.repetitions):
                 df_sampled = pd.DataFrame(index=df_answers_grouped.index, columns=df_answers_grouped.columns)
-                df_aggregated = pd.DataFrame(index=self.answer_range, columns=df_answers_grouped.columns)
                 for condition in df_answers_grouped.columns: # p, p|f=0 and p|f=1
                     df_sampled[condition] = df_answers_grouped[condition].apply(lambda l: np.random.choice(list(l), no_answers, replace=False))
                     df_sampled[condition] = df_sampled[condition].apply(lambda l: np.median(l))
@@ -643,24 +642,27 @@ class AbstractExperiment:
                 """
                 df_actual.columns = df_sampled.columns # rename from 'mean', 'mean|f=0', 'mean|f=1', 'IG' to 'p', 'p|f=0' and 'p|f=1', 'IG'
                 df_diff = abs(df_actual - df_sampled)
+                # pd.concat({'actual': df_actual, 'sampled': df_sampled, 'diff': df_diff}, axis='columns').to_csv('df_compare.csv', index=True)
+                # exit()
 
                 for c in conditions:
                     delta[c].append(np.mean(df_diff[c]))
             series = pd.Series(delta)
             return series
 
-
         df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
         p_target = df_answers_grouped['p'].loc[self.target][0]
         df_answers_grouped = df_answers_grouped.drop(self.target)
+        df_answers_grouped = df_answers_grouped.sort_index()
         df_actual = pd.read_csv(self.path_answers_metadata, index_col=0, header=[0, 1])['actual'].drop(self.target)
+        df_actual = df_actual.sort_index()
 
         df_result = pd.DataFrame({no_answers: get_avg_values(no_answers, df_answers_grouped, df_actual, p_target) for no_answers in self.answer_range}).transpose()
         df_result.to_pickle(self.path_answers_delta)
 
     def evaluate_answers_delta_plot(self, auto_open=False):
         df = pd.read_pickle(self.path_answers_delta)
-        title = '{}: Number of Answers versus Actual Data ({} repetitions)'.format(self.dataset_name, self.repetitions)
+        title = '{}: Number of Answers versus Actual Data ({} Repetitions)'.format(self.dataset_name, self.repetitions)
         fig = AnswerDeltaVisualiser(title=title).get_figure(df)
         plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot)
 

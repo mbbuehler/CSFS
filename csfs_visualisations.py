@@ -118,7 +118,13 @@ class AnswerDeltaVisualiser:
         )
 
     def get_figure(self, df):
+        def f(row):
+            row['diff IG range'] = [abs(np.min(row['IG'])-np.max(row['IG']))]
+            row['IG std'] = [abs(np.std(row['IG']))]
+            return row
+        df = df.apply(f, axis='columns')
         conditions = df.columns
+
         data = [self.get_trace(df, condition) for condition in conditions]
 
         layout = self.get_layout()

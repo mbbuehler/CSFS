@@ -29,7 +29,7 @@ class ExperimentStudent(AbstractExperiment):
         self.path_answers_metadata = '{}results/{}/answers_metadata.csv'.format(self.base_path, experiment_name)
         self.path_no_answers_vs_auc = '{}results/{}/answers_vs_auc.pickle'.format(self.base_path, experiment_name)
         self.path_answers_delta = '{}results/{}/answers_delta.pickle'.format(self.base_path, experiment_name)
-        self.path_answers_delta_plot = '{}results/{}/answers_delta_plot.html'.format(self.base_path, experiment_name)
+        self.path_answers_delta_plot = '{}results/{}/visualisations/{}_answers_delta_plot.html'.format(self.base_path, experiment_name, self.dataset_name)
 
         self.path_csfs_auc = '{}results/{}/csfs_auc.csv'.format(self.base_path, experiment_name)
         self.path_csfs_std = '{}results/{}/csfs_std.csv'.format(self.base_path, experiment_name)
@@ -183,5 +183,5 @@ if __name__ == '__main__':
     # experiment.statistical_comparison(feature_range)
     # experiment.evaluate_no_answers()
     # experiment.evaluate_no_answers_get_fig(feature_range)
-    # experiment.evaluate_answers_delta()
-    experiment.evaluate_answers_delta_plot(auto_open=False)
+    experiment.evaluate_answers_delta()
+    experiment.evaluate_answers_delta_plot(auto_open=True)
