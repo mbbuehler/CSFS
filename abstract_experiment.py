@@ -22,7 +22,8 @@ from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 from application.CSFSConditionEvaluation import TestEvaluation
 from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
 from csfs_stats import hedges_g
-from csfs_visualisations import CIVisualiser, AnswerDeltaVisualiser
+from csfs_visualisations import CIVisualiser, AnswerDeltaVisualiserLinePlot, \
+    AnswerDeltaVisualiserBar
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
 
@@ -41,7 +42,6 @@ class AbstractExperiment:
     path_answers_aggregated = ''
     path_answers_metadata = ''
     path_answers_delta = ''
-    path_answers_delta_plot = ''
     path_csfs_auc = ''
     path_questions = ''
     path_flock_result = ''
@@ -83,6 +83,8 @@ class AbstractExperiment:
         self.experiment_name = experiment_name
         self.base_path = 'datasets/{}/'.format(self.dataset_name)
         self.path_comparison = '{}evaluation/comparison/'.format(self.base_path)
+        self.path_answers_delta_plot_bar = '{}results/{}/visualisations/{}_answers_delta_plot_bar.html'.format(self.base_path, experiment_name, self.dataset_name)
+        self.path_answers_delta_plot_line = '{}results/{}/visualisations/{}_answers_delta_plot_line.html'.format(self.base_path, experiment_name, self.dataset_name)
 
     def _create_if_nonexisting(self, path, folder):
             if folder not in os.listdir(path):
@@ -661,10 +663,15 @@ class AbstractExperiment:
         df_result.to_pickle(self.path_answers_delta)
 
     def evaluate_answers_delta_plot(self, auto_open=False):
+        auto_open=True
         df = pd.read_pickle(self.path_answers_delta)
         title = '{}: Number of Answers versus Actual Data ({} Repetitions)'.format(self.dataset_name, self.repetitions)
-        fig = AnswerDeltaVisualiser(title=title).get_figure(df)
-        plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot)
+        fig = AnswerDeltaVisualiserLinePlot(title=title).get_figure(df)
+        plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot_line)
+        import time
+        time.sleep(2) # delays for 5 seconds
+        fig = AnswerDeltaVisualiserBar(title=title).get_figure(df)
+        plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot_bar)
 
 
 

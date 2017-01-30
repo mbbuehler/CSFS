@@ -1,5 +1,7 @@
 import plotly.graph_objs as go
 import numpy as np
+import statsmodels.stats.weightstats as ssw
+import scipy.stats as st
 
 # alphas = [0.3, 0.6, 1]
 # sec = 80
@@ -92,7 +94,7 @@ class CIVisualiser:
         return [trace_auc, trace_ci_low, trace_ci_hi]
 
 
-class AnswerDeltaVisualiser:
+class AnswerDeltaVisualiserBar:
 
     def __init__(self, title):
         self.title = title
@@ -101,6 +103,7 @@ class AnswerDeltaVisualiser:
         return go.Bar(
             x=df.index,
             y=[np.mean(y) for y in df[condition]],
+            text=["min: {:.2f} \nmax: {:.2f} \nstd: {:.4f}".format(np.min(y), np.max(y), np.std(y)) for y in df[condition]],
             name=condition
         )
 
@@ -131,3 +134,75 @@ class AnswerDeltaVisualiser:
         layout = self.get_layout()
         fig = go.Figure(data=data, layout=layout)
         return fig
+
+class AnswerDeltaVisualiserLinePlot:
+
+    def __init__(self, title):
+        self.title = title
+
+    def get_traces(self, df, condition):
+        colours = get_colours()
+
+        my = go.Scatter(
+            x=df.index,
+            y=[np.mean(y) for y in df[condition]],
+            name="{} mean".format(condition),
+            line = dict(
+                color=colours[0]
+            )
+        )
+        lo = go.Scatter(
+            x=df.index,
+            y=[ssw.DescrStatsW(y).tconfint_mean()[0] for y in df[condition]],
+            name="{} CI low".format(condition),
+            fill=None,
+            line = dict(
+                color = colours[0]
+            )
+        )
+        hi = go.Scatter(
+            x=df.index,
+            y=[ssw.DescrStatsW(y).tconfint_mean()[1] for y in df[condition]],
+            name="{} CI high".format(condition),
+            fill='tonexty',
+            line = dict(
+                color = colours[0]
+            )
+        )
+        return [my, lo, hi]
+
+    def get_layout(self):
+        return go.Layout(
+            title=self.title,
+            xaxis=dict(
+                title='number of answers sampled per feature (without replacement)',
+            ),
+            yaxis=dict(
+                range=[0, 0.5],
+                title='delta (mean difference over all features)',
+            ),
+            barmode='group'
+        )
+
+    def get_figure(self, df):
+        def f(row):
+            # row['diff IG range'] = [abs(np.min(row['IG'])-np.max(row['IG']))]
+            # row['IG std'] = [abs(np.std(row['IG']))]
+            row['p all'] = row['p'] + row['p|f=0'] + row['p|f=1']
+            return row
+        df = df.apply(f, axis='columns')
+        conditions = df.columns
+
+        data = list()
+        for condition in conditions:
+            data += self.get_traces(df, condition)
+
+        layout = self.get_layout()
+        fig = go.Figure(data=data, layout=layout)
+        return fig
+
+def get_colours():
+    alphas = [0.3, 0.6, 1]
+    c = [np.random.randint(0, 256) for i in range(3)]
+    colours = ["rgba({},{},{},{})".format(c[0], c[1], c[2], x) for x in alphas]
+    return colours
