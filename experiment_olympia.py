@@ -176,7 +176,7 @@ if __name__ == '__main__':
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
     # experiment.get_metadata()
-    experiment.evaluate_crowd_all_answers()
+    # experiment.evaluate_crowd_all_answers()
     # experiment.evaluate_flock()
     # experiment.evaluate_csfs_auc(fake_till_n=25)
     auto_open_plots = False
@@ -195,5 +195,5 @@ if __name__ == '__main__':
     # experiment.statistical_comparison(feature_range)
     # experiment.evaluate_no_answers()
     # experiment.evaluate_no_answers_get_fig(feature_range)
-    # experiment.evaluate_answers_delta()
-    # experiment.evaluate_answers_delta_plot(auto_open=True)
+    experiment.evaluate_answers_delta()
+    experiment.evaluate_answers_delta_plot(auto_open=True)
