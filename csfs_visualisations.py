@@ -218,11 +218,11 @@ class AnswerDeltaVisualiserBox:
         return go.Layout(
             title=self.title,
             xaxis=dict(
-                title='number of answers sampled per feature (without replacement)',
+                title='# Answers Sampled per Feature (without Replacement)',
             ),
             yaxis=dict(
                 range=[0, 0.5],
-                title='delta (mean difference over all features)',
+                title='Delta',
             ),
         )
 

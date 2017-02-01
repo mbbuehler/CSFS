@@ -1,3 +1,5 @@
+import os
+
 from experiment_income import ExperimentIncome
 from experiment_olympia import ExperimentOlympia
 from experiment_student_por import ExperimentStudent
@@ -14,4 +16,5 @@ def run_all():
         exp.run()
 
 if __name__=='__main__':
+    os.chdir('..')
     run_all()
