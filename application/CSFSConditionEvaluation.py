@@ -56,6 +56,7 @@ class AucForBudgetCalculator(AUCCalculator):
         result.columns = ['auc']
         return result.sort_index()
 
+
 class AUCForOrderedFeaturesCalculator(AUCCalculator):
 
     def get_auc_for_nofeatures(self, n):

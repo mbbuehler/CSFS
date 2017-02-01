@@ -24,6 +24,7 @@ from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeat
 from csfs_stats import hedges_g
 from csfs_visualisations import CIVisualiser, AnswerDeltaVisualiserLinePlot, \
     AnswerDeltaVisualiserBar
+from humans_vs_actual_auc import FeatureRankerAUC, FeatureCombinationCalculator
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
 
@@ -60,6 +61,7 @@ class AbstractExperiment:
     path_auc_plots = ''
     path_comparison = ''
     path_no_answers_vs_auc = ''
+    path_humans_vs_actual_auc = ''
     target = ''
     answer_range = range(1, 17)
     feature_range = range(1,2)
@@ -85,6 +87,7 @@ class AbstractExperiment:
         self.path_comparison = '{}evaluation/comparison/'.format(self.base_path)
         self.path_answers_delta_plot_bar = '{}results/{}/visualisations/{}_answers_delta_plot_bar.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_answers_delta_plot_line = '{}results/{}/visualisations/{}_answers_delta_plot_line.html'.format(self.base_path, experiment_name, self.dataset_name)
+        self.path_humans_vs_actual_auc = '{}evaluation/comparison/humans_vs_actual_auc.json'.format(self.base_path)
 
     def _create_if_nonexisting(self, path, folder):
             if folder not in os.listdir(path):
@@ -672,6 +675,38 @@ class AbstractExperiment:
         time.sleep(2) # delays for 5 seconds
         fig = AnswerDeltaVisualiserBar(title=title).get_figure(df)
         plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot_bar)
+
+    def humans_vs_actual_auc(self):
+
+        df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'ip', 'date'])
+        df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
+        df_cleaned_bin = pd.read_csv(self.path_bin)
+        df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
+        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, df_actual_metadata=None, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=self.bootstrap_n, repetitions=self.repetitions)
+        features = list(pd.read_csv(self.path_answers_metadata, index_col=0, header=[0, 1]).index)
+        features.remove(self.target)
+        # ranker = FeatureRankerAUC(df_cleaned_bin, self.target, features)
+
+        calculator = FeatureCombinationCalculator(df_cleaned_bin, self.target, features)
+
+        values_domain = evaluator.evaluate(self.feature_range, ERCondition.DOMAIN)[ERCondition.DOMAIN]
+        values_experts = evaluator.evaluate(self.feature_range, ERCondition.EXPERT)[ERCondition.EXPERT]
+        print('start best')
+        values_best = calculator.get_aucs_for_feature_range(self.feature_range, reverse=False)
+        print('start worst')
+        values_worst = calculator.get_aucs_for_feature_range(self.feature_range, reverse=True)
+
+        df_result = pd.DataFrame({'domain': values_domain, 'experts': values_experts, 'best': values_best, 'worst': values_worst })
+        df_result.to_json(self.path_humans_vs_actual_auc)
+
+    def humans_vs_actual_auc_plot(self):
+        df = pd.read_json(self.path_humans_vs_actual_auc).sort_index()
+        for c in df:
+            df[c] = df[c].apply(np.mean)
+        import cufflinks
+        df.plot(filename='test.html')
+
+
 
 
 
