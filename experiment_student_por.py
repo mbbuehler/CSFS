@@ -143,47 +143,48 @@ paid==yes                1    1    0    0    1    2    0    0    0     0     1  
         df_counted.to_csv(self.path_budget_evaluation_result_domain)
 
 
-def run():
-    experiment = ExperimentStudent('student', 2, 'experiment2_por')
-    fake_features={'G3': 0.5}
+    def run(self):
+        fake_features={'G3': 0.5}
 
-    auto_open_plots = False
-    # experiment.set_up_basic_folder_structure()
-    # experiment.set_up_experiment_folder_structure('experiment2_por')
-    # experiment.preprocess_raw()
-    # experiment.bin_binarise()
-    # experiment.get_metadata()
-    # experiment.evaluate_crowd_all_answers(fake_features=fake_features)
-     # experiment.drop_analysis(N_Features, n_samples)
-    # experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
-    # experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
-    # experiment.drop_evaluation(N_Features, n_samples)
-    # budget_range = range(10, 180, 10)
+        auto_open_plots = False
+        # experiment.set_up_basic_folder_structure()
+        # experiment.set_up_experiment_folder_structure('experiment2_por')
+        # experiment.preprocess_raw()
+        # experiment.bin_binarise()
+        # experiment.get_metadata()
+        # experiment.evaluate_crowd_all_answers(fake_features=fake_features)
+         # experiment.drop_analysis(N_Features, n_samples)
+        # experiment.evaluate_flock(N_Features, n_samples, range(3, 350, 1))
+        # experiment.evaluate_csfs_auc(fake_features={'G3': 0.5})
+        # experiment.drop_evaluation(N_Features, n_samples)
+        # budget_range = range(10, 180, 10)
 
-    # experiment.evaluate_budget(budget_range)
-    # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
-    # experiment.get_figure_budget_evaluation(df_budget_evaluation)
-    # experiment.evaluate_ranking_cost(budget_range)
-    # experiment.evaluate_ranking_nofeatures(no_features)
-        #
-    # experiment.evaluate_csfs_auc()
-    # experiment.domain_evaluation()
-    # experiment.autocorrelation()
-    # experiment.final_evaluation(feature_range, bootstrap_n=12, repetitions=20)
-    # experiment.final_evaluation_visualisation(feature_range)
-    # experiment.crowd_answers_plot(auto_open=auto_open_plots)
-    # experiment.final_evaluation_combine(feature_range, bootstrap_n=12, repetitions=20)
-    # experiment.crowd_auc_plot(auto_open=auto_open_plots)
-    # experiment.statistical_comparison(feature_range)
-    # experiment.evaluate_no_answers()
-    # experiment.evaluate_no_answers_get_fig(feature_range)
-    # experiment.evaluate_answers_delta()
-    experiment.evaluate_answers_delta_plot(auto_open=True)
-    # experiment.humans_vs_actual_auc()
-    # experiment.humans_vs_actual_auc_plot()
+        # experiment.evaluate_budget(budget_range)
+        # df_budget_evaluation = pd.read_csv(experiment.path_budget_evaluation, index_col=0, header=[0, 1])
+        # experiment.get_figure_budget_evaluation(df_budget_evaluation)
+        # experiment.evaluate_ranking_cost(budget_range)
+        # experiment.evaluate_ranking_nofeatures(no_features)
+            #
+        # experiment.evaluate_csfs_auc()
+        # experiment.domain_evaluation()
+        # experiment.autocorrelation()
+        # experiment.final_evaluation(feature_range, bootstrap_n=12, repetitions=20)
+        # experiment.final_evaluation_visualisation(feature_range)
+        # experiment.crowd_answers_plot(auto_open=auto_open_plots)
+        # experiment.final_evaluation_combine(feature_range, bootstrap_n=12, repetitions=20)
+        # experiment.crowd_auc_plot(auto_open=auto_open_plots)
+        # experiment.statistical_comparison(feature_range)
+        # experiment.evaluate_no_answers()
+        # experiment.evaluate_no_answers_get_fig(feature_range)
+        # experiment.evaluate_answers_delta()
+        self.evaluate_answers_delta_plot(auto_open=True)
+        # experiment.humans_vs_actual_auc()
+        # experiment.humans_vs_actual_auc_plot()
 
 
 
 if __name__ == '__main__':
-    run()
+
+    experiment = ExperimentStudent('student', 2, 'experiment2_por')
+    experiment.run()
 
