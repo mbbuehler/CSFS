@@ -202,6 +202,45 @@ class AnswerDeltaVisualiserLinePlot:
         fig = go.Figure(data=data, layout=layout)
         return fig
 
+
+class AnswerDeltaVisualiserBox:
+
+    def __init__(self, title):
+        self.title = title
+
+    def get_traces(self, df, condition):
+        return [go.Box(
+            y=list(df.loc[no_answers, condition]),
+            name=no_answers,
+        ) for no_answers in df[condition].index]
+
+    def get_layout(self):
+        return go.Layout(
+            title=self.title,
+            xaxis=dict(
+                title='number of answers sampled per feature (without replacement)',
+            ),
+            yaxis=dict(
+                range=[0, 0.5],
+                title='delta (mean difference over all features)',
+            ),
+        )
+
+    def get_figure(self, df):
+        def f(row):
+            row['diff IG range'] = [abs(np.min(row['IG'])-np.max(row['IG']))]
+            row['IG std'] = [abs(np.std(row['IG']))]
+            row['p all'] = row['p'] + row['p|f=0'] + row['p|f=1']
+            row['median all'] = [np.median(row['p all'])]
+            return row
+        df = df.apply(f, axis='columns')
+
+        data = self.get_traces(df, 'p all')
+
+        layout = self.get_layout()
+        fig = go.Figure(data=data, layout=layout)
+        return fig
+
 def get_colours():
     alphas = [0.3, 0.6, 1]
     c = [np.random.randint(0, 256) for i in range(3)]

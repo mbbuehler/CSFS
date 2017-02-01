@@ -23,7 +23,7 @@ from application.CSFSConditionEvaluation import TestEvaluation
 from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
 from csfs_stats import hedges_g
 from csfs_visualisations import CIVisualiser, AnswerDeltaVisualiserLinePlot, \
-    AnswerDeltaVisualiserBar
+    AnswerDeltaVisualiserBar, AnswerDeltaVisualiserBox
 from humans_vs_actual_auc import FeatureRankerAUC, FeatureCombinationCalculator
 from infoformulas_listcomp import H, _H, IG_from_series
 from util.util_features import get_features_from_questions
@@ -669,11 +669,11 @@ class AbstractExperiment:
         auto_open=True
         df = pd.read_pickle(self.path_answers_delta)
         title = '{}: Number of Answers versus Actual Data ({} Repetitions)'.format(self.dataset_name, self.repetitions)
-        fig = AnswerDeltaVisualiserLinePlot(title=title).get_figure(df)
-        plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot_line)
-        import time
-        time.sleep(2) # delays for 5 seconds
-        fig = AnswerDeltaVisualiserBar(title=title).get_figure(df)
+        # fig = AnswerDeltaVisualiserLinePlot(title=title).get_figure(df)
+        # plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot_line)
+        # import time
+        # time.sleep(2) # delays for 5 seconds
+        fig = AnswerDeltaVisualiserBox(title=title).get_figure(df)
         plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot_bar)
 
     def humans_vs_actual_auc(self):
