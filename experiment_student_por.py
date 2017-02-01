@@ -143,11 +143,7 @@ paid==yes                1    1    0    0    1    2    0    0    0     0     1  
         df_counted.to_csv(self.path_budget_evaluation_result_domain)
 
 
-
-
-
-
-if __name__ == '__main__':
+def run():
     experiment = ExperimentStudent('student', 2, 'experiment2_por')
     fake_features={'G3': 0.5}
 
@@ -185,4 +181,9 @@ if __name__ == '__main__':
     experiment.evaluate_answers_delta_plot(auto_open=True)
     # experiment.humans_vs_actual_auc()
     # experiment.humans_vs_actual_auc_plot()
+
+
+
+if __name__ == '__main__':
+    run()
 

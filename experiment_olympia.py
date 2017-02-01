@@ -169,8 +169,7 @@ class ExperimentOlympia(AbstractExperiment):
             result.loc[r] = {n_feat: np.mean(aucs[n_feat]) for n_feat in aucs}
         result.to_csv(self.path_flock_result)
 
-
-if __name__ == '__main__':
+def run():
     experiment = ExperimentOlympia('olympia', 4, 'experiment2-4_all')
     # experiment.preprocess_raw()
     # experiment.bin_binarise()
@@ -195,6 +194,9 @@ if __name__ == '__main__':
     # experiment.evaluate_no_answers()
     # experiment.evaluate_no_answers_get_fig(feature_range)
     # experiment.evaluate_answers_delta()
-    # experiment.evaluate_answers_delta_plot(auto_open=True)
-    experiment.humans_vs_actual_auc()
+    experiment.evaluate_answers_delta_plot(auto_open=True)
+    # experiment.humans_vs_actual_auc()
     # experiment.humans_vs_actual_auc_plot()
+
+if __name__ == '__main__':
+    run()

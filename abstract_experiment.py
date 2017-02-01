@@ -85,7 +85,7 @@ class AbstractExperiment:
         self.experiment_name = experiment_name
         self.base_path = 'datasets/{}/'.format(self.dataset_name)
         self.path_comparison = '{}evaluation/comparison/'.format(self.base_path)
-        self.path_answers_delta_plot_bar = '{}results/{}/visualisations/{}_answers_delta_plot_bar.html'.format(self.base_path, experiment_name, self.dataset_name)
+        self.path_answers_delta_plot_box = '{}results/{}/visualisations/{}_answers_delta_plot_box.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_answers_delta_plot_line = '{}results/{}/visualisations/{}_answers_delta_plot_line.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_humans_vs_actual_auc = '{}evaluation/comparison/humans_vs_actual_auc.json'.format(self.base_path)
 
@@ -674,7 +674,7 @@ class AbstractExperiment:
         # import time
         # time.sleep(2) # delays for 5 seconds
         fig = AnswerDeltaVisualiserBox(title=title).get_figure(df)
-        plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot_bar)
+        plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot_box)
 
     def humans_vs_actual_auc(self):
 

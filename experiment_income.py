@@ -72,7 +72,7 @@ class ExperimentIncome(AbstractExperiment):
         df = preparator.prepare(df)
         df.to_csv(self.path_bin, index=False)
 
-if __name__ == '__main__':
+def run():
     experiment = ExperimentIncome('income', 1, 'experiment1')
 
     N_Features = range(3, 17, 2)
@@ -111,6 +111,9 @@ if __name__ == '__main__':
     # experiment.evaluate_no_answers()
     # experiment.evaluate_no_answers_get_fig(feature_range)
     # experiment.evaluate_answers_delta()
-    # experiment.evaluate_answers_delta_plot(auto_open=True)
-    experiment.humans_vs_actual_auc()
+    experiment.evaluate_answers_delta_plot(auto_open=True)
+    # experiment.humans_vs_actual_auc()
     # experiment.humans_vs_actual_auc_plot()
+
+if __name__ == '__main__':
+    run()
