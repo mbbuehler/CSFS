@@ -669,7 +669,7 @@ class AbstractExperiment:
     def evaluate_answers_delta_plot(self, auto_open=False):
         auto_open=True
         df = pd.read_pickle(self.path_answers_delta)
-        title = '{}: Number of Answers versus Actual Data ({} Repetitions)'.format(self.dataset_name, self.repetitions)
+        title = '{}: Number of Answers versus Error ({} Repetitions)'.format(self.dataset_name, self.repetitions)
         # fig = AnswerDeltaVisualiserLinePlot(title=title).get_figure(df)
         # plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot_line)
         # import time

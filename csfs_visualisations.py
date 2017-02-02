@@ -209,11 +209,14 @@ class AnswerDeltaVisualiserBox:
     def __init__(self, title):
         self.title = title
 
-    def get_traces(self, df, condition):
+    def get_traces(self, df):
         return [go.Box(
-            y=list(df.loc[no_answers, condition]),
+            y=list(df[no_answers]),
             name=no_answers,
-        ) for no_answers in df[condition].index]
+            marker=dict(
+                color='rgb(99,99,99, 140)',
+            )
+        ) for no_answers in df]
 
     def get_layout(self):
         return go.Layout(
@@ -222,21 +225,14 @@ class AnswerDeltaVisualiserBox:
                 title='# Answers Sampled per Feature (without Replacement)',
             ),
             yaxis=dict(
-                range=[0, 0.5],
+                # range=[0, 0.5],
                 title='Delta',
             ),
+            showlegend=False,
         )
 
     def get_figure(self, df):
-        def f(row):
-            row['diff IG range'] = [abs(np.min(row['IG'])-np.max(row['IG']))]
-            row['IG std'] = [abs(np.std(row['IG']))]
-            row['p all'] = row['p'] + row['p|f=0'] + row['p|f=1']
-            row['median all'] = [np.median(row['p all'])]
-            return row
-        df = df.apply(f, axis='columns')
-
-        data = self.get_traces(df, 'p all')
+        data = self.get_traces(df)
 
         layout = self.get_layout()
         fig = go.Figure(data=data, layout=layout)
