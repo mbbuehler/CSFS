@@ -97,7 +97,7 @@ class ExperimentIncome(AbstractExperiment):
         # experiment.evaluate_ranking_cost(budget_range)
         # experiment.evaluate_ranking_nofeatures(N_Features)
         # experiment.autocorrelation()
-        experiment.final_evaluation()
+        # experiment.final_evaluation()
         # experiment.final_evaluation_visualisation(feature_range=no_features)
         # experiment.crowd_answers_plot()
         # experiment.evaluate_csfs_auc()
@@ -111,7 +111,7 @@ class ExperimentIncome(AbstractExperiment):
         # experiment.evaluate_no_answers_get_fig(feature_range)
         # experiment.evaluate_answers_delta()
         # self.evaluate_answers_delta_plot(auto_open=True)
-        # experiment.humans_vs_actual_auc()
+        self.humans_vs_actual_auc()
         # experiment.humans_vs_actual_auc_plot()
 
 if __name__ == '__main__':

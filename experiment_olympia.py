@@ -184,7 +184,7 @@ class ExperimentOlympia(AbstractExperiment):
         # experiment.final_evaluation(no_features, bootstrap_n=12, repetitions=20)
         # experiment.final_evaluation_visualisation(no_features)
         # experiment.crowd_answers_plot()
-        experiment.final_evaluation()
+        # experiment.final_evaluation()
         # experiment.final_evaluation_visualisation(feature_range)
         # experiment.crowd_answers_plot(auto_open=auto_open_plots)
         # experiment.final_evaluation_combine(feature_range, bootstrap_n=bootstrap_n, repetitions=repetitions)
@@ -194,7 +194,7 @@ class ExperimentOlympia(AbstractExperiment):
         # experiment.evaluate_no_answers_get_fig(feature_range)
         # experiment.evaluate_answers_delta()
         # self.evaluate_answers_delta_plot(auto_open=True)
-        # experiment.humans_vs_actual_auc()
+        self.humans_vs_actual_auc()
         # experiment.humans_vs_actual_auc_plot()
 
 if __name__ == '__main__':

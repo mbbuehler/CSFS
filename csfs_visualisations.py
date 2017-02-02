@@ -241,6 +241,37 @@ class AnswerDeltaVisualiserBox:
         fig = go.Figure(data=data, layout=layout)
         return fig
 
+
+class HumanVsActualBarChart:
+
+    def get_trace(self, df, condition_human):
+        return go.Bar(
+            x=df.index,
+            y=df[condition_human],
+            name=condition_human,
+        )
+
+    def get_layout(self):
+        return go.Layout(
+            title='Humans vs. Actual',
+            xaxis=dict(
+                title='Number of Answers',
+            ),
+            yaxis=dict(
+                range=[0, 1],
+                title='Relative Normalized Performance',
+            ),
+        )
+
+    def get_figure(self, df):
+
+        data = [self.get_trace(df, condition) for condition in df]
+
+        layout = self.get_layout()
+        fig = go.Figure(data=data, layout=layout)
+        return fig
+
+
 def get_colours():
     alphas = [0.3, 0.6, 1]
     c = [np.random.randint(0, 256) for i in range(3)]
