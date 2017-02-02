@@ -40,8 +40,12 @@ class MetaExperiment:
         df_all = [df_student, df_income, df_olympia]
         max_answer_count = max(list(df_student.index) + list(df_olympia.index) + list(df_income.index))
         range_answers = range(1, max_answer_count)
-        print(df_student)
-        # exit()
+
+        def get_df_normalised(df):
+            print(df.head())
+
+        get_df_normalised(df_student)
+        exit()
 
         def normalise(x, min, max):
             print(x, min, max)
