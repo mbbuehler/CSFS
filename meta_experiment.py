@@ -78,6 +78,8 @@ class MetaExperiment:
 
         df_result = pd.DataFrame({c: {i: list() for i in range_features} for c in conditions}) # initialize dataframe with lists
         for df in df_all:
+            print(df.head())
+            exit()
             df_result += get_df_normalised(df)
 
         # df_result has index=range_answers and columns 'domain', 'experts',... values are lists of normalised scores

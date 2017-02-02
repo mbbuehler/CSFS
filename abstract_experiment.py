@@ -685,8 +685,10 @@ class AbstractExperiment:
         evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, df_actual_metadata=None, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=self.bootstrap_n, repetitions=self.repetitions)
         features = list(pd.read_csv(self.path_answers_metadata, index_col=0, header=[0, 1]).index)
         features.remove(self.target)
-
+        print(self.feature_range)
         values_domain = evaluator.evaluate(self.feature_range, ERCondition.DOMAIN)[ERCondition.DOMAIN]
+        print(values_domain) # why is domain better than best?
+        exit()
         values_experts = evaluator.evaluate(self.feature_range, ERCondition.EXPERT)[ERCondition.EXPERT]
         values_lay = evaluator.evaluate(self.feature_range, ERCondition.LAYPERSON)[ERCondition.LAYPERSON]
 

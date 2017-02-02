@@ -64,7 +64,12 @@ class FeatureCombinationCalculator:
         return max(aucs)
 
     def get_aucs_for_feature_range(self, feature_range, reverse=False):
-        return {no_features: self.get_max_auc(no_features, reverse=reverse) for no_features in feature_range}
+        result = dict()
+        for no_features in feature_range:
+            max_auc = self.get_max_auc(no_features, reverse=reverse)
+            result[no_features] = max_auc
+        return result
+        # return {no_features: self.get_max_auc(no_features, reverse=reverse) }
 
 
 
