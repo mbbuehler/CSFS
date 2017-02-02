@@ -93,7 +93,7 @@ class MetaExperiment:
         df_result = df_result.apply(filter_row)
         print(df_result.columns)
 
-        df_result.columns = ['Domain Experts', 'Data Science Experts', 'Laymen']
+        df_result.columns = ['Domain Experts', 'Data Science Experts', 'Laypeople']
 
         # fig = HumanVsActualBarChart().get_figure(df_result)
         # plotly.offline.plot(fig, auto_open=True)
@@ -120,7 +120,8 @@ class MetaExperiment:
                 for cond in conditions:
                     data[no_answers] += df.loc[no_answers, cond]
         df_no_answers_vs_delta = pd.DataFrame(data) # columns are no_answers
-        fig = AnswerDeltaVisualiserBox(title='Number of Answers versus Actual Data (19 Repetitions)').get_figure(df_no_answers_vs_delta)
+        # 'Number of Answers versus Actual Data (19 Repetitions)'
+        fig = AnswerDeltaVisualiserBox(title="").get_figure(df_no_answers_vs_delta)
         plotly.offline.plot(fig, auto_open=True)
 
 

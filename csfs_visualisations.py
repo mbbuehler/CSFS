@@ -222,7 +222,7 @@ class AnswerDeltaVisualiserBox:
         return go.Layout(
             title=self.title,
             xaxis=dict(
-                title='# Answers Sampled per Feature (without Replacement)',
+                title='# Answers Sampled per Feature',
             ),
             yaxis=dict(
                 # range=[0, 0.5],
