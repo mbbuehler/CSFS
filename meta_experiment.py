@@ -41,8 +41,13 @@ class MetaExperiment:
         max_answer_count = max(list(df_student.index) + list(df_olympia.index) + list(df_income.index))
         range_answers = range(1, max_answer_count)
 
+        def normalise_row(row):
+            print(row)
+            exit()
+            pass
+
         def get_df_normalised(df):
-            print(df.head())
+            df_norm = df.apply(normalise_row, axis='columns')
 
         get_df_normalised(df_student)
         exit()
