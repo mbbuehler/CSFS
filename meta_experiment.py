@@ -1,3 +1,4 @@
+import math
 import pandas as pd
 import numpy as np
 
@@ -40,65 +41,61 @@ class MetaExperiment:
         df_all = [df_student, df_income, df_olympia]
         max_answer_count = max(list(df_student.index) + list(df_olympia.index) + list(df_income.index))
         range_answers = range(1, max_answer_count)
+        conditions = ['domain', 'experts', 'lay']
 
-        def normalise_row(row):
-            print(row)
-            exit()
-            pass
-
-        def get_df_normalised(df):
-            df_norm = df.apply(normalise_row, axis='columns')
-
-        get_df_normalised(df_student)
-        exit()
+        conditions = ['domain', 'experts']
 
         def normalise(x, min, max):
-            print(x, min, max)
+            # print(x,min,max)
             if x == min == max:
                 z = -1
+
+            # only for debugging
+            elif min == max:
+                return -1
             else:
                 z = (x - min) / (max - min)
             # assert 0 <= z <= 1
 
-            print(z)
             return z
 
-        def get_series_relative_means(list_df, no_answers):
-            print(list_df[0].head())
-            for df in list_df:
-                worst = df.loc[no_answers, 'worst']
-                best = df.loc[no_answers, 'best']
-                print([normalise(v, worst, best) for v in list(df.loc[no_answers, 'domain'])])
-                # exit()
-                df.loc[no_answers, 'domain'] = [normalise(v, worst, best) for v in list(df.loc[no_answers, 'domain'])]
-                exit()
-                # df.loc[no_answers, 'experts'] = normalise(df.loc[no_answers, 'experts'], df.loc[no_answers, 'worst'], df.loc[no_answers, 'best'])
-                # df.loc[no_answers, 'lay'] = normalise(df.loc[no_answers, 'lay'], df.loc[no_answers, 'worst'], df.loc[no_answers, 'best'])
-            print(list_df[0].head())
-            exit()
+        def normalise_row(row):
+            """
+            Returns row with normalised values. only returns human conditions (others are 1 and 0, respectively)
+            """
+            row_norm = row[conditions].copy()
+            for c in conditions:
+                row_norm[c] = [normalise(x, min=row['worst'], max=row['best']) for x in row[c]]
+            return row_norm
 
-            # list_df = [df for df in list_df if no_answers in df.index]
-            rel_means_domain = [normalise(np.mean(df.loc[no_answers, 'domain']), df.loc[no_answers, 'worst'], df.loc[no_answers, 'best']) for df in list_df if no_answers in df.index]
-            rel_means_experts = [normalise(np.mean(df.loc[no_answers, 'experts']), df.loc[no_answers, 'worst'], df.loc[no_answers, 'best']) for df in list_df if no_answers in df.index]
-            rel_means_lay = [normalise(np.mean(df.loc[no_answers, 'lay']), df.loc[no_answers, 'worst'], df.loc[no_answers, 'best']) for df in list_df if no_answers in df.index]
+        def get_df_normalised(df):
+            df_norm = df.apply(normalise_row, axis='columns')
+            return df_norm
 
-            # normalise returns -1 if x, min and max are equal. ignore these values. nan was not properly recognised, so use -1
-            rel_means_domain = [mean for mean in rel_means_domain if mean != -1]
-            rel_means_experts = [mean for mean in rel_means_experts if mean != -1]
+        df_result = pd.DataFrame({c: {i: list() for i in range_answers} for c in conditions}) # initialize dataframe with lists
+        for df in df_all:
+            df_result += get_df_normalised(df)
 
-            row_rel = pd.Series({
-                'Domain Experts': np.mean(rel_means_domain),
-                'Data Science Experts': np.mean(rel_means_experts),
-                'Laymen': np.mean(rel_means_lay),
-            })
-            return row_rel
+        # df_result has index=range_answers and columns 'domain', 'experts',... values are lists of normalised scores
+        def filter_row(row):
+            # filters na and -1 values
+            def filter(l):
+                if isinstance(l, list):
+                    return [e for e in l if 0 <= e <= 1]
+                if np.isnan(l):
+                    return list()
+            row = row.apply(filter)
+            return row
+            # filter na and -1 values
+        df_result = df_result.apply(filter_row)
 
-        df_result = pd.DataFrame(index=range_answers, columns=['Data Science Experts', 'Domain Experts', 'Laymen'])
-        for no_answers in range_answers:
-            # print()
-            df_result.loc[no_answers] = get_series_relative_means(df_all, no_answers)
-        # df_result contains the normalised averaged values for domain experts and datascience experts for all three datasets. the normalisation took place for each dataset, not for the aggregated data.
-        fig = HumanVsActualBarChart().get_figure(df_result)
+        #TODO remove all -1 from all fields
+
+        df_result.columns = ['Domain Experts', 'Data Science Experts']#, 'Laymen'] # TODO check order
+
+        # fig = HumanVsActualBarChart().get_figure(df_result)
+        # plotly.offline.plot(fig, auto_open=True)
+        fig = HumanVsActualBarChart().get_histograms(df_result)
         plotly.offline.plot(fig, auto_open=True)
 
     def plot_no_answers_vs_delta(self):

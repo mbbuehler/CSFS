@@ -2,6 +2,7 @@ import plotly.graph_objs as go
 import numpy as np
 import statsmodels.stats.weightstats as ssw
 import scipy.stats as st
+from plotly import tools
 
 # alphas = [0.3, 0.6, 1]
 # sec = 80
@@ -244,31 +245,50 @@ class AnswerDeltaVisualiserBox:
 
 class HumanVsActualBarChart:
 
+    def get_histogram_trace(self, df, condition, no_answer):
+        # print(df.loc[no_answer, condition])
+        return go.Histogram(
+            # x=df.index,
+            x=list(df.loc[no_answer, condition]),
+            name="{} {}".format(condition, no_answer),
+        )
+
+
     def get_trace(self, df, condition_human):
-        return go.Bar(
-            x=df.index,
-            y=df[condition_human],
+        return go.Histogram(
+            # x=df.index,
+            x=list(df[condition_human]),
             name=condition_human,
         )
 
     def get_layout(self):
         return go.Layout(
-            title='Humans vs. Actual',
-            xaxis=dict(
-                title='Number of Answers',
-            ),
-            yaxis=dict(
-                range=[0, 1],
-                title='Relative Normalized Performance',
-            ),
+            # title='Humans vs. Actual',
+            # xaxis=dict(
+            #     title='Number of Answers',
+            # ),
+            # yaxis=dict(
+            #     range=[0, 1],
+            #     title='Relative Normalized Performance',
+            # ),
         )
 
     def get_figure(self, df):
 
         data = [self.get_trace(df, condition) for condition in df]
-
         layout = self.get_layout()
         fig = go.Figure(data=data, layout=layout)
+        return fig
+
+    def get_histograms(self, df):
+        conditions = list(df.columns)
+        answer_range = list(df.index)
+        fig = tools.make_subplots(rows=len(answer_range), cols=len(conditions))
+        for i in range(len(answer_range)):
+            for j in range(len(conditions)):
+                trace = self.get_histogram_trace(df, conditions[j], answer_range[i])
+                fig.append_trace(trace, i+1, j+1)
+        fig['layout'].update(height=1200, title='Histograms Human vs Actual')
         return fig
 
 
