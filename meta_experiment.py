@@ -50,10 +50,8 @@ class MetaExperiment:
         range_features = range(1, max_feature_count)
         conditions = ['domain', 'experts', 'lay']
 
-        df_all = [df_student, df_olympia]
-
         def normalise(x, min, max):
-            # print(x,min,max)
+            print(x,min,max)
             if x == min == max:
                 z = -1
             # only for debugging
@@ -61,7 +59,7 @@ class MetaExperiment:
                 return -1
             else:
                 z = (x - min) / (max - min)
-            # assert 0 <= z <= 1
+            assert 0 <= z <= 1
 
             return z
 
@@ -137,8 +135,8 @@ class MetaExperiment:
 def run():
     experiment = MetaExperiment()
     # experiment.final_evaluation_combine_all()
-    # experiment.plot_humans_vs_actual_all_plot()
-    experiment.plot_no_answers_vs_delta()
+    experiment.plot_humans_vs_actual_all_plot()
+    # experiment.plot_no_answers_vs_delta()
 
 
 if __name__ == '__main__':
