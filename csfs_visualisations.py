@@ -2,6 +2,7 @@ import plotly.graph_objs as go
 import numpy as np
 import statsmodels.stats.weightstats as ssw
 import scipy.stats as st
+from plotly import tools
 
 # alphas = [0.3, 0.6, 1]
 # sec = 80
@@ -208,34 +209,30 @@ class AnswerDeltaVisualiserBox:
     def __init__(self, title):
         self.title = title
 
-    def get_traces(self, df, condition):
+    def get_traces(self, df):
         return [go.Box(
-            y=list(df.loc[no_answers, condition]),
+            y=list(df[no_answers]),
             name=no_answers,
-        ) for no_answers in df[condition].index]
+            marker=dict(
+                color='rgb(99,99,99, 140)',
+            )
+        ) for no_answers in df]
 
     def get_layout(self):
         return go.Layout(
             title=self.title,
             xaxis=dict(
-                title='# Answers Sampled per Feature (without Replacement)',
+                title='# Answers Sampled per Feature',
             ),
             yaxis=dict(
-                range=[0, 0.5],
+                # range=[0, 0.5],
                 title='Delta',
             ),
+            showlegend=False,
         )
 
     def get_figure(self, df):
-        def f(row):
-            row['diff IG range'] = [abs(np.min(row['IG'])-np.max(row['IG']))]
-            row['IG std'] = [abs(np.std(row['IG']))]
-            row['p all'] = row['p'] + row['p|f=0'] + row['p|f=1']
-            row['median all'] = [np.median(row['p all'])]
-            return row
-        df = df.apply(f, axis='columns')
-
-        data = self.get_traces(df, 'p all')
+        data = self.get_traces(df)
 
         layout = self.get_layout()
         fig = go.Figure(data=data, layout=layout)
@@ -244,31 +241,50 @@ class AnswerDeltaVisualiserBox:
 
 class HumanVsActualBarChart:
 
+    def get_histogram_trace(self, df, condition, no_answer):
+        # print(df.loc[no_answer, condition])
+        return go.Histogram(
+            # x=df.index,
+            x=list(df.loc[no_answer, condition]),
+            name="{} {}".format(condition, no_answer),
+        )
+
+
     def get_trace(self, df, condition_human):
-        return go.Bar(
-            x=df.index,
-            y=df[condition_human],
+        return go.Histogram(
+            # x=df.index,
+            x=list(df[condition_human]),
             name=condition_human,
         )
 
     def get_layout(self):
         return go.Layout(
-            title='Humans vs. Actual',
-            xaxis=dict(
-                title='Number of Answers',
-            ),
-            yaxis=dict(
-                range=[0, 1],
-                title='Relative Normalized Performance',
-            ),
+            # title='Humans vs. Actual',
+            # xaxis=dict(
+            #     title='Number of Features',
+            # ),
+            # yaxis=dict(
+            #     range=[0, 1],
+            #     title='Relative Normalized Performance',
+            # ),
         )
 
     def get_figure(self, df):
 
         data = [self.get_trace(df, condition) for condition in df]
-
         layout = self.get_layout()
         fig = go.Figure(data=data, layout=layout)
+        return fig
+
+    def get_histograms(self, df):
+        conditions = list(df.columns)
+        answer_range = list(df.index)
+        fig = tools.make_subplots(rows=len(answer_range), cols=len(conditions))
+        for i in range(len(answer_range)):
+            for j in range(len(conditions)):
+                trace = self.get_histogram_trace(df, conditions[j], answer_range[i])
+                fig.append_trace(trace, i+1, j+1)
+        fig['layout'].update(height=1800, title='Histograms Human vs Actual')
         return fig
 
 
