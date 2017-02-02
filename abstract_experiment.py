@@ -64,8 +64,8 @@ class AbstractExperiment:
     path_humans_vs_actual_auc = ''
     target = ''
     answer_range = range(1, 17)
-    feature_range = range(1,2)
-    bootstrap_n = 12
+    feature_range = range(1, 2)
+    bootstrap_n = 9
     repetitions = 19
 
     sec = 80
@@ -425,9 +425,10 @@ class AbstractExperiment:
                     break
         df_correlation.to_csv(self.path_autocorrelation, index=True)
 
-    def final_evaluation(self, feature_range, bootstrap_n=12, repetitions=100):
+    def final_evaluation(self):
         """
-        Final evaluation. Takes tokens for condition 1-4 and outputs aucs for #features
+        Comparing conditions for a given number of answers for csfs
+        Final evaluation. Takes tokens for condition 1-6 and outputs aucs for #features
         :param feature_range: list(int)
         :return: saves final_evaluation_aucs.pickle
         """
@@ -437,8 +438,8 @@ class AbstractExperiment:
         df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
         df_actual_metadata = pd.read_csv(self.path_answers_metadata, index_col=0, header=[0, 1])
         df_actual_metadata = df_actual_metadata['actual']
-        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, df_actual_metadata=df_actual_metadata, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=bootstrap_n, repetitions=repetitions)
-        raw_data = evaluator.evaluate_all_to_dict(feature_range) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
+        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, df_actual_metadata=df_actual_metadata, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=self.bootstrap_n, repetitions=self.repetitions, replace=False)
+        raw_data = evaluator.evaluate_all_to_dict(self.feature_range) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
         pickle.dump(raw_data, open(self.path_final_evaluation_aucs, 'wb'))
 
     def crowd_auc_plot(self, auto_open=False):

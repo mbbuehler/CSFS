@@ -129,7 +129,7 @@ class EREvaluator:
 70   0.639263   0.598034  0.618649  0.0148
     """
 
-    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target, dataset_name, df_answers_grouped, df_actual_metadata, bootstrap_n=12, repetitions=100, replace=True):
+    def __init__(self, df_evaluation_result, df_evaluation_base, df_cleaned_bin, target, dataset_name, df_answers_grouped, df_actual_metadata, bootstrap_n=12, repetitions=100, replace=False):
         self.df_evaluation_result = df_evaluation_result
         self.df_evaluation_base = df_evaluation_base
         self.df_cleaned_bin = df_cleaned_bin
@@ -278,7 +278,7 @@ class ERNofeaturesEvaluator(EREvaluator):
             features = list(self.df_answers_grouped.drop(self.target).index)
             df_ordered = pd.DataFrame({'Feature': features})
             result = {nofeatures: list() for nofeatures in budget_range}
-            for i in range(100):
+            for i in range(1000):
                 df_shuffled = df_ordered.sample(frac=1).reset_index(drop=True)
                 evaluator = AUCForOrderedFeaturesCalculator(df_shuffled, self.df_cleaned_bin, self.target)
                 df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
