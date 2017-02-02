@@ -174,12 +174,12 @@ paid==yes                1    1    0    0    1    2    0    0    0     0     1  
         # experiment.final_evaluation_combine(feature_range, bootstrap_n=12, repetitions=20)
         # experiment.crowd_auc_plot(auto_open=auto_open_plots)
         # experiment.statistical_comparison(feature_range)
-        self.evaluate_no_answers()
+        # self.evaluate_no_answers()
         # experiment.evaluate_no_answers_get_fig(feature_range)
         # experiment.evaluate_answers_delta()
         # self.evaluate_answers_delta_plot(auto_open=True)
         # experiment.humans_vs_actual_auc()
-        # experiment.humans_vs_actual_auc_plot()
+        experiment.humans_vs_actual_auc_plot()
 
 
 
