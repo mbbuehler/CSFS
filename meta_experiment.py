@@ -14,10 +14,13 @@ class MetaExperiment:
         self.path_final_evaluation_combined = 'final_evaluation/combined.csv'
         self.path_upwork_participants = 'participants.csv'
         self.path_statistical_comparison = 'final_evaluation/comparisons/' # e.g. + 'student_1-vs-2'
+        self.path_human_vs_actual_histogram = 'final_evaluation/human_vs_actual_hist.html'
 
         self.ds_student = ExperimentStudent('student', 2, 'experiment2_por')
         self.ds_income = ExperimentIncome('income', 1, 'experiment1')
         self.ds_olympia = ExperimentOlympia('olympia', 4, 'experiment2-4_all')
+
+
 
     def final_evaluation_combine_all(self):
 
@@ -44,6 +47,7 @@ class MetaExperiment:
         conditions = ['domain', 'experts', 'lay']
 
         conditions = ['domain', 'experts']
+        df_all = [df_student, df_olympia]
 
         def normalise(x, min, max):
             # print(x,min,max)
@@ -96,7 +100,7 @@ class MetaExperiment:
         # fig = HumanVsActualBarChart().get_figure(df_result)
         # plotly.offline.plot(fig, auto_open=True)
         fig = HumanVsActualBarChart().get_histograms(df_result)
-        plotly.offline.plot(fig, auto_open=True)
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_human_vs_actual_histogram)
 
     def plot_no_answers_vs_delta(self):
         """

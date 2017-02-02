@@ -265,7 +265,7 @@ class HumanVsActualBarChart:
         return go.Layout(
             # title='Humans vs. Actual',
             # xaxis=dict(
-            #     title='Number of Answers',
+            #     title='Number of Features',
             # ),
             # yaxis=dict(
             #     range=[0, 1],
@@ -288,7 +288,7 @@ class HumanVsActualBarChart:
             for j in range(len(conditions)):
                 trace = self.get_histogram_trace(df, conditions[j], answer_range[i])
                 fig.append_trace(trace, i+1, j+1)
-        fig['layout'].update(height=1200, title='Histograms Human vs Actual')
+        fig['layout'].update(height=1800, title='Histograms Human vs Actual')
         return fig
 
 
