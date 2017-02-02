@@ -16,6 +16,9 @@ class MetaExperiment:
         self.path_statistical_comparison = 'final_evaluation/comparisons/' # e.g. + 'student_1-vs-2'
         self.path_human_vs_actual_histogram = 'final_evaluation/human_vs_actual_hist.html'
 
+        self.path_plot_no_answers_vs_delta_png = 'final_evaluation/no-answers-vs-delta/no_answers-vs-delta'
+        self.path_plot_no_answers_vs_delta_html = 'final_evaluation/no-answers-vs-delta/no_answers-vs-delta.html'
+
         self.ds_student = ExperimentStudent('student', 2, 'experiment2_por')
         self.ds_income = ExperimentIncome('income', 1, 'experiment1')
         self.ds_olympia = ExperimentOlympia('olympia', 4, 'experiment2-4_all')
@@ -122,7 +125,7 @@ class MetaExperiment:
         df_no_answers_vs_delta = pd.DataFrame(data) # columns are no_answers
         # 'Number of Answers versus Actual Data (19 Repetitions)'
         fig = AnswerDeltaVisualiserBox(title="").get_figure(df_no_answers_vs_delta)
-        plotly.offline.plot(fig, auto_open=True)
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_plot_no_answers_vs_delta_html, image='png', image_filename=self.path_plot_no_answers_vs_delta_png)
 
 
 

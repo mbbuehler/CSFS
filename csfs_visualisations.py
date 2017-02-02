@@ -215,7 +215,7 @@ class AnswerDeltaVisualiserBox:
             name=no_answers,
             marker=dict(
                 color='rgb(99,99,99, 140)',
-            )
+            ),
         ) for no_answers in df]
 
     def get_layout(self):
@@ -229,6 +229,7 @@ class AnswerDeltaVisualiserBox:
                 title='Delta',
             ),
             showlegend=False,
+            font=get_font(),
         )
 
     def get_figure(self, df):
@@ -293,3 +294,18 @@ def get_colours():
     c = [np.random.randint(0, 256) for i in range(3)]
     colours = ["rgba({},{},{},{})".format(c[0], c[1], c[2], x) for x in alphas]
     return colours
+
+def get_textfont():
+    """
+    Use in go.Scatter,...
+    :return:
+    """
+    textfont=dict(
+        family='sans serif',
+        size=18,
+        color='#ff7f0e'
+    )
+    return textfont
+
+def get_font():
+    return dict(family='serif', size=18, color='#000')
