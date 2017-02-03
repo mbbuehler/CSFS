@@ -149,8 +149,8 @@ class MetaExperiment:
 def run():
     experiment = MetaExperiment()
     # experiment.final_evaluation_combine_all()
-    # experiment.plot_humans_vs_actual_all_plot()
-    experiment.plot_no_answers_vs_delta()
+    experiment.plot_humans_vs_actual_all_plot()
+    # experiment.plot_no_answers_vs_delta()
 
 
 if __name__ == '__main__':

@@ -276,6 +276,7 @@ class HumanVsActualBarChart:
                 range=[0, 1],
                 title='Relative Normalized Performance',
             ),
+            font=get_font(),
         )
 
     def get_figure(self, df, feature_range):
