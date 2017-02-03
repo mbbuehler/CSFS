@@ -322,4 +322,4 @@ def get_textfont():
     return textfont
 
 def get_font():
-    return dict(family='serif', size=18, color='#000')
+    return dict(family='serif', size=24, color='#000')

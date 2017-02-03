@@ -46,14 +46,13 @@ class MetaExperiment:
         Plots human experts (domain and data science) relative to max/min performance for all datasets.
         :return:
         """
-        # TODO here: check for normality and then generate barplot with CI or std (when taliesin is done)
         df_student = pd.read_json(self.ds_student.path_humans_vs_actual_auc).sort_index()
         df_income = pd.read_json(self.ds_income.path_humans_vs_actual_auc).sort_index()
         df_olympia = pd.read_json(self.ds_olympia.path_humans_vs_actual_auc).sort_index()
         df_all = [df_student, df_income, df_olympia]
         max_feature_count = max(list(df_student.index) + list(df_olympia.index) + list(df_income.index))
         range_features = range(1, max_feature_count+1)
-        conditions = ['domain', 'experts', 'lay']
+        conditions = ['domain', 'experts', 'lay', 'random']
 
         def normalise(x, min, max):
             if x == min == max:
@@ -106,13 +105,14 @@ class MetaExperiment:
             return row
             # filter na and -1 values
         df_result = df_result.apply(filter_row)
-        df_result.columns = ['Domain Experts', 'Data Science Experts', 'Laypeople']
+        print(df_result.head())
+        df_result.columns = ['Domain Experts', 'Data Science Experts', 'Laypeople', 'Random']
         df_result.to_json(self.path_human_vs_actual_data)
 
         fig = HumanVsActualBarChart().get_figure(df_result, feature_range=range(1,10))
-        plotly.offline.plot(fig, auto_open=True)
-        # fig = HumanVsActualBarChart().get_histograms(df_result)
-        # plotly.offline.plot(fig, auto_open=True, filename=self.path_human_vs_actual_histogram)
+        plotly.offline.plot(fig, auto_open=True, image='png', filename=self.path_human_vs_actual_barchart)
+        fig = HumanVsActualBarChart().get_histograms(df_result)
+        plotly.offline.plot(fig, auto_open=True, image='png', filename=self.path_human_vs_actual_histogram)
 
     def plot_no_answers_vs_delta(self):
         """

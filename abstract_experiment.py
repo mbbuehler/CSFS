@@ -509,6 +509,7 @@ class AbstractExperiment:
         :param feature_range: list(int)
         :return:
         """
+        #TODO: make sure we sample csfs correctly
         df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'ip', 'date'])
         df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
         df_cleaned_bin = pd.read_csv(self.path_bin)
@@ -700,6 +701,8 @@ class AbstractExperiment:
                 data = pd.read_json(self.path_humans_vs_actual_auc)
                 values_best = data['best']
                 values_worst = data['worst']
+                values_random = data['random']
+
             else:
                 calculator = FeatureCombinationCalculator(df_cleaned_bin, self.target, features)
                 print('start best')
@@ -707,7 +710,7 @@ class AbstractExperiment:
                 print('start worst')
                 values_worst = calculator.get_aucs_for_feature_range(self.feature_range, reverse=True)
 
-        df_result = pd.DataFrame({'lay': values_lay, 'domain': values_domain, 'experts': values_experts, 'best': values_best, 'worst': values_worst })
+        df_result = pd.DataFrame({'lay': values_lay, 'domain': values_domain, 'experts': values_experts, 'best': values_best, 'worst': values_worst, 'random': values_random})
         df_result.to_json(self.path_humans_vs_actual_auc)
 
 

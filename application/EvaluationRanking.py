@@ -278,7 +278,7 @@ class ERNofeaturesEvaluator(EREvaluator):
             features = list(self.df_answers_grouped.drop(self.target).index)
             df_ordered = pd.DataFrame({'Feature': features})
             result = {nofeatures: list() for nofeatures in budget_range}
-            for i in range(1000):
+            for i in range(100):
                 df_shuffled = df_ordered.sample(frac=1).reset_index(drop=True)
                 evaluator = AUCForOrderedFeaturesCalculator(df_shuffled, self.df_cleaned_bin, self.target)
                 df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
