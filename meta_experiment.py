@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 
 import plotly
+from tabulate import tabulate
+
 from csfs_visualisations import HumanVsActualBarChart, AnswerDeltaVisualiserBox
 from experiment_income import ExperimentIncome
 from experiment_olympia import ExperimentOlympia
@@ -47,11 +49,10 @@ class MetaExperiment:
         df_olympia = pd.read_json(self.ds_olympia.path_humans_vs_actual_auc).sort_index()
         df_all = [df_student, df_income, df_olympia]
         max_feature_count = max(list(df_student.index) + list(df_olympia.index) + list(df_income.index))
-        range_features = range(1, max_feature_count)
+        range_features = range(1, max_feature_count+1)
         conditions = ['domain', 'experts', 'lay']
 
         def normalise(x, min, max):
-            print(x,min,max)
             if x == min == max:
                 z = -1
             # only for debugging
@@ -59,7 +60,8 @@ class MetaExperiment:
                 return -1
             else:
                 z = (x - min) / (max - min)
-            assert 0 <= z <= 1
+            # print(x,min,max,z)
+            assert 0 <= round(z,3) <= 1 or z == -1
 
             return z
 
@@ -69,33 +71,38 @@ class MetaExperiment:
             """
             row_norm = row[conditions].copy()
             for c in conditions:
-                row_norm[c] = [normalise(x, min=row['worst'], max=row['best']) for x in row[c]]
+                values_normalised = [normalise(x, min=row['worst'], max=row['best']) for x in row[c]]
+                # print('vals')
+                # print(values_normalised)
+                values_normalised = [v for v in values_normalised if v != -1]
+                # print(values_normalised)
+                row_norm[c] = values_normalised
             return row_norm
 
-        def get_df_normalised(df):
-            df_norm = df.apply(normalise_row, axis='columns')
-            return df_norm
-
         df_result = pd.DataFrame({c: {i: list() for i in range_features} for c in conditions}) # initialize dataframe with lists
-        for df in df_all:
-            print(df.head())
-            exit()
-            df_result += get_df_normalised(df)
+        df_norm_all = [df.apply(normalise_row, axis='columns') for df in df_all]
+        for df in df_norm_all:
+            for column in df:
+                for index in df[column].index: # list scores is array with float values
+                    if index in df.index:
+                        df_result.loc[index, column] += df.loc[index, column]
+                    # print(df.loc[index, column])
 
+        # print(tabulate(df_result, headers='keys'))
+        #
+        # exit()
         # df_result has index=range_answers and columns 'domain', 'experts',... values are lists of normalised scores
         def filter_row(row):
             # filters na and -1 values
             def filter(l):
                 if isinstance(l, list):
-                    return [e for e in l if 0 <= e <= 1]
+                    return [e for e in l if 0 <= round(e,3) <= 1]
                 if np.isnan(l):
                     return list()
             row = row.apply(filter)
             return row
             # filter na and -1 values
         df_result = df_result.apply(filter_row)
-        print(df_result.columns)
-
         df_result.columns = ['Domain Experts', 'Data Science Experts', 'Laypeople']
 
         # fig = HumanVsActualBarChart().get_figure(df_result)
