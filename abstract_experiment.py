@@ -677,7 +677,7 @@ class AbstractExperiment:
         fig = AnswerDeltaVisualiserBox(title=title).get_figure(df)
         plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot_box)
 
-    def humans_vs_actual_auc(self, mode='combination'):
+    def humans_vs_actual_auc(self, mode='combination', merge_combinations=True):
         df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'ip', 'date'])
         df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
         df_cleaned_bin = pd.read_csv(self.path_bin)
@@ -685,10 +685,7 @@ class AbstractExperiment:
         evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, df_actual_metadata=None, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=self.bootstrap_n, repetitions=self.repetitions)
         features = list(pd.read_csv(self.path_answers_metadata, index_col=0, header=[0, 1]).index)
         features.remove(self.target)
-        print(self.feature_range)
         values_domain = evaluator.evaluate(self.feature_range, ERCondition.DOMAIN)[ERCondition.DOMAIN]
-        print(values_domain) # why is domain better than best?
-        exit()
         values_experts = evaluator.evaluate(self.feature_range, ERCondition.EXPERT)[ERCondition.EXPERT]
         values_lay = evaluator.evaluate(self.feature_range, ERCondition.LAYPERSON)[ERCondition.LAYPERSON]
 
@@ -698,11 +695,17 @@ class AbstractExperiment:
             values_best = ranker.get_ranked(reverse=False, return_features=False)
 
         else:
-            calculator = FeatureCombinationCalculator(df_cleaned_bin, self.target, features)
-            print('start best')
-            values_best = calculator.get_aucs_for_feature_range(self.feature_range, reverse=False)
-            print('start worst')
-            values_worst = calculator.get_aucs_for_feature_range(self.feature_range, reverse=True)
+            if merge_combinations:
+                # combinations have already been calculated. get them from file to save time
+                data = pd.read_json(self.path_humans_vs_actual_auc)
+                values_best = data['best']
+                values_worst = data['worst']
+            else:
+                calculator = FeatureCombinationCalculator(df_cleaned_bin, self.target, features)
+                print('start best')
+                values_best = calculator.get_aucs_for_feature_range(self.feature_range, reverse=False)
+                print('start worst')
+                values_worst = calculator.get_aucs_for_feature_range(self.feature_range, reverse=True)
 
         df_result = pd.DataFrame({'lay': values_lay, 'domain': values_domain, 'experts': values_experts, 'best': values_best, 'worst': values_worst })
         df_result.to_json(self.path_humans_vs_actual_auc)
