@@ -20,8 +20,9 @@ class MetaExperiment:
         self.path_human_vs_actual_barchart = 'paper_plots-and-data/human-vs-actual/human_vs_actual_barchart.html'
         self.path_human_vs_actual_data = 'paper_plots-and-data/human-vs-actual/human_vs_actual_data.json'
 
-        self.path_plot_no_answers_vs_delta_png = 'final_evaluation/no-answers-vs-delta/no_answers-vs-delta'
-        self.path_plot_no_answers_vs_delta_html = 'final_evaluation/no-answers-vs-delta/no_answers-vs-delta.html'
+        self.path_plot_no_answers_vs_delta_png = 'no_answers_vs_delta'
+        self.path_plot_no_answers_vs_delta_html = 'paper_plots-and-data/answers-delta/no_answers_vs_delta_data.html'
+        self.path_plot_no_answers_vs_delta_data = 'paper_plots-and-data/answers-delta/no_answers_vs_delta_data.json'
 
         self.ds_student = ExperimentStudent('student', 2, 'experiment2_por')
         self.ds_income = ExperimentIncome('income', 1, 'experiment1')
@@ -133,6 +134,7 @@ class MetaExperiment:
                 for cond in conditions:
                     data[no_answers] += df.loc[no_answers, cond]
         df_no_answers_vs_delta = pd.DataFrame(data) # columns are no_answers
+        df_no_answers_vs_delta.to_json(self.path_plot_no_answers_vs_delta_data)
         # 'Number of Answers versus Actual Data (19 Repetitions)'
         fig = AnswerDeltaVisualiserBox(title="").get_figure(df_no_answers_vs_delta)
         plotly.offline.plot(fig, auto_open=True, filename=self.path_plot_no_answers_vs_delta_html, image='png', image_filename=self.path_plot_no_answers_vs_delta_png)
@@ -147,8 +149,8 @@ class MetaExperiment:
 def run():
     experiment = MetaExperiment()
     # experiment.final_evaluation_combine_all()
-    experiment.plot_humans_vs_actual_all_plot()
-    # experiment.plot_no_answers_vs_delta()
+    # experiment.plot_humans_vs_actual_all_plot()
+    experiment.plot_no_answers_vs_delta()
 
 
 if __name__ == '__main__':
