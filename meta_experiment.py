@@ -16,7 +16,9 @@ class MetaExperiment:
         self.path_final_evaluation_combined = 'final_evaluation/combined.csv'
         self.path_upwork_participants = 'participants.csv'
         self.path_statistical_comparison = 'final_evaluation/comparisons/' # e.g. + 'student_1-vs-2'
-        self.path_human_vs_actual_histogram = 'final_evaluation/human_vs_actual_hist.html'
+        self.path_human_vs_actual_histogram = 'paper_plots-and-data/human-vs-actual/human_vs_actual_hist.html'
+        self.path_human_vs_actual_barchart = 'paper_plots-and-data/human-vs-actual/human_vs_actual_barchart.html'
+        self.path_human_vs_actual_data = 'paper_plots-and-data/human-vs-actual/human_vs_actual_data.json'
 
         self.path_plot_no_answers_vs_delta_png = 'final_evaluation/no-answers-vs-delta/no_answers-vs-delta'
         self.path_plot_no_answers_vs_delta_html = 'final_evaluation/no-answers-vs-delta/no_answers-vs-delta.html'
@@ -104,6 +106,7 @@ class MetaExperiment:
             # filter na and -1 values
         df_result = df_result.apply(filter_row)
         df_result.columns = ['Domain Experts', 'Data Science Experts', 'Laypeople']
+        df_result.to_json(self.path_human_vs_actual_data)
 
         fig = HumanVsActualBarChart().get_figure(df_result, feature_range=range(1,10))
         plotly.offline.plot(fig, auto_open=True)
