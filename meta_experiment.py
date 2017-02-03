@@ -105,10 +105,10 @@ class MetaExperiment:
         df_result = df_result.apply(filter_row)
         df_result.columns = ['Domain Experts', 'Data Science Experts', 'Laypeople']
 
-        # fig = HumanVsActualBarChart().get_figure(df_result)
-        # plotly.offline.plot(fig, auto_open=True)
-        fig = HumanVsActualBarChart().get_histograms(df_result)
-        plotly.offline.plot(fig, auto_open=True, filename=self.path_human_vs_actual_histogram)
+        fig = HumanVsActualBarChart().get_figure(df_result, feature_range=range(1,10))
+        plotly.offline.plot(fig, auto_open=True)
+        # fig = HumanVsActualBarChart().get_histograms(df_result)
+        # plotly.offline.plot(fig, auto_open=True, filename=self.path_human_vs_actual_histogram)
 
     def plot_no_answers_vs_delta(self):
         """

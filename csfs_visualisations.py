@@ -250,28 +250,41 @@ class HumanVsActualBarChart:
             name="{} {}".format(condition, no_answer),
         )
 
-
     def get_trace(self, df, condition_human):
-        return go.Histogram(
-            # x=df.index,
-            x=list(df[condition_human]),
+        # print(df[condition_human]) # index: no features, value: list
+        y = [np.mean(l) for l in df[condition_human]]
+        error = [np.std(l) for l in df[condition_human]]
+
+        return go.Bar(
+            x=df.index,
+            y=y,
             name=condition_human,
+            error_y=dict(
+                type='data',
+                array=error,
+                visible=True
+            )
         )
 
     def get_layout(self):
         return go.Layout(
             # title='Humans vs. Actual',
-            # xaxis=dict(
-            #     title='Number of Features',
-            # ),
-            # yaxis=dict(
-            #     range=[0, 1],
-            #     title='Relative Normalized Performance',
-            # ),
+            xaxis=dict(
+                title='Number of Features',
+            ),
+            yaxis=dict(
+                range=[0, 1],
+                title='Relative Normalized Performance',
+            ),
         )
 
-    def get_figure(self, df):
-
+    def get_figure(self, df, feature_range):
+        """
+        :param df:
+        :param feature_range: how many features to show (default 1-9)
+        :return:
+        """
+        df = df.loc[feature_range[0]:feature_range[-1]]
         data = [self.get_trace(df, condition) for condition in df]
         layout = self.get_layout()
         fig = go.Figure(data=data, layout=layout)
