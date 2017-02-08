@@ -310,11 +310,11 @@ class HumanComparisonBarChart:
     def get_trace(self, df, feature_range, condition):
         # print(df[condition_human]) # index: no features, value: list
         df_sel = df[condition].loc[feature_range]
-        y = df_sel['mean']
-        ci = (df_sel['ci_hi'] - df_sel['ci_lo']) / 2
+        y = list(df_sel['mean'])
+        ci = list((df_sel['ci_hi'] - df_sel['ci_lo']) / 2)
 
         return go.Bar(
-            x=df.index,
+            x=list(feature_range),
             y=y,
             name=ERCondition.get_string_paper(condition),
             error_y=dict(
@@ -349,38 +349,37 @@ class HumanComparisonBarChart:
         """
         datasets = sorted(list(data.keys()))
         dataset_count = len(datasets)
-        fig = tools.make_subplots(rows=dataset_count, cols=1, shared_xaxes=True, shared_yaxes=True, subplot_titles=[get_dataset_name_paper(name) for name in datasets], vertical_spacing=0.05 )
-        fig['layout'].update(
-            annotations=go.Annotations([
-                go.Annotation(
-                    x=0.5,
-                    y=-0.16,
-                    showarrow=False,
-                    text='Number of Features',
-                    xref='paper',
-                    yref='paper'
-                ),
-                go.Annotation(
-                    x=-0.05,
-                    y=0.17,
-                    showarrow=False,
-                    text='AUC and Confidence Interval',
-                    textangle=-90,
-                    xref='paper',
-                    yref='paper'
-                )
-            ]),
-        )
+        fig = tools.make_subplots(rows=1, cols=dataset_count, shared_xaxes=True, subplot_titles=[get_dataset_name_paper(name) for name in datasets], ) #  vertical_spacing=0.05
+        # fig['layout'].update(
+        #     annotations=go.Annotations([
+        #         go.Annotation(
+        #             x=0.5,
+        #             y=-0.16,
+        #             showarrow=False,
+        #             text='Number of Features',
+        #             xref='paper',
+        #             yref='paper'
+        #         ),
+        #         go.Annotation(
+        #             x=-0.05,
+        #             y=0.17,
+        #             showarrow=False,
+        #             text='AUC and Confidence Interval',
+        #             textangle=-90,
+        #             xref='paper',
+        #             yref='paper'
+        #         )
+        #     ]),
+        # )
         for i in range(dataset_count):
             df_dataset = data[datasets[i]]
             for condition in conditions:
                 trace = self.get_trace(df_dataset, feature_range, condition)
-                fig.append_trace(trace, i+1, 1)
-            print(fig['layout'])
-            fig['layout']['yaxis'+str(i+1)].update(range=[0.5, 1])
+                fig.append_trace(trace, 1, i+1)
+            fig['layout']['yaxis'+str(i+1)].update(range=[0.5, 0.9])
 
         fig['layout'].update(
-            height=600,
+            height=400,
             font=get_font(),
             showlegend=False
         )

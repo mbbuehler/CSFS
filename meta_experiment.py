@@ -143,18 +143,18 @@ class MetaExperiment:
         fig = AnswerDeltaVisualiserBox(title="").get_figure(df_no_answers_vs_delta)
         plotly.offline.plot(fig, auto_open=True, filename=self.path_plot_no_answers_vs_delta_html, image='png', image_filename=self.path_plot_no_answers_vs_delta_png)
 
-    def plot_bar_comparing_humans(self):
+    def plot_bar_comparing_humans(self, auto_plot=False):
+        auto_plot=True
         data = { 'student': pd.read_pickle(self.ds_student.path_final_evaluation_aggregated),
                  'income': pd.read_pickle(self.ds_income.path_final_evaluation_aggregated),
                  'olympia': pd.read_pickle(self.ds_olympia.path_final_evaluation_aggregated),
         }
         fig = HumanComparisonBarChart().get_figure(data, feature_range=range(1, 10), conditions=[1,2,3])
-        plotly.offline.plot(fig, auto_open=False, filename=self.path_human_comparison_plot)
+        plotly.offline.plot(fig, auto_open=auto_plot, filename=self.path_human_comparison_plot)
         for dataset in data:
             path = "{}human-comparison_{}.json".format(self.path_human_comparison_data, dataset)
             data[dataset].to_json(path) # TODO: remove count, std, ... which is not visualised
-
-
+        return fig
 
 
 
