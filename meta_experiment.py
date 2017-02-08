@@ -29,6 +29,8 @@ class MetaExperiment:
         self.path_plot_no_answers_vs_delta_html = 'paper_plots-and-data/answers-delta/no_answers_vs_delta_data.html'
         self.path_plot_no_answers_vs_delta_data = 'paper_plots-and-data/answers-delta/no_answers_vs_delta_data.json'
 
+        self.path_auc_all_conditions = 'paper_plots-and-data/evaluation_all_conditions/'
+
         self.ds_student = ExperimentStudent('student', 2, 'experiment2_por')
         self.ds_income = ExperimentIncome('income', 1, 'experiment1')
         self.ds_olympia = ExperimentOlympia('olympia', 4, 'experiment2-4_all')
@@ -36,7 +38,7 @@ class MetaExperiment:
 
 
     def final_evaluation_combine_all(self):
-
+        # for patrick
         df_student = pd.read_csv(self.ds_student.path_final_evaluation_combined)
         df_income = pd.read_csv(self.ds_income.path_final_evaluation_combined)
         df_olympia = pd.read_csv(self.ds_olympia.path_final_evaluation_combined)
@@ -186,7 +188,34 @@ class MetaExperiment:
 
         # print(data['student'])
 
+    def move_and_rename_auc_for_all_conditions(self):
+        """
+        Moves complete table with aucs for all conditions to paper folder and renames columns to paper style.
+        :return:
+        """
+        #TODO: REDO when decision for method name has happened + adjust dataset names
+        names = dict(
+            best=ERCondition.get_string_paper(7),
+            domain=ERCondition.get_string_paper(2),
+            experts=ERCondition.get_string_paper(3),
+            lay=ERCondition.get_string_paper(1),
+            random=ERCondition.get_string_paper(5),
+            worst=ERCondition.get_string_paper(8),
+            csfs=ERCondition.get_string_paper(4),
+        )
 
+        data = { 'student': pd.read_csv(self.ds_student.path_auc_all_conditions, index_col=0),
+                         'income': pd.read_csv(self.ds_income.path_auc_all_conditions, index_col=0),
+                         'olympia': pd.read_csv(self.ds_olympia.path_auc_all_conditions, index_col=0),
+                }
+        for dataset in data:
+            df = data[dataset]
+            columns_new = [names[c] for c in df.columns]
+            df.columns = columns_new
+            path_out_csv = "{}{}_auc_all_conditions.csv".format(self.path_auc_all_conditions, dataset)
+            df.to_csv(path_out_csv)
+            path_out_json = "{}{}_auc_all_conditions.json".format(self.path_auc_all_conditions, dataset)
+            df.to_csv(path_out_json)
 
 def run():
     experiment = MetaExperiment()
@@ -194,7 +223,8 @@ def run():
     # experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
     # experiment.plot_bar_comparing_humans()
-    experiment.plot_bar_humans_vs_csfs()
+    # experiment.plot_bar_humans_vs_csfs()
+    experiment.move_and_rename_auc_for_all_conditions()
 
 
 if __name__ == '__main__':

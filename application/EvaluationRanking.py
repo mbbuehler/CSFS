@@ -20,6 +20,8 @@ class ERCondition:
     CSFS = 4
     RANDOM = 5
     ACTUAL = 6
+    BEST = 7
+    WORST = 8
 
     NAMES = {
         LAYPERSON: 'lay',
@@ -37,6 +39,8 @@ class ERCondition:
         CSFS: 'CSFS',
         RANDOM: 'Random',
         ACTUAL: 'actual',
+        BEST: 'Best',
+        WORST: 'Worst'
     }
 
     PAPER_NAMES_SHORT = {
@@ -60,6 +64,7 @@ class ERCondition:
     def get_string_paper(condition):
         if condition in ERCondition.PAPER_NAMES:
             return ERCondition.PAPER_NAMES[condition]
+        print(condition)
         return 'n.a.'
 
     @staticmethod

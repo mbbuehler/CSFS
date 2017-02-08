@@ -1,0 +1,2 @@
+AUC calculated for all conditions. Values are stored as float (best, worst) or list of floats (others).
+The index represents the number of features used for obtaining the AUC(s).
