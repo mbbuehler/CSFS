@@ -194,8 +194,9 @@ class ExperimentOlympia(AbstractExperiment):
         # experiment.evaluate_no_answers_get_fig(feature_range)
         # experiment.evaluate_answers_delta()
         # self.evaluate_answers_delta_plot(auto_open=True)
-        self.humans_vs_actual_auc()
+        # self.humans_vs_actual_auc()
         # experiment.humans_vs_actual_auc_plot()
+        self.add_csfs_auc_to_human_vs_actual()
 
 if __name__ == '__main__':
     experiment = ExperimentOlympia('olympia', 4, 'experiment2-4_all')
