@@ -760,7 +760,7 @@ class AbstractExperiment:
         series_csfs = pd.Series(values_csfs, name='csfs')
         data = pd.read_json(self.path_humans_vs_actual_auc).sort_index()
         data = data.join(series_csfs)
-        data.to_csv(self.path_auc_all_conditions, index=True) # index: no_features, columns: conditions
+        data.to_json(self.path_auc_all_conditions) # index: no_features, columns: conditions
 
 
 

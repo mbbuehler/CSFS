@@ -4,18 +4,18 @@ import statsmodels.stats.weightstats as ssw
 import scipy.stats as st
 from plotly import tools
 
-# alphas = [0.3, 0.6, 1]
-# sec = 80
-# colours = {1:['rgba(255, {}, {}, {})'.format(sec, sec, x) for x in alphas],
-#             2: ['rgba( {}, 255,  {}, {})'.format(sec, sec, x) for x in alphas],
-#                 3: ['rgba( {},  {}, 255, {})'.format(sec, sec, x) for x in alphas],
-#                     4: ['rgba(0, 0, 0, {})'.format(x) for x in alphas],
-#                         5: ['rgba(100, 100, 100, {})'.format(x) for x in alphas],
-#                             6: ['rgba(200, 150, 0, {})'.format(x) for x in alphas]
-#            }
-# colours.update({i: ['rgba(200, 150, 0, {})'.format(x) for x in alphas] for i in range(7,20)})
-from application.EvaluationRanking import ERCondition
+class COLORS_HEX:
+    BLUE = '#1f77b4'
+    ORANGE = '#ff7f0e'
+    GREEN = '#2ca02c'
+    RED = '#D62728'
+    VIOLET = '#9467BD'
 
+from application.EvaluationRanking import ERCondition
+from bootstrap import CSFSBootstrap
+colors = {1: COLORS_HEX.ORANGE, 2: COLORS_HEX.VIOLET, 3: COLORS_HEX.GREEN, 4: COLORS_HEX.BLUE,
+          'Laypeople': COLORS_HEX.ORANGE, 'Domain Experts': COLORS_HEX.VIOLET, 'Data Scientists': COLORS_HEX.GREEN, 'CSFS': COLORS_HEX.BLUE, 'Human': COLORS_HEX.RED
+          } # blue orange green
 
 class CIVisualiser:
 
@@ -305,7 +305,6 @@ class HumanVsActualBarChart:
 
 
 class HumanComparisonBarChart:
-    colors = {1: '#1f77b4', 2: '#ff7f0e', 3: '#2ca02c'} # blue orange green
 
     def get_trace(self, df, feature_range, condition):
         # print(df[condition_human]) # index: no features, value: list
@@ -391,6 +390,56 @@ class HumanComparisonBarChart:
         data = [self.get_trace(df, feature_range, condition) for condition in conditions]
         layout = self.get_layout()
         fig = go.Figure(data=data, layout=layout)
+        return fig
+
+
+class CSFSVsHumansBarChart:
+    def get_trace(self, df, feature_range, condition):
+        # print(df[condition_human]) # index: no features, value: list
+        y = [np.mean(df.loc[no_features, condition]) for no_features in feature_range]
+        list_ci = [CSFSBootstrap.get_ci(df.loc[no_features, condition]) for no_features in feature_range]
+        ci_delta = [ci[1]-ci[0] for ci in list_ci]
+        error_y = [d/2 for d in ci_delta]
+
+        return go.Bar(
+            x=list(feature_range),
+            y=y,
+            name=condition,
+            error_y=dict(
+                type='data',
+                array=error_y,
+                visible=True
+            ),
+            marker=dict(
+                color=colors[condition]
+            )
+        )
+    def get_figure(self, data, feature_range=range(1, 10)):
+        """
+
+        :param data: dict with key in {'income', 'olympia', 'student'} and value pd.DataFrame with multilevel columns conditions -> {ci_hi, ci_lo, count, mean, std} and index: number of features
+        :param feature_range: limit of feature range to visualise
+        :param conditions: human conditions
+        :return:
+        """
+        datasets = sorted(list(data.keys()))
+        dataset_count = len(datasets)
+        fig = tools.make_subplots(rows=1, cols=dataset_count, shared_xaxes=True, subplot_titles=[get_dataset_name_paper(name) for name in datasets]) #  vertical_spacing=0.05
+
+        for i in range(dataset_count):
+            df_dataset = data[datasets[i]]
+            print(datasets[i])
+            for condition in df_dataset.columns:
+                trace = self.get_trace(df_dataset, feature_range, condition)
+                fig.append_trace(trace, 1, i+1)
+            fig['layout']['yaxis'+str(i+1)].update(range=[0.5, 0.9])
+
+        fig['layout'].update(
+            height=400,
+            font=get_font(),
+            showlegend=False
+        )
+
         return fig
 
 def get_colours():

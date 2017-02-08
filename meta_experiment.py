@@ -7,7 +7,8 @@ import plotly
 from tabulate import tabulate
 
 from application.EvaluationRanking import ERCondition
-from csfs_visualisations import HumanVsActualBarChart, AnswerDeltaVisualiserBox, HumanComparisonBarChart
+from csfs_visualisations import HumanVsActualBarChart, AnswerDeltaVisualiserBox, HumanComparisonBarChart, \
+    CSFSVsHumansBarChart
 from experiment_income import ExperimentIncome
 from experiment_olympia import ExperimentOlympia
 from experiment_student_por import ExperimentStudent
@@ -30,6 +31,8 @@ class MetaExperiment:
         self.path_plot_no_answers_vs_delta_data = 'paper_plots-and-data/answers-delta/no_answers_vs_delta_data.json'
 
         self.path_auc_all_conditions = 'paper_plots-and-data/evaluation_all_conditions/'
+
+        self.path_plot_csfs_vs_humans = 'paper_plots-and-data/csfs_vs_humans/csfs_vs_humans.html'
 
         self.ds_student = ExperimentStudent('student', 2, 'experiment2_por')
         self.ds_income = ExperimentIncome('income', 1, 'experiment1')
@@ -170,23 +173,27 @@ class MetaExperiment:
         :param auto_plot:
         :return:
         """
-        data = { 'student': pd.read_pickle(self.ds_student.path_final_evaluation_aucs),
-                         'income': pd.read_pickle(self.ds_income.path_final_evaluation_aucs),
-                         'olympia': pd.read_pickle(self.ds_olympia.path_final_evaluation_aucs),
+        data = { 'student': pd.read_json(self.ds_student.path_auc_all_conditions).sort_index(),
+                         'income': pd.read_json(self.ds_income.path_auc_all_conditions).sort_index(),
+                         'olympia': pd.read_json(self.ds_olympia.path_auc_all_conditions).sort_index(),
                 }
 
-        def get_filtered(data, dataset):
-            data_csfs = data[dataset][ERCondition.CSFS]
-            data_human = dict()
-            for no_features in feature_range:
-                # print(len(data[dataset][ERCondition.DOMAIN][no_features]))
-                # exit()
-                data_human[no_features] = data[dataset][ERCondition.DOMAIN][no_features] + data[dataset][ERCondition.EXPERT][no_features]
-            print(len(data_human[5]))
-        data_filtered = {ds_name: get_filtered(data, ds_name) for ds_name in data}
+        def prepare_row(row):
+            """
+            Returns new row with two columns: combined experts and data scientists + cfs
+            :param row:
+            :return:
+            """
+            values_csfs = row['csfs']
+            print(values_csfs)
+            values_human = row['experts'] + row['domain']
+            print(values_human)
+            row_new = pd.Series({'CSFS': values_csfs, 'Human': values_human})
+            return row_new
 
-
-        # print(data['student'])
+        data_filtered = {ds_name: data[ds_name].apply(prepare_row, axis='columns') for ds_name in data}
+        fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, feature_range=range(1,10))
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_plot_csfs_vs_humans)
 
     def move_and_rename_auc_for_all_conditions(self):
         """
@@ -204,9 +211,9 @@ class MetaExperiment:
             csfs=ERCondition.get_string_paper(4),
         )
 
-        data = { 'student': pd.read_csv(self.ds_student.path_auc_all_conditions, index_col=0),
-                         'income': pd.read_csv(self.ds_income.path_auc_all_conditions, index_col=0),
-                         'olympia': pd.read_csv(self.ds_olympia.path_auc_all_conditions, index_col=0),
+        data = { 'student': pd.read_json(self.ds_student.path_auc_all_conditions),
+                         'income': pd.read_json(self.ds_income.path_auc_all_conditions),
+                         'olympia': pd.read_json(self.ds_olympia.path_auc_all_conditions),
                 }
         for dataset in data:
             df = data[dataset]
@@ -223,8 +230,8 @@ def run():
     # experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
     # experiment.plot_bar_comparing_humans()
-    # experiment.plot_bar_humans_vs_csfs()
-    experiment.move_and_rename_auc_for_all_conditions()
+    experiment.plot_bar_humans_vs_csfs()
+    # experiment.move_and_rename_auc_for_all_conditions()
 
 
 if __name__ == '__main__':
