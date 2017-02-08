@@ -14,6 +14,7 @@ from plotly import tools
 #                             6: ['rgba(200, 150, 0, {})'.format(x) for x in alphas]
 #            }
 # colours.update({i: ['rgba(200, 150, 0, {})'.format(x) for x in alphas] for i in range(7,20)})
+from application.EvaluationRanking import ERCondition
 
 
 class CIVisualiser:
@@ -303,6 +304,96 @@ class HumanVsActualBarChart:
         return fig
 
 
+class HumanComparisonBarChart:
+    colors = {1: '#1f77b4', 2: '#ff7f0e', 3: '#2ca02c'} # blue orange green
+
+    def get_trace(self, df, feature_range, condition):
+        # print(df[condition_human]) # index: no features, value: list
+        df_sel = df[condition].loc[feature_range]
+        y = df_sel['mean']
+        ci = (df_sel['ci_hi'] - df_sel['ci_lo']) / 2
+
+        return go.Bar(
+            x=df.index,
+            y=y,
+            name=ERCondition.get_string_paper(condition),
+            error_y=dict(
+                type='data',
+                array=ci,
+                visible=True
+            ),
+            marker=dict(
+                color=self.colors[condition]
+            )
+        )
+
+    def get_layout(self):
+        return go.Layout(
+            xaxis=dict(
+                title='Number of Features',
+            ),
+            yaxis=dict(
+                range=[0.5, 1],
+                title='AUC and Confidence Interval',
+            ),
+            font=get_font(),
+        )
+
+    def get_figure(self, data, feature_range=range(1, 10), conditions=[1, 2, 3]):
+        """
+
+        :param data: dict with key in {'income', 'olympia', 'student'} and value pd.DataFrame with multilevel columns conditions -> {ci_hi, ci_lo, count, mean, std} and index: number of features
+        :param feature_range: limit of feature range to visualise
+        :param conditions: human conditions
+        :return:
+        """
+        datasets = sorted(list(data.keys()))
+        dataset_count = len(datasets)
+        fig = tools.make_subplots(rows=dataset_count, cols=1, shared_xaxes=True, shared_yaxes=True, subplot_titles=[get_dataset_name_paper(name) for name in datasets], vertical_spacing=0.05 )
+        fig['layout'].update(
+            annotations=go.Annotations([
+                go.Annotation(
+                    x=0.5,
+                    y=-0.16,
+                    showarrow=False,
+                    text='Number of Features',
+                    xref='paper',
+                    yref='paper'
+                ),
+                go.Annotation(
+                    x=-0.05,
+                    y=0.17,
+                    showarrow=False,
+                    text='AUC and Confidence Interval',
+                    textangle=-90,
+                    xref='paper',
+                    yref='paper'
+                )
+            ]),
+        )
+        for i in range(dataset_count):
+            df_dataset = data[datasets[i]]
+            for condition in conditions:
+                trace = self.get_trace(df_dataset, feature_range, condition)
+                fig.append_trace(trace, i+1, 1)
+            print(fig['layout'])
+            fig['layout']['yaxis'+str(i+1)].update(range=[0.5, 1])
+
+        fig['layout'].update(
+            height=600,
+            font=get_font(),
+            showlegend=False
+        )
+
+        return fig
+
+
+    def get_figure_for_dataset(self, df, feature_range=range(1, 10), conditions=[1, 2, 3]):
+        data = [self.get_trace(df, feature_range, condition) for condition in conditions]
+        layout = self.get_layout()
+        fig = go.Figure(data=data, layout=layout)
+        return fig
+
 def get_colours():
     alphas = [0.3, 0.6, 1]
     c = [np.random.randint(0, 256) for i in range(3)]
@@ -323,3 +414,11 @@ def get_textfont():
 
 def get_font():
     return dict(family='serif', size=24, color='#000')
+
+def get_dataset_name_paper(identifier):
+    NAMES = {
+        'income': 'Income',
+        'olympia': 'Olympics',
+        'student': 'Portuguese',
+    }
+    return NAMES[identifier]

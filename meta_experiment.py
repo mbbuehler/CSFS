@@ -5,7 +5,7 @@ import numpy as np
 import plotly
 from tabulate import tabulate
 
-from csfs_visualisations import HumanVsActualBarChart, AnswerDeltaVisualiserBox
+from csfs_visualisations import HumanVsActualBarChart, AnswerDeltaVisualiserBox, HumanComparisonBarChart
 from experiment_income import ExperimentIncome
 from experiment_olympia import ExperimentOlympia
 from experiment_student_por import ExperimentStudent
@@ -139,7 +139,13 @@ class MetaExperiment:
         fig = AnswerDeltaVisualiserBox(title="").get_figure(df_no_answers_vs_delta)
         plotly.offline.plot(fig, auto_open=True, filename=self.path_plot_no_answers_vs_delta_html, image='png', image_filename=self.path_plot_no_answers_vs_delta_png)
 
-
+    def plot_bar_comparing_humans(self):
+        data = { 'student': pd.read_pickle(self.ds_student.path_final_evaluation_aggregated),
+                 'income': pd.read_pickle(self.ds_income.path_final_evaluation_aggregated),
+                 'olympia': pd.read_pickle(self.ds_olympia.path_final_evaluation_aggregated),
+        }
+        fig = HumanComparisonBarChart().get_figure(data, feature_range=range(1, 10), conditions=[1,2,3])
+        plotly.offline.plot(fig, auto_open=True)
 
 
 
@@ -149,8 +155,9 @@ class MetaExperiment:
 def run():
     experiment = MetaExperiment()
     # experiment.final_evaluation_combine_all()
-    experiment.plot_humans_vs_actual_all_plot()
+    # experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
+    experiment.plot_bar_comparing_humans()
 
 
 if __name__ == '__main__':
