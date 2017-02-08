@@ -43,7 +43,7 @@ class CSFSBootstrap:
 
     @staticmethod
     def get_ci(observations):
-        ci = sk_bootstrap.ci(data=observations, statfunction=np.mean, n_samples=2000,)
+        ci = sk_bootstrap.ci(data=observations, statfunction=np.mean, n_samples=10000,)
         return ci
 
 observations = [1, 3, 4, 5, 2, 3, 4, 1, 4, 3, 2, 1, 3, 3, 3,3 ,2 ]
