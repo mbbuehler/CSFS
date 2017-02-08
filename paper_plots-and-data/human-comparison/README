@@ -1,0 +1,18 @@
+Datasets:
+income -> Income
+student -> Portuguese
+olympia -> Olympics
+
+Structure json:
+{CONDITION,FIELD: {NUMBER_OF_FEATURES: AUC,...}, ...}
+
+CONDITION:
+1: Laypeople
+2: Domain Experts
+3: Data Science Experts
+
+FIELD:
+ci_lo: Conficence Interval low
+ci_hi: Conficence Interval high
+mean: Mean
+

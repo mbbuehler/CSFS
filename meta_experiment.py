@@ -1,3 +1,4 @@
+import json
 import math
 import pandas as pd
 import numpy as np
@@ -19,6 +20,9 @@ class MetaExperiment:
         self.path_human_vs_actual_histogram = 'paper_plots-and-data/human-vs-actual/human_vs_actual_hist.html'
         self.path_human_vs_actual_barchart = 'paper_plots-and-data/human-vs-actual/human_vs_actual_barchart.html'
         self.path_human_vs_actual_data = 'paper_plots-and-data/human-vs-actual/human_vs_actual_data.json'
+
+        self.path_human_comparison_data = 'paper_plots-and-data/human-comparison/'
+        self.path_human_comparison_plot = 'paper_plots-and-data/human-comparison/human-comparison.html'
 
         self.path_plot_no_answers_vs_delta_png = 'no_answers_vs_delta'
         self.path_plot_no_answers_vs_delta_html = 'paper_plots-and-data/answers-delta/no_answers_vs_delta_data.html'
@@ -145,7 +149,10 @@ class MetaExperiment:
                  'olympia': pd.read_pickle(self.ds_olympia.path_final_evaluation_aggregated),
         }
         fig = HumanComparisonBarChart().get_figure(data, feature_range=range(1, 10), conditions=[1,2,3])
-        plotly.offline.plot(fig, auto_open=True)
+        plotly.offline.plot(fig, auto_open=False, filename=self.path_human_comparison_plot)
+        for dataset in data:
+            path = "{}human-comparison_{}.json".format(self.path_human_comparison_data, dataset)
+            data[dataset].to_json(path) # TODO: remove count, std, ... which is not visualised
 
 
 
