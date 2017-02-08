@@ -39,6 +39,13 @@ class ERCondition:
         ACTUAL: 'actual',
     }
 
+    PAPER_NAMES_SHORT = {
+        LAYPERSON: 'Layp.',
+        DOMAIN: 'Domain E.',
+        EXPERT: 'Data S.',
+
+    }
+
     @staticmethod
     def get_all():
         return [ERCondition.LAYPERSON, ERCondition.DOMAIN, ERCondition.EXPERT, ERCondition.CSFS, ERCondition.RANDOM, ERCondition.ACTUAL]
@@ -53,6 +60,12 @@ class ERCondition:
     def get_string_paper(condition):
         if condition in ERCondition.PAPER_NAMES:
             return ERCondition.PAPER_NAMES[condition]
+        return 'n.a.'
+
+    @staticmethod
+    def get_string_paper_short(condition):
+        if condition in ERCondition.PAPER_NAMES_SHORT:
+            return ERCondition.PAPER_NAMES_SHORT[condition]
         return 'n.a.'
 
     @classmethod

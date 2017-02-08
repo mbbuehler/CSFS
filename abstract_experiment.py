@@ -88,6 +88,7 @@ class AbstractExperiment:
         self.path_answers_delta_plot_box = '{}results/{}/visualisations/{}_answers_delta_plot_box.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_answers_delta_plot_line = '{}results/{}/visualisations/{}_answers_delta_plot_line.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_humans_vs_actual_auc = '{}evaluation/comparison/humans_vs_actual_auc.json'.format(self.base_path)
+        self.path_human_comparison_table = '{}evaluation/comparison/{}_humans_comparison_table.csv'.format(self.base_path, self.dataset_name)
 
     def _create_if_nonexisting(self, path, folder):
             if folder not in os.listdir(path):
@@ -712,6 +713,40 @@ class AbstractExperiment:
 
         df_result = pd.DataFrame({'lay': values_lay, 'domain': values_domain, 'experts': values_experts, 'best': values_best, 'worst': values_worst, 'random': values_random})
         df_result.to_json(self.path_humans_vs_actual_auc)
+
+    def human_comparison_table(self, feature_slice=5):
+        """
+        Creates a latex table comparing human conditions with the welch's t-test
+        :param feature_slice: int
+        :return:
+        """
+        def get_asteriks(p):
+            asteriks = ""
+            if 0.01 <= p < 0.05:
+                asteriks = "*"
+            elif p < 0.01:
+                asteriks = "**"
+            return asteriks
+
+        conditions = [1, 2, 3]
+        aucs = pd.read_pickle(self.path_final_evaluation_aucs)
+        aucs_filtered = {condition: aucs[condition][feature_slice] for condition in conditions}
+        print(aucs_filtered) # condition: [AUC]
+        df_matrix = pd.DataFrame(columns=conditions, index=conditions)
+        for cond1 in conditions:
+            for cond2 in conditions:
+                a = aucs_filtered[cond1]
+                b = aucs_filtered[cond2]
+                t, p = scipy.stats.ttest_ind(a, b, equal_var=False)
+                g = hedges_g(a, b) # effect size
+                value = "{:.3f}{}".format(g, get_asteriks(p))
+                df_matrix.loc[cond1, cond2] = value
+        print(df_matrix)
+        labels = [ERCondition.get_string_paper_short(c) for c in conditions]
+        df_result = pd.DataFrame(np.triu(df_matrix.values, k=1), columns=labels, index=labels)
+        print(df_result.to_latex())
+
+
 
 
 
