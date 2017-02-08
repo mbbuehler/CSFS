@@ -26,8 +26,13 @@ def hedges_g(x, y):
     mean_y = np.mean(y)
     std_x = np.std(x)
     std_y = np.std(y)
+
     n_x = len(x)
     n_y = len(y)
+
+    print('mean x / y', mean_x, mean_y)
+    print('std x / y', std_x, std_y)
+    print('n x / y',n_x, n_y)
     pooled_s = np.sqrt(((n_x - 1) * std_x**2 + (n_y - 1) * std_y**2)/( n_x + n_y - 2))
     g = (mean_x - mean_y) / pooled_s
     return g

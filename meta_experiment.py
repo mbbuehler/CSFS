@@ -6,6 +6,7 @@ import numpy as np
 import plotly
 from tabulate import tabulate
 
+from application.EvaluationRanking import ERCondition
 from csfs_visualisations import HumanVsActualBarChart, AnswerDeltaVisualiserBox, HumanComparisonBarChart
 from experiment_income import ExperimentIncome
 from experiment_olympia import ExperimentOlympia
@@ -144,6 +145,11 @@ class MetaExperiment:
         plotly.offline.plot(fig, auto_open=True, filename=self.path_plot_no_answers_vs_delta_html, image='png', image_filename=self.path_plot_no_answers_vs_delta_png)
 
     def plot_bar_comparing_humans(self, auto_plot=False):
+        """
+        Bar chart with CI error bars comparing condition 1-3
+        :param auto_plot:
+        :return:
+        """
         auto_plot=True
         data = { 'student': pd.read_pickle(self.ds_student.path_final_evaluation_aggregated),
                  'income': pd.read_pickle(self.ds_income.path_final_evaluation_aggregated),
@@ -156,6 +162,29 @@ class MetaExperiment:
             data[dataset].to_json(path) # TODO: remove count, std, ... which is not visualised
         return fig
 
+    def plot_bar_humans_vs_csfs(self, auto_plot=True, feature_range=range(1,10)):
+        """
+        Bar chart comparing the combined condition (data scientsts + domain experts) with csfs
+        :param auto_plot:
+        :return:
+        """
+        data = { 'student': pd.read_pickle(self.ds_student.path_final_evaluation_aucs),
+                         'income': pd.read_pickle(self.ds_income.path_final_evaluation_aucs),
+                         'olympia': pd.read_pickle(self.ds_olympia.path_final_evaluation_aucs),
+                }
+
+        def get_filtered(data, dataset):
+            data_csfs = data[dataset][ERCondition.CSFS]
+            data_human = dict()
+            for no_features in feature_range:
+                # print(len(data[dataset][ERCondition.DOMAIN][no_features]))
+                # exit()
+                data_human[no_features] = data[dataset][ERCondition.DOMAIN][no_features] + data[dataset][ERCondition.EXPERT][no_features]
+            print(len(data_human[5]))
+        data_filtered = {ds_name: get_filtered(data, ds_name) for ds_name in data}
+
+
+        # print(data['student'])
 
 
 
@@ -164,7 +193,8 @@ def run():
     # experiment.final_evaluation_combine_all()
     # experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
-    experiment.plot_bar_comparing_humans()
+    # experiment.plot_bar_comparing_humans()
+    experiment.plot_bar_humans_vs_csfs()
 
 
 if __name__ == '__main__':

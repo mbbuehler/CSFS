@@ -89,6 +89,7 @@ class AbstractExperiment:
         self.path_answers_delta_plot_line = '{}results/{}/visualisations/{}_answers_delta_plot_line.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_humans_vs_actual_auc = '{}evaluation/comparison/humans_vs_actual_auc.json'.format(self.base_path)
         self.path_human_comparison_table = '{}evaluation/comparison/{}_humans_comparison_table.csv'.format(self.base_path, self.dataset_name)
+        self.path_auc_all_conditions = '{}evaluation/{}_auc_all_conditions.csv'.format(self.base_path, self.dataset_name)
 
     def _create_if_nonexisting(self, path, folder):
             if folder not in os.listdir(path):
@@ -738,6 +739,7 @@ class AbstractExperiment:
                 a = aucs_filtered[cond1]
                 b = aucs_filtered[cond2]
                 t, p = scipy.stats.ttest_ind(a, b, equal_var=False)
+                print("{} vs {}".format(cond1, cond2))
                 g = hedges_g(a, b) # effect size
                 value = "{:.3f}{}".format(g, get_asteriks(p))
                 df_matrix.loc[cond1, cond2] = value
@@ -745,6 +747,21 @@ class AbstractExperiment:
         labels = [ERCondition.get_string_paper_short(c) for c in conditions]
         df_result = pd.DataFrame(np.triu(df_matrix.values, k=1), columns=labels, index=labels)
         print(df_result.to_latex())
+
+    def add_csfs_auc_to_human_vs_actual(self):
+        """
+        Finishes the data for the evaluation. in the end we will have data for all conditions (lay, domain, experts, csfs, random, best, worst) for all no_features.1
+        :return:
+        """
+        df_cleaned_bin = pd.read_csv(self.path_bin)
+        df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
+        evaluator = ERNofeaturesEvaluator(df_evaluation_result=None, df_evaluation_base=None, df_cleaned_bin=df_cleaned_bin, df_actual_metadata=None, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=self.bootstrap_n, repetitions=self.repetitions)
+        values_csfs = evaluator.evaluate(self.feature_range, ERCondition.CSFS)[ERCondition.CSFS]
+        series_csfs = pd.Series(values_csfs, name='csfs')
+        data = pd.read_json(self.path_humans_vs_actual_auc).sort_index()
+        data = data.join(series_csfs)
+        data.to_csv(self.path_auc_all_conditions, index=True) # index: no_features, columns: conditions
+
 
 
 
