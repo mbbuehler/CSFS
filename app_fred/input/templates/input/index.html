@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Instructions</h1>
+<p>blablab</p>
+<form method="POST" class="post-form">{% csrf_token %}
+{{ form.as_p }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+<div id="user-token">
+    <p>This is your token: <input disabled="disabled" value=""/></p>
+<p>Store it carefully. You will need your token and your e-mail to query the results of this job.</p>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    function reset(){
+        $('#user-token').hide();
+        update_target_mean_field();
+
+        $('#id_target_mean_checkbox').click(update_target_mean_field);
+
+
+    }
+    /**
+     * Shows and hides target mean field based on checkbox
+     */
+    function update_target_mean_field(){
+        if ($('#id_target_mean_checkbox').is(':checked')){
+            $('#id_target_mean').hide();
+            $('label[for="id_target_mean"]').hide();
+        } else{
+            $('#id_target_mean').show();
+            $('label[for="id_target_mean"]').show();
+        }
+    }
+
+    $(document).ready(function(){
+        reset();
+    });
+</script>
+{% endblock %}

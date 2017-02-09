@@ -1,0 +1,6 @@
+=== Setup mysql:
+http://stackoverflow.com/questions/14087598/python-3-importerror-no-module-named-configparser
+
+pip install mysqlclient
+in my python3.4 virtualenv after
+sudo apt-get install python3-dev libmysqlclient-dev
