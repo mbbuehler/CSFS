@@ -3,24 +3,60 @@
 {% block content %}
 <h1>Instructions</h1>
 <p>blablab</p>
-<form method="POST" class="post-form">{% csrf_token %}
+<form id='form-new-job' method="POST" class="post-form">
+    {% csrf_token %}
 {{ form.as_p }}
-        <button type="submit" class="save btn btn-default">Save</button>
+        <button id='btn-reset' type="reset" class="btn btn-default">Reset</button>
+    <button id='btn-submit' type="submit" class="save btn btn-primary">Save</button>
     </form>
-<div id="user-token">
-    <p>This is your token: <input disabled="disabled" value=""/></p>
+<div id="div-costs">
+    <p>Estimated costs for this job: <span id="span-costs">0</span></p>
+</div>
+
+<div id="div-user-token">
+    <p>This is your token: <span id="span-user-token"></span></p>
 <p>Store it carefully. You will need your token and your e-mail to query the results of this job.</p>
 </div>
 {% endblock %}
 
 {% block javascript %}
 <script>
+    function onSubmit(e){
+        e.preventDefault();
+        //Check validity (automatic?)
+        // Ask if ok with estimated costs
+        // Start job and return token -> show to user
+        $.ajax({
+            url: "{{links.onFormSubmit}}",
+            data: {
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                if(data.success === 'success'){
+                    console.log('success');
+                    // do whatever
+                    $('#span-costs').text(data.costs);
+                    $('#div-costs').show();
+                    $('#span-user-token').text(data.user_token).show();
+                    $('#div-user-token').show();
+                }
+                else{
+                    // complain
+                }
+            }
+        });
+    }
+
     function reset(){
+        $(this).closest('form').find("input[type=text], textarea").val("");
+
         $('#user-token').hide();
+        $('#div-costs').hide();
         update_target_mean_field();
 
         $('#id_target_mean_checkbox').click(update_target_mean_field);
-
+//        $('#form-new-job').submit(function(e){onSubmit(e);});
 
     }
     /**
