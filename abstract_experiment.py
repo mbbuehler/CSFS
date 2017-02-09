@@ -21,7 +21,7 @@ from FinalEvaluation import FinalEvaluationCombiner
 from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 from application.CSFSConditionEvaluation import TestEvaluation
 from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
-from csfs_stats import hedges_g
+from csfs_stats import hedges_g, cohen_d
 from csfs_visualisations import CIVisualiser, AnswerDeltaVisualiserLinePlot, \
     AnswerDeltaVisualiserBar, AnswerDeltaVisualiserBox
 from humans_vs_actual_auc import FeatureRankerAUC, FeatureCombinationCalculator
@@ -67,6 +67,7 @@ class AbstractExperiment:
     feature_range = range(1, 2)
     bootstrap_n = 9
     repetitions = 19
+    feature_slice = 6
 
     sec = 80
     x = 1
@@ -715,24 +716,26 @@ class AbstractExperiment:
         df_result = pd.DataFrame({'lay': values_lay, 'domain': values_domain, 'experts': values_experts, 'best': values_best, 'worst': values_worst, 'random': values_random})
         df_result.to_json(self.path_humans_vs_actual_auc)
 
-    def human_comparison_table(self, feature_slice=5):
+    def human_comparison_table(self, feature_slice=6):
         """
         Creates a latex table comparing human conditions with the welch's t-test
         :param feature_slice: int
         :return:
         """
         def get_asteriks(p):
-            asteriks = ""
-            if 0.01 <= p < 0.05:
+            asteriks = "+"
+            if p <= 0.05:
                 asteriks = "*"
-            elif p < 0.01:
+            if p <= 0.01:
                 asteriks = "**"
+            if p <= 0.001:
+                asteriks = "***"
             return asteriks
 
         conditions = [1, 2, 3]
         aucs = pd.read_pickle(self.path_final_evaluation_aucs)
         aucs_filtered = {condition: aucs[condition][feature_slice] for condition in conditions}
-        print(aucs_filtered) # condition: [AUC]
+        # print(aucs_filtered) # condition: [AUC]
         df_matrix = pd.DataFrame(columns=conditions, index=conditions)
         for cond1 in conditions:
             for cond2 in conditions:
@@ -741,12 +744,20 @@ class AbstractExperiment:
                 t, p = scipy.stats.ttest_ind(a, b, equal_var=False)
                 print("{} vs {}".format(cond1, cond2))
                 g = hedges_g(a, b) # effect size
-                value = "{:.3f}{}".format(g, get_asteriks(p))
+                # d = cohen_d(a, b)
+                # g = d
+                value = "{:.3f}\textsuperscript{{{}}}".format(g, get_asteriks(p))
                 df_matrix.loc[cond1, cond2] = value
-        print(df_matrix)
-        labels = [ERCondition.get_string_paper_short(c) for c in conditions]
+        # print(df_matrix)
+        # print(df_matrix)
+        # exit()
+        labels = [ERCondition.get_string_paper(c) for c in conditions]
         df_result = pd.DataFrame(np.triu(df_matrix.values, k=1), columns=labels, index=labels)
-        print(df_result.to_latex())
+        df_result = df_result.drop(labels[2]).drop(labels[0], 1)
+        df_result.loc['Domain Experts', 'Domain Experts'] = ""
+        print(tabulate(df_result, headers='keys'))
+        print()
+        print(df_result.to_latex(escape=False))
 
     def add_csfs_auc_to_human_vs_actual(self):
         """

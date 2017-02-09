@@ -46,12 +46,13 @@ class CSFSBootstrap:
         ci = sk_bootstrap.ci(data=observations, statfunction=np.mean, n_samples=10000,)
         return ci
 
-observations = [1, 3, 4, 5, 2, 3, 4, 1, 4, 3, 2, 1, 3, 3, 3,3 ,2 ]
-bootstrap = Bootstrap(observations, B=2000)._bootstrap()
-bootstrap.print()
-print(np.mean(observations))
+def test():
+    observations = [1, 3, 4, 5, 2, 3, 4, 1, 4, 3, 2, 1, 3, 3, 3,3 ,2 ]
+    bootstrap = Bootstrap(observations, B=2000)._bootstrap()
+    bootstrap.print()
+    print(np.mean(observations))
 
-CI = sk_bootstrap.ci(data=observations, statfunction=np.mean, n_samples=19,)
-print(CI)
+    CI = sk_bootstrap.ci(data=observations, statfunction=np.mean, n_samples=19,)
+    print(CI)
 
 

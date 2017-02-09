@@ -10,11 +10,12 @@ class COLORS_HEX:
     GREEN = '#2ca02c'
     RED = '#D62728'
     VIOLET = '#9467BD'
+    GREY = '#7F7F7F'
 
 from application.EvaluationRanking import ERCondition
 from bootstrap import CSFSBootstrap
-colors = {1: COLORS_HEX.ORANGE, 2: COLORS_HEX.VIOLET, 3: COLORS_HEX.GREEN, 4: COLORS_HEX.BLUE,
-          'Laypeople': COLORS_HEX.ORANGE, 'Domain Experts': COLORS_HEX.VIOLET, 'Data Scientists': COLORS_HEX.GREEN, 'CSFS': COLORS_HEX.BLUE, 'Human': COLORS_HEX.RED
+colors = {ERCondition.LAYPERSON: COLORS_HEX.ORANGE, ERCondition.DOMAIN: COLORS_HEX.VIOLET, ERCondition.EXPERT: COLORS_HEX.GREEN, ERCondition.CSFS: COLORS_HEX.BLUE, ERCondition.RANDOM: COLORS_HEX.GREY,
+          'Laypeople': COLORS_HEX.ORANGE, 'Domain Experts': COLORS_HEX.VIOLET, 'Data Scientists': COLORS_HEX.GREEN, 'CSFS': COLORS_HEX.BLUE, 'Human': COLORS_HEX.RED, 'Random': COLORS_HEX.GREY
           } # blue orange green
 
 class CIVisualiser:

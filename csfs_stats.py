@@ -37,6 +37,14 @@ def hedges_g(x, y):
     g = (mean_x - mean_y) / pooled_s
     return g
 
+def cohen_d(x,y):
+    nx = len(x)
+    ny = len(y)
+    dof = nx + ny - 2
+    return (np.mean(x) - np.mean(y)) / np.sqrt(((nx-1)*np.std(x, ddof=1) ** 2 + (ny-1)*np.std(y, ddof=1) ** 2) / dof)
+
+
+
 def test():
     x = [2,4,7,3,7,35,8,9]
     y = [i*2 for i in x]

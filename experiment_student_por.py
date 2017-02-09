@@ -180,8 +180,8 @@ paid==yes                1    1    0    0    1    2    0    0    0     0     1  
         # self.evaluate_answers_delta_plot(auto_open=True)
         # self.humans_vs_actual_auc()
         # experiment.humans_vs_actual_auc_plot()
-        # self.human_comparison_table(feature_slice=5)
-        self.add_csfs_auc_to_human_vs_actual()
+        self.human_comparison_table(feature_slice=self.feature_slice)
+        # self.add_csfs_auc_to_human_vs_actual()
 
 
 

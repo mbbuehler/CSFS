@@ -185,13 +185,12 @@ class MetaExperiment:
             :return:
             """
             values_csfs = row['csfs']
-            print(values_csfs)
             values_human = row['experts'] + row['domain']
-            print(values_human)
-            row_new = pd.Series({'CSFS': values_csfs, 'Human': values_human})
+            values_random = row['random']
+            row_new = pd.Series({'CSFS': values_csfs, 'Human': values_human, 'Random': values_random})
             return row_new
 
-        data_filtered = {ds_name: data[ds_name].apply(prepare_row, axis='columns') for ds_name in data}
+        data_filtered = {ds_name: data[ds_name].loc[feature_range].apply(prepare_row, axis='columns') for ds_name in data}
         fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, feature_range=range(1,10))
         plotly.offline.plot(fig, auto_open=True, filename=self.path_plot_csfs_vs_humans)
 
