@@ -67,7 +67,7 @@ class AbstractExperiment:
     feature_range = range(1, 2)
     bootstrap_n = 9
     repetitions = 19
-    feature_slice = 6
+    feature_slice = 9
 
     sec = 80
     x = 1
@@ -742,7 +742,7 @@ class AbstractExperiment:
                 a = aucs_filtered[cond1]
                 b = aucs_filtered[cond2]
                 t, p = scipy.stats.ttest_ind(a, b, equal_var=False)
-                print("{} vs {}".format(cond1, cond2))
+                # print("{} vs {}".format(cond1, cond2))
                 g = hedges_g(a, b) # effect size
                 # d = cohen_d(a, b)
                 # g = d
@@ -757,7 +757,7 @@ class AbstractExperiment:
         df_result.loc['Domain Experts', 'Domain Experts'] = ""
         print(tabulate(df_result, headers='keys'))
         print()
-        print(df_result.to_latex(escape=False))
+        # print(df_result.to_latex(escape=False))
 
     def add_csfs_auc_to_human_vs_actual(self):
         """

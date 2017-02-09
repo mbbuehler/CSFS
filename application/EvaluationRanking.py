@@ -291,7 +291,7 @@ class ERNofeaturesEvaluator(EREvaluator):
             result = {nofeatures: list() for nofeatures in budget_range}
             p_target = self.df_answers_grouped['p'].loc[self.target][0]
             df_answers_tmp = self.df_answers_grouped.drop(self.target) # need to drop target
-            for i in range(self.repetitions): # number of iterations for bootstrapping -> is number of aucs calculated
+            for i in range(self.repetitions): # is number of aucs calculated
                 sys.stdout.write(str(i)+" ")
                 # bootstrap answers
                 df_answers_bootstrapped = df_answers_tmp.copy().apply(bootstrap_row, axis='columns')
