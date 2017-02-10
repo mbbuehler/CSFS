@@ -123,8 +123,8 @@ class MetaExperiment:
 
         fig = HumanVsActualBarChart().get_figure(df_result, feature_range=range(1,10))
         plotly.offline.plot(fig, auto_open=True, image='png', filename=self.path_human_vs_actual_barchart)
-        fig = HumanVsActualBarChart().get_histograms(df_result)
-        plotly.offline.plot(fig, auto_open=True, image='png', filename=self.path_human_vs_actual_histogram)
+        # fig = HumanVsActualBarChart().get_histograms(df_result)
+        # plotly.offline.plot(fig, auto_open=True, image='png', filename=self.path_human_vs_actual_histogram)
 
     def plot_no_answers_vs_delta(self):
         """
@@ -251,8 +251,8 @@ def run():
     # experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
     # experiment.plot_bar_comparing_humans()
-    # experiment.plot_bar_humans_vs_csfs()
-    experiment.table_human_vs_csfs()
+    experiment.plot_bar_humans_vs_csfs()
+    # experiment.table_human_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
 
 

@@ -437,7 +437,7 @@ class CSFSVsHumansBarChart:
         """
         datasets = sorted(list(data.keys()))
         dataset_count = len(datasets)
-        fig = tools.make_subplots(rows=1, cols=dataset_count, shared_xaxes=True, subplot_titles=[get_dataset_name_paper(name) for name in datasets]) #  vertical_spacing=0.05
+        fig = tools.make_subplots(rows=1, cols=dataset_count, subplot_titles=[get_dataset_name_paper(name) for name in datasets]) #  vertical_spacing=0.05
 
         for i in range(dataset_count):
             df_dataset = data[datasets[i]]
@@ -448,9 +448,9 @@ class CSFSVsHumansBarChart:
             fig['layout']['yaxis'+str(i+1)].update(range=[0.5, 0.9])
 
         fig['layout'].update(
-            height=400,
+            height=500,
             font=get_font(),
-            showlegend=False
+            showlegend=False,
         )
 
         return fig
