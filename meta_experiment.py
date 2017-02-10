@@ -12,6 +12,7 @@ from csfs_visualisations import HumanVsActualBarChart, AnswerDeltaVisualiserBox,
 from experiment_income import ExperimentIncome
 from experiment_olympia import ExperimentOlympia
 from experiment_student_por import ExperimentStudent
+from table_effect_size import EffectSizeTable
 
 
 class MetaExperiment:
@@ -32,7 +33,8 @@ class MetaExperiment:
 
         self.path_auc_all_conditions = 'paper_plots-and-data/evaluation_all_conditions/'
 
-        self.path_plot_csfs_vs_humans = 'paper_plots-and-data/csfs_vs_humans/csfs_vs_humans.html'
+        self.path_csfs_vs_humans_plot = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans.html'
+        self.path_csfs_vs_humans_data = 'paper_plots-and-data/krowdd_vs_humans/'
 
         self.ds_student = ExperimentStudent('student', 2, 'experiment2_por')
         self.ds_income = ExperimentIncome('income', 1, 'experiment1')
@@ -186,13 +188,33 @@ class MetaExperiment:
             """
             values_csfs = row['csfs']
             values_human = row['experts'] + row['domain']
-            values_random = row['random']
-            row_new = pd.Series({'CSFS': values_csfs, 'Human': values_human, 'Random': values_random})
+            # values_random = row['random']
+            row_new = pd.Series({'KrowDD': values_csfs, 'Human': values_human}) #, 'Random': values_random})
             return row_new
 
         data_filtered = {ds_name: data[ds_name].loc[feature_range].apply(prepare_row, axis='columns') for ds_name in data}
         fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, feature_range=range(1,10))
-        plotly.offline.plot(fig, auto_open=True, filename=self.path_plot_csfs_vs_humans)
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot)
+        for d in data_filtered:
+            data_filtered[d].to_json("{}{}_krowdd_vs_human.json".format(self.path_csfs_vs_humans_data, d))
+
+    def table_human_vs_csfs(self):
+        """
+        :pre: json data already saved in plot above
+        :return:
+        """
+        datasets = ['student', 'income', 'olympia']
+        data = { d: pd.read_json("{}{}_krowdd_vs_human.json".format(self.path_csfs_vs_humans_data, d)).sort_index() for d in datasets}
+        feature_range = range(1,10)
+        df_result = pd.DataFrame(index=feature_range)
+        for d in datasets:
+            df = data[d]
+            series = EffectSizeTable(df, feature_range=feature_range).get_result_series(dataset_name=d)
+            df_result[d] = series
+        df_result.columns=['Portuguese', 'Income', 'Olympics']
+        print(df_result.to_latex(escape=False))
+
+
 
     def move_and_rename_auc_for_all_conditions(self):
         """
@@ -229,7 +251,8 @@ def run():
     # experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
     # experiment.plot_bar_comparing_humans()
-    experiment.plot_bar_humans_vs_csfs()
+    # experiment.plot_bar_humans_vs_csfs()
+    experiment.table_human_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
 
 

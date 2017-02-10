@@ -22,6 +22,7 @@ class ERCondition:
     ACTUAL = 6
     BEST = 7
     WORST = 8
+    HUMAN = 9
 
     NAMES = {
         LAYPERSON: 'lay',
@@ -30,24 +31,19 @@ class ERCondition:
         CSFS: 'CSFS',
         RANDOM: 'random',
         ACTUAL: 'actual',
+        HUMAN: 'human experts'
     }
 
     PAPER_NAMES = {
         LAYPERSON: 'Laypeople',
         DOMAIN: 'Domain Experts',
         EXPERT: 'Data Scientists',
-        CSFS: 'CSFS',
+        CSFS: 'KrowDD',
         RANDOM: 'Random',
         ACTUAL: 'actual',
         BEST: 'Best',
-        WORST: 'Worst'
-    }
-
-    PAPER_NAMES_SHORT = {
-        LAYPERSON: 'Layp.',
-        DOMAIN: 'Domain E.',
-        EXPERT: 'Data S.',
-
+        WORST: 'Worst',
+        HUMAN: 'Human Experts'
     }
 
     @staticmethod
@@ -67,11 +63,6 @@ class ERCondition:
         print(condition)
         return 'n.a.'
 
-    @staticmethod
-    def get_string_paper_short(condition):
-        if condition in ERCondition.PAPER_NAMES_SHORT:
-            return ERCondition.PAPER_NAMES_SHORT[condition]
-        return 'n.a.'
 
     @classmethod
     def get_string_identifier(cls, condition):

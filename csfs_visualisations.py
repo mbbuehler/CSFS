@@ -6,17 +6,29 @@ from plotly import tools
 
 class COLORS_HEX:
     BLUE = '#1f77b4'
-    ORANGE = '#ff7f0e'
+    ORANGE_DARK = '#ff7f0e'
+    ORANGE_BRIGHT = '#FFB50EPRO'
     GREEN = '#2ca02c'
     RED = '#D62728'
     VIOLET = '#9467BD'
     GREY = '#7F7F7F'
+    YELLOW = '#FFF100'
 
 from application.EvaluationRanking import ERCondition
 from bootstrap import CSFSBootstrap
-colors = {ERCondition.LAYPERSON: COLORS_HEX.ORANGE, ERCondition.DOMAIN: COLORS_HEX.VIOLET, ERCondition.EXPERT: COLORS_HEX.GREEN, ERCondition.CSFS: COLORS_HEX.BLUE, ERCondition.RANDOM: COLORS_HEX.GREY,
-          'Laypeople': COLORS_HEX.ORANGE, 'Domain Experts': COLORS_HEX.VIOLET, 'Data Scientists': COLORS_HEX.GREEN, 'CSFS': COLORS_HEX.BLUE, 'Human': COLORS_HEX.RED, 'Random': COLORS_HEX.GREY
-          } # blue orange green
+colors = {ERCondition.LAYPERSON: COLORS_HEX.VIOLET,
+          ERCondition.DOMAIN: COLORS_HEX.GREEN,
+          ERCondition.EXPERT: COLORS_HEX.ORANGE_BRIGHT,
+          ERCondition.CSFS: COLORS_HEX.BLUE,
+          ERCondition.RANDOM: COLORS_HEX.GREY,
+          ERCondition.HUMAN: COLORS_HEX.ORANGE_DARK,
+          'Laypeople': COLORS_HEX.VIOLET,
+          'Domain Experts': COLORS_HEX.GREEN,
+          'Data Scientists': COLORS_HEX.ORANGE_BRIGHT,
+          'KrowDD': COLORS_HEX.BLUE,
+          'Random': COLORS_HEX.GREY,
+          'Human': COLORS_HEX.ORANGE_DARK,
+          }
 
 class CIVisualiser:
 

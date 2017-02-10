@@ -26,6 +26,7 @@ from csfs_visualisations import CIVisualiser, AnswerDeltaVisualiserLinePlot, \
     AnswerDeltaVisualiserBar, AnswerDeltaVisualiserBox
 from humans_vs_actual_auc import FeatureRankerAUC, FeatureCombinationCalculator
 from infoformulas_listcomp import H, _H, IG_from_series
+from table_effect_size import EffectSizeMatrix
 from util.util_features import get_features_from_questions
 
 
@@ -67,7 +68,7 @@ class AbstractExperiment:
     feature_range = range(1, 2)
     bootstrap_n = 9
     repetitions = 19
-    feature_slice = 9
+    feature_slice = 6
 
     sec = 80
     x = 1
@@ -722,42 +723,13 @@ class AbstractExperiment:
         :param feature_slice: int
         :return:
         """
-        def get_asteriks(p):
-            asteriks = "+"
-            if p <= 0.05:
-                asteriks = "*"
-            if p <= 0.01:
-                asteriks = "**"
-            if p <= 0.001:
-                asteriks = "***"
-            return asteriks
-
         conditions = [1, 2, 3]
-        aucs = pd.read_pickle(self.path_final_evaluation_aucs)
-        aucs_filtered = {condition: aucs[condition][feature_slice] for condition in conditions}
-        # print(aucs_filtered) # condition: [AUC]
-        df_matrix = pd.DataFrame(columns=conditions, index=conditions)
-        for cond1 in conditions:
-            for cond2 in conditions:
-                a = aucs_filtered[cond1]
-                b = aucs_filtered[cond2]
-                t, p = scipy.stats.ttest_ind(a, b, equal_var=False)
-                # print("{} vs {}".format(cond1, cond2))
-                g = hedges_g(a, b) # effect size
-                # d = cohen_d(a, b)
-                # g = d
-                value = "{:.3f}\textsuperscript{{{}}}".format(g, get_asteriks(p))
-                df_matrix.loc[cond1, cond2] = value
-        # print(df_matrix)
-        # print(df_matrix)
-        # exit()
-        labels = [ERCondition.get_string_paper(c) for c in conditions]
-        df_result = pd.DataFrame(np.triu(df_matrix.values, k=1), columns=labels, index=labels)
-        df_result = df_result.drop(labels[2]).drop(labels[0], 1)
-        df_result.loc['Domain Experts', 'Domain Experts'] = ""
-        print(tabulate(df_result, headers='keys'))
-        print()
-        # print(df_result.to_latex(escape=False))
+        df = pd.read_pickle(self.path_final_evaluation_aucs)
+        table = EffectSizeMatrix(df, conditions)
+        data = table.get_result_df()
+        latex = table.get_latex()
+        print(latex)
+        return data
 
     def add_csfs_auc_to_human_vs_actual(self):
         """
