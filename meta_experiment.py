@@ -6,7 +6,8 @@ import numpy as np
 import plotly
 from tabulate import tabulate
 
-from application.EvaluationRanking import ERCondition
+from application.CSFSConditionEvaluation import AUCForOrderedFeaturesCalculator
+from application.EvaluationRanking import ERCondition, ERFilterer, ERParser
 from csfs_visualisations import HumanVsActualBarChart, AnswerDeltaVisualiserBox, HumanComparisonBarChart, \
     CSFSVsHumansBarChart
 from experiment_income import ExperimentIncome
@@ -39,6 +40,8 @@ class MetaExperiment:
         self.ds_student = ExperimentStudent('student', 2, 'experiment2_por')
         self.ds_income = ExperimentIncome('income', 1, 'experiment1')
         self.ds_olympia = ExperimentOlympia('olympia', 4, 'experiment2-4_all')
+
+        self.path_single_human_performance_data = 'final_evaluation/private_single_human_performance.json'
 
 
 
@@ -302,17 +305,42 @@ class MetaExperiment:
             path_out_json = "{}{}_auc_all_conditions.json".format(self.path_auc_all_conditions, dataset)
             df.to_csv(path_out_json)
 
+    def single_humans_performance(self):
+        feature_range = range(1, 10)
+        df_evaluation_result = pd.read_csv('final_evaluation/private_conditions1-3_result.csv', header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'ip', 'date'])
+        datasets = {
+            'student': self.ds_student,
+            'income': self.ds_income,
+            'olympia': self.ds_olympia
+        }
+        def add_auc_column(row):
+            exp = datasets[row.dataset_name]
+            token = row.token
+            df_evaluation_base = pd.read_csv(exp.path_budget_evaluation_base)
+            df_cleaned_bin = pd.read_csv(exp.path_bin)
+            target = exp.target
+            df_features_ranked = ERParser(df_evaluation_base).get_ordered_features(token)
+            evaluator = AUCForOrderedFeaturesCalculator(df_features_ranked, df_cleaned_bin, target)
+            df_aucs = evaluator.get_auc_for_nofeatures_range(feature_range) # df with one col: AUC and index= cost
+            aucs = {no_features: df_aucs.loc[no_features, 'auc'] for no_features in df_aucs.index}
+            row['aucs'] = aucs
+            return row
+        df_evaluation_result = df_evaluation_result.apply(add_auc_column, axis=1).head()
+        df_single_human_performance = df_evaluation_result.drop(['token', 'id'], axis=1)
+        df_single_human_performance.to_json(self.path_single_human_performance_data)
+
 def run():
     experiment = MetaExperiment()
     # experiment.final_evaluation_combine_all()
     # experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
-    experiment.table_kahneman()
+    # experiment.table_kahneman()
     # experiment.plot_bar_comparing_humans()
     # experiment.plot_bar_humans_vs_csfs()
     # experiment.table_human_vs_csfs()
     # experiment.table_lay_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
+    experiment.single_humans_performance()
 
 
 if __name__ == '__main__':

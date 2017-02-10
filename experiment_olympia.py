@@ -51,7 +51,6 @@ class ExperimentOlympia(AbstractExperiment):
         # self.path_budget_evaluation_result_domain = '{}evaluation/experts_domain/result_domain.csv'.format(self.base_path)
         # self.path_cost_ig_base = '{}evaluation/base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_base = '{}evaluation/base.csv'.format(self.base_path, experiment_name)
-        self.path_budget_evaluation_result = 'final_evaluation/conditions1-3_result.csv'
 
         self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
         self.path_final_evaluation_aggregated = '{}evaluation/final_evaluation_aggregated.pickle'.format(self.base_path)
