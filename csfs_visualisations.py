@@ -300,13 +300,19 @@ class HumanVsActualBarChart:
                 range=[0, 1],
                 # title='Relative Normalized Performance',
             ),
-            font=get_font(),
             showlegend=True,
+            font=dict(
+                        family='sans serif',
+                        size=48,
+                    ),
             legend=dict(
-                x=0.3,
+                x=0.2,
                 y=1,
                 orientation='h',
-                font=get_font()
+                font=dict(
+                        family='sans serif',
+                        size=66,
+                    ),
             )
         )
 

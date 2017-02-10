@@ -347,7 +347,7 @@ class MetaExperiment:
 def run():
     experiment = MetaExperiment()
     # experiment.final_evaluation_combine_all()
-    # experiment.plot_humans_vs_actual_all_plot()
+    experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
     # experiment.table_kahneman()
     # experiment.plot_bar_comparing_humans()
@@ -356,7 +356,7 @@ def run():
     # experiment.table_lay_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
     # experiment.single_humans_performance()
-    experiment.data_scientist_performance()
+    # experiment.data_scientist_performance()
 
 
 if __name__ == '__main__':
