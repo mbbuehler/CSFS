@@ -71,9 +71,9 @@ class EffectSizeMatrix:
         return df_result.to_latex(escape=False)
 
 class EffectSizeTable:
-    def __init__(self, df, feature_range):
+    def __init__(self, df, feature_range, conditions=['Human', 'KrowDD']):
         self.df = df
-        self.conditions = ['Human', 'KrowDD']
+        self.conditions = conditions
         self.feature_range = feature_range
 
     @staticmethod
@@ -87,7 +87,7 @@ class EffectSizeTable:
                 asteriks = "***"
             return asteriks
 
-    def get_result_series(self, dataset_name):
+    def get_result_series(self, dataset_name, condition_other, condition_better='KrowDD'):
         """
         Creates a df table comparing human conditions with the welch's t-test
         :param feature_slice: int
@@ -102,7 +102,6 @@ class EffectSizeTable:
             if np.mean(a) > np.mean(b):
                 value = "\textbf{{{}}}".format(value)
             return value
-
-        data = {no_features: get_value(aucs_filtered['KrowDD'][no_features], aucs_filtered['Human'][no_features]) for no_features in self.feature_range}
+        data = {no_features: get_value(aucs_filtered[condition_better][no_features], aucs_filtered[condition_other][no_features]) for no_features in self.feature_range}
         series = pd.Series(data, name=dataset_name)
         return series

@@ -723,9 +723,9 @@ class AbstractExperiment:
         :param feature_slice: int
         :return:
         """
-        conditions = [1, 2, 3]
+        conditions = [ERCondition.DOMAIN, ERCondition.EXPERT, ERCondition.RANDOM]
         df = pd.read_pickle(self.path_final_evaluation_aucs)
-        table = EffectSizeMatrix(df, conditions)
+        table = EffectSizeMatrix(df, conditions, remove_null=True, rename_columns=True)
         data = table.get_result_df()
         latex = table.get_latex()
         print(latex)

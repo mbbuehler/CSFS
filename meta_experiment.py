@@ -64,7 +64,7 @@ class MetaExperiment:
         df_all = [df_student, df_income, df_olympia]
         max_feature_count = max(list(df_student.index) + list(df_olympia.index) + list(df_income.index))
         range_features = range(1, max_feature_count+1)
-        conditions = ['domain', 'experts', 'lay', 'random']
+        conditions = ['domain', 'experts', 'random'] # 'lay',
 
         def normalise(x, min, max):
             if x == min == max:
@@ -117,12 +117,11 @@ class MetaExperiment:
             return row
             # filter na and -1 values
         df_result = df_result.apply(filter_row)
-        print(df_result.head())
-        df_result.columns = ['Domain Experts', 'Data Science Experts', 'Laypeople', 'Random']
+        df_result.columns = ['Domain Experts', 'Data Scientists', 'Random'] #'Laypeople'
         df_result.to_json(self.path_human_vs_actual_data)
 
         fig = HumanVsActualBarChart().get_figure(df_result, feature_range=range(1,10))
-        plotly.offline.plot(fig, auto_open=True, image='png', filename=self.path_human_vs_actual_barchart)
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_human_vs_actual_barchart)
         # fig = HumanVsActualBarChart().get_histograms(df_result)
         # plotly.offline.plot(fig, auto_open=True, image='png', filename=self.path_human_vs_actual_histogram)
 
@@ -162,14 +161,14 @@ class MetaExperiment:
                  'income': pd.read_pickle(self.ds_income.path_final_evaluation_aggregated),
                  'olympia': pd.read_pickle(self.ds_olympia.path_final_evaluation_aggregated),
         }
-        fig = HumanComparisonBarChart().get_figure(data, feature_range=range(1, 10), conditions=[1,2,3])
+        fig = HumanComparisonBarChart().get_figure(data, feature_range=range(1, 10), conditions=[ERCondition.EXPERT, ERCondition.DOMAIN, ERCondition.RANDOM]) # , 1
         plotly.offline.plot(fig, auto_open=auto_plot, filename=self.path_human_comparison_plot)
         for dataset in data:
             path = "{}human-comparison_{}.json".format(self.path_human_comparison_data, dataset)
             data[dataset].to_json(path) # TODO: remove count, std, ... which is not visualised
         return fig
 
-    def plot_bar_humans_vs_csfs(self, auto_plot=True, feature_range=range(1,10)):
+    def plot_bar_humans_vs_csfs(self, auto_plot=True, feature_range=range(1,10), plot_conditions=['KrowDD', 'Human']):
         """
         Bar chart comparing the combined condition (data scientsts + domain experts) with csfs
         :param auto_plot:
@@ -188,15 +187,19 @@ class MetaExperiment:
             """
             values_csfs = row['csfs']
             values_human = row['experts'] + row['domain']
-            # values_random = row['random']
-            row_new = pd.Series({'KrowDD': values_csfs, 'Human': values_human}) #, 'Random': values_random})
+            values_random = row['random']
+            values_lay = row['lay']
+            row_new = pd.Series({'KrowDD': values_csfs, 'Human': values_human, 'Random': values_random, 'Laypeople': values_lay})
             return row_new
 
         data_filtered = {ds_name: data[ds_name].loc[feature_range].apply(prepare_row, axis='columns') for ds_name in data}
-        fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, feature_range=range(1,10))
-        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot)
         for d in data_filtered:
             data_filtered[d].to_json("{}{}_krowdd_vs_human.json".format(self.path_csfs_vs_humans_data, d))
+
+        # reduce conditions for plotting
+        data_filtered = {ds_name: data_filtered[ds_name].loc[feature_range, plot_conditions] for ds_name in data }
+        fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, feature_range=range(1,10))
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot)
 
     def table_human_vs_csfs(self):
         """
@@ -209,10 +212,23 @@ class MetaExperiment:
         df_result = pd.DataFrame(index=feature_range)
         for d in datasets:
             df = data[d]
-            series = EffectSizeTable(df, feature_range=feature_range).get_result_series(dataset_name=d)
+            series = EffectSizeTable(df, feature_range=feature_range).get_result_series(dataset_name=d, condition_better='KrowDD', condition_other='Human')
             df_result[d] = series
         df_result.columns=['Portuguese', 'Income', 'Olympics']
         print(df_result.to_latex(escape=False))
+
+    def table_lay_vs_csfs(self):
+        datasets = ['student', 'income', 'olympia']
+        data = { d: pd.read_json("{}{}_krowdd_vs_human.json".format(self.path_csfs_vs_humans_data, d)).sort_index() for d in datasets}
+        feature_range = range(1,10)
+        df_result = pd.DataFrame(index=feature_range)
+        for d in datasets:
+            df = data[d]
+            series = EffectSizeTable(df, feature_range=feature_range, conditions=['KrowDD', 'Laypeople']).get_result_series(dataset_name=d, condition_better='KrowDD', condition_other='Laypeople')
+            df_result[d] = series
+        df_result.columns=['Portuguese', 'Income', 'Olympics']
+        print(df_result.to_latex(escape=False))
+
 
 
 
@@ -251,8 +267,9 @@ def run():
     # experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
     # experiment.plot_bar_comparing_humans()
-    experiment.plot_bar_humans_vs_csfs()
+    # experiment.plot_bar_humans_vs_csfs()
     # experiment.table_human_vs_csfs()
+    experiment.table_lay_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
 
 

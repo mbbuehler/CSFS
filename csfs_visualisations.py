@@ -7,11 +7,11 @@ from plotly import tools
 class COLORS_HEX:
     BLUE = '#1f77b4'
     ORANGE_DARK = '#ff7f0e'
-    ORANGE_BRIGHT = '#FFB50EPRO'
+    ORANGE_BRIGHT = '#FFB50E'
     GREEN = '#2ca02c'
     RED = '#D62728'
-    VIOLET = '#9467BD'
-    GREY = '#7F7F7F'
+    VIOLET = '#AC84E2'
+    GREY = '#BABABA'
     YELLOW = '#FFF100'
 
 from application.EvaluationRanking import ERCondition
@@ -255,6 +255,9 @@ class AnswerDeltaVisualiserBox:
 
 
 class HumanVsActualBarChart:
+    """
+    Relative performance
+    """
 
     def get_histogram_trace(self, df, condition, no_answer):
         # print(df.loc[no_answer, condition])
@@ -267,7 +270,11 @@ class HumanVsActualBarChart:
     def get_trace(self, df, condition_human):
         # print(df[condition_human]) # index: no features, value: list
         y = [np.mean(l) for l in df[condition_human]]
-        error = [np.std(l) for l in df[condition_human]]
+        list_ci = [CSFSBootstrap.get_ci(l) for l in df[condition_human]]
+        ci_delta = [ci[1]-ci[0] for ci in list_ci]
+        error_y = [d/2 for d in ci_delta]
+        # error = [np.std(l) for l in df[condition_human]]
+        error = error_y
 
         return go.Bar(
             x=df.index,
@@ -277,6 +284,9 @@ class HumanVsActualBarChart:
                 type='data',
                 array=error,
                 visible=True
+            ),
+            marker=dict(
+                color=colors[condition_human]
             )
         )
 
@@ -284,13 +294,20 @@ class HumanVsActualBarChart:
         return go.Layout(
             # title='Humans vs. Actual',
             xaxis=dict(
-                title='Number of Features',
+                # title='Number of Features',
             ),
             yaxis=dict(
                 range=[0, 1],
-                title='Relative Normalized Performance',
+                # title='Relative Normalized Performance',
             ),
             font=get_font(),
+            showlegend=True,
+            legend=dict(
+                x=0.3,
+                y=1,
+                orientation='h',
+                font=get_font()
+            )
         )
 
     def get_figure(self, df, feature_range):
@@ -299,8 +316,9 @@ class HumanVsActualBarChart:
         :param feature_range: how many features to show (default 1-9)
         :return:
         """
+        conditions = sorted(list(df.columns))
         df = df.loc[feature_range[0]:feature_range[-1]]
-        data = [self.get_trace(df, condition) for condition in df]
+        data = [self.get_trace(df, condition) for condition in conditions]
         layout = self.get_layout()
         fig = go.Figure(data=data, layout=layout)
         return fig
@@ -319,7 +337,7 @@ class HumanVsActualBarChart:
 
 class HumanComparisonBarChart:
 
-    def get_trace(self, df, feature_range, condition):
+    def get_trace(self, df, feature_range, condition, show_legend):
         # print(df[condition_human]) # index: no features, value: list
         df_sel = df[condition].loc[feature_range]
         y = list(df_sel['mean'])
@@ -335,20 +353,27 @@ class HumanComparisonBarChart:
                 visible=True
             ),
             marker=dict(
-                color=self.colors[condition]
-            )
+                color=colors[condition]
+            ),
+            showlegend=show_legend
         )
 
     def get_layout(self):
         return go.Layout(
             xaxis=dict(
-                title='Number of Features',
+                # title='Number of Features',
             ),
             yaxis=dict(
                 range=[0.5, 1],
-                title='AUC and Confidence Interval',
+                # title='AUC and Confidence Interval',
             ),
             font=get_font(),
+            showlegend=True,
+            legend=dict(
+                x=0.3,
+                y=1,
+                orientation='h',
+            )
         )
 
     def get_figure(self, data, feature_range=range(1, 10), conditions=[1, 2, 3]):
@@ -362,38 +387,24 @@ class HumanComparisonBarChart:
         datasets = sorted(list(data.keys()))
         dataset_count = len(datasets)
         fig = tools.make_subplots(rows=1, cols=dataset_count, shared_xaxes=True, subplot_titles=[get_dataset_name_paper(name) for name in datasets], ) #  vertical_spacing=0.05
-        # fig['layout'].update(
-        #     annotations=go.Annotations([
-        #         go.Annotation(
-        #             x=0.5,
-        #             y=-0.16,
-        #             showarrow=False,
-        #             text='Number of Features',
-        #             xref='paper',
-        #             yref='paper'
-        #         ),
-        #         go.Annotation(
-        #             x=-0.05,
-        #             y=0.17,
-        #             showarrow=False,
-        #             text='AUC and Confidence Interval',
-        #             textangle=-90,
-        #             xref='paper',
-        #             yref='paper'
-        #         )
-        #     ]),
-        # )
+        show_legend = True
         for i in range(dataset_count):
             df_dataset = data[datasets[i]]
             for condition in conditions:
-                trace = self.get_trace(df_dataset, feature_range, condition)
+                trace = self.get_trace(df_dataset, feature_range, condition, show_legend)
                 fig.append_trace(trace, 1, i+1)
+            show_legend = False
             fig['layout']['yaxis'+str(i+1)].update(range=[0.5, 0.9])
 
         fig['layout'].update(
             height=400,
             font=get_font(),
-            showlegend=False
+            showlegend=True,
+            legend=dict(
+                x=0.25,
+                y=1.4,
+                orientation='h',
+            )
         )
 
         return fig
@@ -407,7 +418,7 @@ class HumanComparisonBarChart:
 
 
 class CSFSVsHumansBarChart:
-    def get_trace(self, df, feature_range, condition):
+    def get_trace(self, df, feature_range, condition, show_legend):
         # print(df[condition_human]) # index: no features, value: list
         y = [np.mean(df.loc[no_features, condition]) for no_features in feature_range]
         list_ci = [CSFSBootstrap.get_ci(df.loc[no_features, condition]) for no_features in feature_range]
@@ -425,7 +436,8 @@ class CSFSVsHumansBarChart:
             ),
             marker=dict(
                 color=colors[condition]
-            )
+            ),
+            showlegend = show_legend
         )
     def get_figure(self, data, feature_range=range(1, 10)):
         """
@@ -438,19 +450,25 @@ class CSFSVsHumansBarChart:
         datasets = sorted(list(data.keys()))
         dataset_count = len(datasets)
         fig = tools.make_subplots(rows=1, cols=dataset_count, subplot_titles=[get_dataset_name_paper(name) for name in datasets]) #  vertical_spacing=0.05
-
+        showlegend = True
         for i in range(dataset_count):
             df_dataset = data[datasets[i]]
             print(datasets[i])
             for condition in df_dataset.columns:
-                trace = self.get_trace(df_dataset, feature_range, condition)
+                trace = self.get_trace(df_dataset, feature_range, condition, showlegend)
                 fig.append_trace(trace, 1, i+1)
+            showlegend = False
             fig['layout']['yaxis'+str(i+1)].update(range=[0.5, 0.9])
 
         fig['layout'].update(
             height=500,
             font=get_font(),
-            showlegend=False,
+            showlegend=True,
+            legend=dict(
+                x=0.42,
+                y=1.3,
+                orientation='h',
+            )
         )
 
         return fig
