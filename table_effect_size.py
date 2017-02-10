@@ -105,3 +105,22 @@ class EffectSizeTable:
         data = {no_features: get_value(aucs_filtered[condition_better][no_features], aucs_filtered[condition_other][no_features]) for no_features in self.feature_range}
         series = pd.Series(data, name=dataset_name)
         return series
+
+class EffectSizeSingle:
+
+    @staticmethod
+    def _get_asteriks(p):
+            asteriks = "+"
+            if p <= 0.05:
+                asteriks = "*"
+            if p <= 0.01:
+                asteriks = "**"
+            if p <= 0.001:
+                asteriks = "***"
+            return asteriks
+
+    def get_value(self, a, b):
+        t, p = scipy.stats.ttest_ind(a, b, equal_var=False)
+        g = hedges_g(a, b) # effect size
+        value = "{:.3f}{}".format(g, self._get_asteriks(p))
+        return value

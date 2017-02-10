@@ -12,7 +12,7 @@ from csfs_visualisations import HumanVsActualBarChart, AnswerDeltaVisualiserBox,
 from experiment_income import ExperimentIncome
 from experiment_olympia import ExperimentOlympia
 from experiment_student_por import ExperimentStudent
-from table_effect_size import EffectSizeTable
+from table_effect_size import EffectSizeTable, EffectSizeSingle
 
 
 class MetaExperiment:
@@ -137,6 +137,8 @@ class MetaExperiment:
         df_olympia = pd.read_pickle(self.ds_olympia.path_answers_delta)
 
         df_all = [df_student, df_income, df_olympia]
+        # print(df_all[0])
+        # exit()
 
         data = dict()
         for no_answers in range_answers:
@@ -144,11 +146,49 @@ class MetaExperiment:
             for df in df_all:
                 for cond in conditions:
                     data[no_answers] += df.loc[no_answers, cond]
+
         df_no_answers_vs_delta = pd.DataFrame(data) # columns are no_answers
+        # print(df_no_answers_vs_delta)
+        # exit()
         df_no_answers_vs_delta.to_json(self.path_plot_no_answers_vs_delta_data)
         # 'Number of Answers versus Actual Data (19 Repetitions)'
         fig = AnswerDeltaVisualiserBox(title="").get_figure(df_no_answers_vs_delta)
         plotly.offline.plot(fig, auto_open=True, filename=self.path_plot_no_answers_vs_delta_html, image='png', image_filename=self.path_plot_no_answers_vs_delta_png)
+
+    def table_kahneman(self):
+        """
+        Create table to check whether answers for conditional means were worse than others. (GitHub issue #30)
+        :return:
+        """
+        range_answers = range(1, 17)
+        conditions = ['p', 'p|f=0', 'p|f=1']
+        datasets = {
+            'Portuguese': pd.read_pickle(self.ds_student.path_answers_delta),
+            'Income': pd.read_pickle(self.ds_income.path_answers_delta),
+            'Olympics': pd.read_pickle(self.ds_olympia.path_answers_delta)
+        }
+        df_data = pd.DataFrame() # df with columns: Datset name and index: P(X=1),... values are lists
+        for dataset in sorted(datasets):
+            df = datasets[dataset]
+            df_data[dataset] = pd.Series({
+                'P(X=1)': df.loc[9, 'p'],
+                'P(X=1|Y=0)': df.loc[9, 'p|f=0'],
+                'P(X=1|Y=1)': df.loc[9, 'p|f=1']
+            })
+        def get_value(list):
+            s = "{:.3f} (std={:.3f})".format(np.mean(list), np.std(list))
+            return s
+        df_result = df_data.apply(lambda r: r.apply(get_value))
+        print(df_result)
+
+        print('Delta Income vs. Portuguese + Olympics')
+        for cond in df_data.index:
+            a = df_data.loc[cond, 'Income']
+            b = df_data.loc[cond, 'Portuguese'] + df_data.loc[cond, 'Olympics']
+            print("{}: {}".format(cond, EffectSizeSingle().get_value(a, b)))
+
+
+
 
     def plot_bar_comparing_humans(self, auto_plot=False):
         """
@@ -267,8 +307,9 @@ def run():
     # experiment.final_evaluation_combine_all()
     # experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
+    experiment.table_kahneman()
     # experiment.plot_bar_comparing_humans()
-    experiment.plot_bar_humans_vs_csfs()
+    # experiment.plot_bar_humans_vs_csfs()
     # experiment.table_human_vs_csfs()
     # experiment.table_lay_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()

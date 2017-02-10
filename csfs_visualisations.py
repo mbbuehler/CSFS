@@ -236,11 +236,11 @@ class AnswerDeltaVisualiserBox:
         return go.Layout(
             title=self.title,
             xaxis=dict(
-                title='# Answers Sampled per Feature',
+                # title='# Answers Sampled per Feature',
             ),
             yaxis=dict(
                 # range=[0, 0.5],
-                title='Delta',
+                # title='Delta',
             ),
             showlegend=False,
             font=get_font(),
