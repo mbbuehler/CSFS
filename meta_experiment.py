@@ -174,6 +174,7 @@ class MetaExperiment:
         :param auto_plot:
         :return:
         """
+        # plot_conditions=['KrowDD', 'Human', 'Random', 'Laypeople'] # for plotting
         data = { 'student': pd.read_json(self.ds_student.path_auc_all_conditions).sort_index(),
                          'income': pd.read_json(self.ds_income.path_auc_all_conditions).sort_index(),
                          'olympia': pd.read_json(self.ds_olympia.path_auc_all_conditions).sort_index(),
@@ -267,9 +268,9 @@ def run():
     # experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
     # experiment.plot_bar_comparing_humans()
-    # experiment.plot_bar_humans_vs_csfs()
+    experiment.plot_bar_humans_vs_csfs()
     # experiment.table_human_vs_csfs()
-    experiment.table_lay_vs_csfs()
+    # experiment.table_lay_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
 
 
