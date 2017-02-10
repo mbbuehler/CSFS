@@ -42,6 +42,8 @@ class MetaExperiment:
         self.ds_olympia = ExperimentOlympia('olympia', 4, 'experiment2-4_all')
 
         self.path_single_human_performance_data = 'final_evaluation/private_single_human_performance.json'
+        self.path_data_scientists = 'final_evaluation/private_participants.csv'
+        self.path_data_scientists_performance = 'final_evaluation/private_data-scientists_performance.json'
 
 
 
@@ -325,9 +327,22 @@ class MetaExperiment:
             aucs = {no_features: df_aucs.loc[no_features, 'auc'] for no_features in df_aucs.index}
             row['aucs'] = aucs
             return row
-        df_evaluation_result = df_evaluation_result.apply(add_auc_column, axis=1).head()
+        # df_evaluation_result = df_evaluation_result.loc[:10]
+        df_evaluation_result = df_evaluation_result.apply(add_auc_column, axis=1)
         df_single_human_performance = df_evaluation_result.drop(['token', 'id'], axis=1)
+        # print(tabulate(df_single_human_performance, headers='keys'))
         df_single_human_performance.to_json(self.path_single_human_performance_data)
+
+    def data_scientist_performance(self):
+        df_participants = pd.read_csv(self.path_data_scientists)
+        df_single_humans = pd.read_json(self.path_single_human_performance_data)
+        # print(tabulate(df_single_humans.head(), headers='keys'))
+        df_single_humans = df_single_humans[df_single_humans['condition'] == ERCondition.EXPERT]
+        # print(tabulate(df_participants.head(), headers='keys'))
+        df_joined = df_participants.merge(df_single_humans, left_on='Username', right_on='name')
+        df_joined = df_joined.drop(['Username', 'Country', 'When is your birthday?', 'When did you start working in data science? If you are not sure about the exact date just select a random day in the year you became a data scientist.', 'Please explain your choice in a few words', 'Are you interested in learning about the results of our research?', 'Comments', 'comment', 'ip', 'date', 'name', 'condition'], axis=1)
+        print(tabulate(df_joined, headers='keys'))
+        df_joined.to_json(self.path_data_scientists_performance)
 
 def run():
     experiment = MetaExperiment()
@@ -340,7 +355,8 @@ def run():
     # experiment.table_human_vs_csfs()
     # experiment.table_lay_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
-    experiment.single_humans_performance()
+    # experiment.single_humans_performance()
+    experiment.data_scientist_performance()
 
 
 if __name__ == '__main__':
