@@ -40,12 +40,10 @@ class ExperimentStudent(AbstractExperiment):
         self.path_budget_evaluation_cost = '{}evaluation/budget_evaluation_cost.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_nofeatures = '{}evaluation/budget_evaluation_nofeatures.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_cost_rawaucs = '{}evaluation/budget_evaluation_cost_rawaucs.pickle'.format(self.base_path, experiment_name)
-        self.path_budget_evaluation_nofeatures_rawaucs = '{}evaluation/budget_evaluation_nofeatures_rawaucs.pickle'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_result_domain = '{}evaluation/experts_domain/result_domain.csv'.format(self.base_path)
         self.path_cost_ig_base = '{}evaluation/student_base.csv'.format(self.base_path, experiment_name)
         self.path_budget_evaluation_base = '{}evaluation/base.csv'.format(self.base_path, experiment_name)
 
-        self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
         self.path_final_evaluation_aggregated = '{}evaluation/final_evaluation_aggregated.pickle'.format(self.base_path)
         self.path_final_evaluation_combined = '{}evaluation/final_evaluation_combined.csv'.format(self.base_path)
         self.path_auc_plots = '{}evaluation/visualisation/{}_histograms_aucs.html'.format(self.base_path, self.dataset_name)
@@ -167,7 +165,7 @@ paid==yes                1    1    0    0    1    2    0    0    0     0     1  
         # experiment.evaluate_csfs_auc()
         # experiment.domain_evaluation()
         # experiment.autocorrelation()
-        # experiment.final_evaluation()
+        #experiment.final_evaluation()
         # experiment.final_evaluation_visualisation(feature_range)
         # experiment.crowd_answers_plot(auto_open=auto_open_plots)
         # experiment.final_evaluation_combine(feature_range, bootstrap_n=12, repetitions=20)
@@ -177,9 +175,9 @@ paid==yes                1    1    0    0    1    2    0    0    0     0     1  
         # experiment.evaluate_no_answers_get_fig(feature_range)
         # experiment.evaluate_answers_delta()
         # self.evaluate_answers_delta_plot(auto_open=True)
-        # self.humans_vs_actual_auc()
+        self.humans_vs_actual_auc()
         # experiment.humans_vs_actual_auc_plot()
-        self.human_comparison_table(feature_slice=self.feature_slice)
+        #self.human_comparison_table(feature_slice=self.feature_slice)
         # self.add_csfs_auc_to_human_vs_actual()
 
 

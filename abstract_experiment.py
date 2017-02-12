@@ -89,10 +89,17 @@ class AbstractExperiment:
         self.path_comparison = '{}evaluation/comparison/'.format(self.base_path)
         self.path_answers_delta_plot_box = '{}results/{}/visualisations/{}_answers_delta_plot_box.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_answers_delta_plot_line = '{}results/{}/visualisations/{}_answers_delta_plot_line.html'.format(self.base_path, experiment_name, self.dataset_name)
-        self.path_humans_vs_actual_auc = '{}evaluation/comparison/humans_vs_actual_auc.json'.format(self.base_path)
+        #self.path_humans_vs_actual_auc = '{}evaluation/comparison/humans_vs_actual_auc.json'.format(self.base_path)
+        self.path_humans_vs_actual_auc = '{}evaluation/comparison/humans_vs_actual_auc_decision_tree.json'.format(self.base_path)
+
         self.path_human_comparison_table = '{}evaluation/comparison/{}_humans_comparison_table.csv'.format(self.base_path, self.dataset_name)
         self.path_auc_all_conditions = '{}evaluation/{}_auc_all_conditions.csv'.format(self.base_path, self.dataset_name)
         self.path_budget_evaluation_result = 'final_evaluation/private_conditions1-3_result.csv'
+        self.path_budget_evaluation_nofeatures_rawaucs = '{}evaluation/budget_evaluation_nofeatures_rawaucs.pickle'.format(self.base_path, experiment_name)
+        self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs_decision_tree.pickle'.format(self.base_path)
+        # self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
+
+
 
     def _create_if_nonexisting(self, path, folder):
             if folder not in os.listdir(path):
@@ -684,6 +691,7 @@ class AbstractExperiment:
         plotly.offline.plot(fig, auto_open=auto_open, filename=self.path_answers_delta_plot_box)
 
     def humans_vs_actual_auc(self, mode='combination', merge_combinations=True):
+        merge_combinations=False
         df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'ip', 'date'])
         df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
         df_cleaned_bin = pd.read_csv(self.path_bin)
@@ -694,6 +702,8 @@ class AbstractExperiment:
         values_domain = evaluator.evaluate(self.feature_range, ERCondition.DOMAIN)[ERCondition.DOMAIN]
         values_experts = evaluator.evaluate(self.feature_range, ERCondition.EXPERT)[ERCondition.EXPERT]
         values_lay = evaluator.evaluate(self.feature_range, ERCondition.LAYPERSON)[ERCondition.LAYPERSON]
+        values_random = evaluator.evaluate(self.feature_range, ERCondition.RANDOM)[ERCondition.RANDOM]
+        values_csfs = evaluator.evaluate(self.feature_range, ERCondition.CSFS)[ERCondition.CSFS]
 
         if mode == 'rank':
             ranker = FeatureRankerAUC(df_cleaned_bin, self.target, features)
@@ -715,7 +725,7 @@ class AbstractExperiment:
                 print('start worst')
                 values_worst = calculator.get_aucs_for_feature_range(self.feature_range, reverse=True)
 
-        df_result = pd.DataFrame({'lay': values_lay, 'domain': values_domain, 'experts': values_experts, 'best': values_best, 'worst': values_worst, 'random': values_random})
+        df_result = pd.DataFrame({'lay': values_lay, 'domain': values_domain, 'experts': values_experts, 'best': values_best, 'worst': values_worst, 'random': values_random, 'csfs': values_csfs})
         df_result.to_json(self.path_humans_vs_actual_auc)
 
     def human_comparison_table(self, feature_slice=6):
