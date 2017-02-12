@@ -10,6 +10,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_curve, auc, roc_auc_score, precision_recall_fscore_support
 import matplotlib.pyplot as plt
+from sklearn.neural_network import MLPClassifier
 # https://datamize.wordpress.com/2015/01/24/how-to-plot-a-roc-curve-in-scikit-learn/
 # http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html
 from sklearn.naive_bayes import GaussianNB
@@ -23,9 +24,10 @@ class AUCComparator:
         self.target = target
         self.fast = fast
         self.classifiers = [
-            GaussianNB(),
+            #GaussianNB(),
             # LogisticRegression(),
-            # tree.DecisionTreeClassifier(),
+            tree.DecisionTreeClassifier(),
+            #MLPClassifier(),
             # RandomForestClassifier(),
             # SVC(probability=True), # slows it down a lot
             ]
