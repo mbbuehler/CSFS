@@ -96,7 +96,10 @@ class AbstractExperiment:
         self.path_auc_all_conditions = '{}evaluation/{}_auc_all_conditions.csv'.format(self.base_path, self.dataset_name)
         self.path_budget_evaluation_result = 'final_evaluation/private_conditions1-3_result.csv'
         self.path_budget_evaluation_nofeatures_rawaucs = '{}evaluation/budget_evaluation_nofeatures_rawaucs.pickle'.format(self.base_path, experiment_name)
-        self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs_decision_tree.pickle'.format(self.base_path)
+
+        self.path_final_evaluation_aucs_dt = '{}evaluation/final_evaluation_aucs_decision_tree.pickle'.format(self.base_path)
+        self.path_final_evaluation_aucs_nb = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
+        self.path_final_evaluation_aucs_mlp = '{}evaluation/final_evaluation_aucs_mlp.pickle'.format(self.base_path)
         # self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
 
 

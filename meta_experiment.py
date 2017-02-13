@@ -365,6 +365,22 @@ class MetaExperiment:
             df_chosen_features = get_df_chosen_features(self.datasets[dataset])
             df_chosen_features.to_csv("{}{}_chosen_features_ig.csv".format(self.path_chosen_features_ig, dataset))
 
+    def compare_classifiers(self):
+        """
+        Compares Naive Bayes with Decision Tree and Multilayer perceptron
+        - t-test
+        if difference:
+        - correlation of conditions
+        :return:
+        """
+        dataset = 'Portuguese'
+        scores = {'MLP': pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_mlp),
+                  'DT':  pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_dt),
+                    'NB':  pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_nb),
+        }
+
+
+
 
 def run():
     experiment = MetaExperiment()
@@ -379,7 +395,8 @@ def run():
     # experiment.move_and_rename_auc_for_all_conditions()
     # experiment.single_humans_performance()
     # experiment.data_scientist_performance()
-    experiment.chosen_features_ig()
+    #experiment.chosen_features_ig()
+    experiment.compare_classifiers()
 
 
 if __name__ == '__main__':
