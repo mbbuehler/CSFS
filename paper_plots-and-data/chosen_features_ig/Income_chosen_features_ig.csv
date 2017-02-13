@@ -1,0 +1,18 @@
+,IG
+marital.status_Married-civ-spouse,0.15210656150000001
+relationship_Husband,0.1166806176
+marital.status_Never-married,0.0893760024
+"education.num_(11, 16]",0.0670128509
+relationship_Own-child,0.055134184
+sex==Male,0.037171387400000006
+"education.num_(6, 11]",0.0346825402
+"age_(41.333, 65.667]",0.034442107
+"age_(16.927, 41.333]",0.0314780214
+"hours.per.week_(0.902, 33.667]",0.029357973399999997
+education_Assoc-voc,7.154576603218829e-05
+occupation_Armed-Forces,2.1639559509623e-05
+education_Assoc-acdm,7.569e-06
+native.country_Ireland,3.1716814975490897e-06
+"capital.loss_(2904, 4356]",1.32032443700414e-06
+native.country_Hungary,1.6041134587307903e-07
+native.country_Scotland,1.2182333986032697e-07

@@ -41,7 +41,7 @@ class MetaExperiment:
         self.path_data_scientists = 'final_evaluation/private_participants.csv'
         self.path_data_scientists_performance = 'final_evaluation/private_data-scientists_performance.json'
 
-        self.path_chosen_features_ig = 'final_evaluation/chosen_features_ig/'
+        self.path_chosen_features_ig = 'paper_plots-and-data/chosen_features_ig/'
 
         self.ds_student = ExperimentStudent('student', 2, 'experiment2_por')
         self.ds_income = ExperimentIncome('income', 1, 'experiment1')
@@ -354,13 +354,15 @@ class MetaExperiment:
         :return:
         """
         def get_df_chosen_features(exp):
-            features = pd.read_csv(exp.path_budget_evaluation_base)
-            print(features)
-            print(features['Feature'])
-            print(features)
+            df_meta = pd.read_csv(exp.path_meta, index_col=0)
+            df_meta = df_meta[['IG']]
+            features = pd.read_csv(exp.path_budget_evaluation_base).Feature
+            df_chosen = df_meta.loc[features]
+            df_chosen = df_chosen.sort_values('IG', ascending=False)
+            return df_chosen
+
         for dataset in self.datasets:
             df_chosen_features = get_df_chosen_features(self.datasets[dataset])
-            exit()
             df_chosen_features.to_csv("{}{}_chosen_features_ig.csv".format(self.path_chosen_features_ig, dataset))
 
 
