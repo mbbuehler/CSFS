@@ -24,6 +24,13 @@ class ERCondition:
     WORST = 8
     HUMAN = 9
 
+    NAMES_SHORT = {
+        LAYPERSON: 'lay',
+        DOMAIN: 'domain',
+        EXPERT: 'experts',
+        CSFS: 'csfs',
+        RANDOM: 'random',
+    }
     NAMES = {
         LAYPERSON: 'lay',
         DOMAIN: 'domain expert',
@@ -62,6 +69,13 @@ class ERCondition:
             return ERCondition.PAPER_NAMES[condition]
         print(condition)
         return 'n.a.'
+
+    @staticmethod
+    def get_string_short(condition):
+        if condition in ERCondition.NAMES_SHORT:
+            return ERCondition.NAMES_SHORT[condition]
+        return 'n.a.'
+
 
 
     @classmethod

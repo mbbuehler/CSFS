@@ -36,7 +36,9 @@ class MetaExperiment:
 
         self.path_auc_all_conditions = 'paper_plots-and-data/evaluation_all_conditions/'
 
-        self.path_csfs_vs_humans_plot = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans.html'
+        self.path_csfs_vs_humans_plot_nb = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans_nb.html'
+        self.path_csfs_vs_humans_plot_dt = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans_dt.html'
+        self.path_csfs_vs_humans_plot_mlp = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans_mlp.html'
         self.path_csfs_vs_humans_data = 'paper_plots-and-data/krowdd_vs_humans/'
 
         self.path_single_human_performance_data = 'final_evaluation/private_single_human_performance.json'
@@ -224,13 +226,17 @@ class MetaExperiment:
     def plot_bar_humans_vs_csfs(self, auto_plot=True, feature_range=range(1,10), plot_conditions=['KrowDD', 'Human']):
         """
         Bar chart comparing the combined condition (data scientsts + domain experts) with csfs
+        change classifier 3 times (data in, data out, vis filename)
         :param auto_plot:
         :return:
         """
+        print(sorted(pd.read_json(self.ds_student.path_auc_all_conditions_dt).sort_index().loc[4].csfs))
+        print(sorted(pd.read_json(self.ds_student.path_auc_all_conditions_mlp).sort_index().loc[4].csfs))
+        exit()
         # plot_conditions=['KrowDD', 'Human', 'Random', 'Laypeople'] # for plotting
-        data = { 'student': pd.read_json(self.ds_student.path_auc_all_conditions).sort_index(),
-                         'income': pd.read_json(self.ds_income.path_auc_all_conditions).sort_index(),
-                         'olympia': pd.read_json(self.ds_olympia.path_auc_all_conditions).sort_index(),
+        data = { 'student': pd.read_json(self.ds_student.path_auc_all_conditions_dt).sort_index(),
+                         'income': pd.read_json(self.ds_income.path_auc_all_conditions_dt).sort_index(),
+                         'olympia': pd.read_json(self.ds_olympia.path_auc_all_conditions_dt).sort_index(),
                 }
 
         def prepare_row(row):
@@ -248,12 +254,12 @@ class MetaExperiment:
 
         data_filtered = {ds_name: data[ds_name].loc[feature_range].apply(prepare_row, axis='columns') for ds_name in data}
         for d in data_filtered:
-            data_filtered[d].to_json("{}{}_krowdd_vs_human.json".format(self.path_csfs_vs_humans_data, d))
+            data_filtered[d].to_json("{}{}_krowdd_vs_human_dt.json".format(self.path_csfs_vs_humans_data, d))
 
         # reduce conditions for plotting
         data_filtered = {ds_name: data_filtered[ds_name].loc[feature_range, plot_conditions] for ds_name in data }
         fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, feature_range=range(1,10))
-        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot)
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_dt)
 
     def table_human_vs_csfs(self):
         """
@@ -383,13 +389,22 @@ class MetaExperiment:
             # dataset = 'Portuguese'
             feature_slice = 9
             conditions = ['csfs', 'domain', 'experts', 'lay', 'random']
+
+            data_mlp = pd.read_pickle(self.datasets[dataset].path_final_evaluation_aucs_mlp)
+            df_mlp = pd.DataFrame(data_mlp)
+            df_mlp.columns = [ERCondition.get_string_short(c) for c in df_mlp.columns]
+
             scores = {
-                # 'MLP': pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_mlp),
+                'MLP': df_mlp,
                 'DT':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_dt).sort_index(),
                 'NB':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_nb).sort_index(),
             }
-            classifiers = ['DT', 'NB'] # 'MLP'
+
+            classifiers = [c for c in scores]
             combinations = list(itertools.combinations(classifiers, 2))
+            # print(scores['MLP'])
+            # print(scores['DT'])
+            # exit()
 
             df_t = pd.DataFrame(columns=conditions, index=["{} vs. {}".format(comb[0], comb[1]) for comb in combinations])
             df_corr = pd.DataFrame(columns=conditions, index=["{} vs. {}".format(comb[0], comb[1]) for comb in combinations])
@@ -446,7 +461,7 @@ def run():
     # experiment.plot_no_answers_vs_delta()
     # experiment.table_kahneman()
     # experiment.plot_bar_comparing_humans()
-    # experiment.plot_bar_humans_vs_csfs()
+    experiment.plot_bar_humans_vs_csfs()
     # experiment.table_human_vs_csfs()
     # experiment.table_lay_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
@@ -454,7 +469,7 @@ def run():
     # experiment.data_scientist_performance()
     #experiment.chosen_features_ig()
     # experiment.compare_classifiers()
-    experiment.compare_classifiers_vis()
+    # experiment.compare_classifiers_vis()
 
 
 if __name__ == '__main__':

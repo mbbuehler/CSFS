@@ -64,7 +64,7 @@ class AbstractExperiment:
     path_humans_vs_actual_auc = ''
     target = ''
     answer_range = range(1, 17)
-    feature_range = range(1, 2)
+    feature_range = range(1, 10)
     bootstrap_n = 9
     repetitions = 19
     feature_slice = 6
@@ -103,7 +103,7 @@ class AbstractExperiment:
         self.path_budget_evaluation_nofeatures_rawaucs = '{}evaluation/budget_evaluation_nofeatures_rawaucs.pickle'.format(self.base_path, experiment_name)
 
         self.path_final_evaluation_aucs_dt = '{}evaluation/final_evaluation_aucs_dt.pickle'.format(self.base_path)
-        self.path_final_evaluation_aucs_nb = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
+        self.path_final_evaluation_aucs_nb = '{}evaluation/final_evaluation_aucs_nb.pickle'.format(self.base_path)
         self.path_final_evaluation_aucs_mlp = '{}evaluation/final_evaluation_aucs_mlp.pickle'.format(self.base_path)
         # self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
 
