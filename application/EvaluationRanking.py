@@ -253,7 +253,7 @@ class ERCostEvaluator(EREvaluator):
 class ERNofeaturesEvaluator(EREvaluator):
 
     def evaluate(self, budget_range, condition):
-        sys.stdout.write('> ',condition,'started')
+        sys.stdout.write("> Contition {} started".format(condition))
         if condition in [ERCondition.LAYPERSON, ERCondition.DOMAIN, ERCondition.EXPERT]: # ranking conditions
             df_result_filtered = self._get_filtered_result(condition)
             list_nofeatures_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()] # list of dfs with index=nofeature and one column 'auc'
