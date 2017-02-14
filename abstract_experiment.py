@@ -90,7 +90,7 @@ class AbstractExperiment:
         self.path_answers_delta_plot_box = '{}results/{}/visualisations/{}_answers_delta_plot_box.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_answers_delta_plot_line = '{}results/{}/visualisations/{}_answers_delta_plot_line.html'.format(self.base_path, experiment_name, self.dataset_name)
         #self.path_humans_vs_actual_auc = '{}evaluation/comparison/humans_vs_actual_auc.json'.format(self.base_path)
-        self.path_humans_vs_actual_auc = '{}evaluation/comparison/humans_vs_actual_auc_decision_tree.json'.format(self.base_path)
+        self.path_humans_vs_actual_auc = '{}evaluation/comparison/humans_vs_actual_auc_mlp.json'.format(self.base_path)
 
         self.path_human_comparison_table = '{}evaluation/comparison/{}_humans_comparison_table.csv'.format(self.base_path, self.dataset_name)
         self.path_auc_all_conditions = '{}evaluation/{}_auc_all_conditions.csv'.format(self.base_path, self.dataset_name)
