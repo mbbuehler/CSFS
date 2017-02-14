@@ -503,9 +503,9 @@ class ClassifiersComparisonBarChart:
             #     color=colors[cond]
             # )
         )
-    def get_layout(self):
+    def get_layout(self, title):
         return go.Layout(
-            # title='Humans vs. Actual',
+            title=title,
             xaxis=dict(
                 # title='Number of Features',
             ),
@@ -529,7 +529,7 @@ class ClassifiersComparisonBarChart:
             )
         )
 
-    def get_figure(self, df, feature_range):
+    def get_figure(self, df, feature_range, title):
         """
         :param df:
         :param feature_range: how many features to show (default 1-9)
@@ -538,7 +538,7 @@ class ClassifiersComparisonBarChart:
         conditions = sorted(list(df.columns))
         df = df.loc[feature_range[0]:feature_range[-1]]
         data = [self.get_trace(df, condition) for condition in conditions]
-        layout = self.get_layout()
+        layout = self.get_layout(title)
         fig = go.Figure(data=data, layout=layout)
         return fig
 

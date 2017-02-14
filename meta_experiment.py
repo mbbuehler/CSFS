@@ -16,7 +16,7 @@ from experiment_income import ExperimentIncome
 from experiment_olympia import ExperimentOlympia
 from experiment_student_por import ExperimentStudent
 from table_effect_size import EffectSizeTable, EffectSizeSingle
-
+from scipy.stats import spearmanr
 
 class MetaExperiment:
     def __init__(self):
@@ -44,6 +44,8 @@ class MetaExperiment:
         self.path_data_scientists_performance = 'final_evaluation/private_data-scientists_performance.json'
 
         self.path_chosen_features_ig = 'paper_plots-and-data/chosen_features_ig/'
+
+        self.path_compare_classifiers = 'final_evaluation/compare_classifiers/'
 
         self.ds_student = ExperimentStudent('student', 2, 'experiment2_por')
         self.ds_income = ExperimentIncome('income', 1, 'experiment1')
@@ -375,31 +377,38 @@ class MetaExperiment:
         - correlation of conditions
         :return:
         """
-        dataset = 'Portuguese'
-        feature_slice = 9
-        conditions = ['csfs', 'domain', 'experts', 'lay', 'random']
-        scores = {
-            # 'MLP': pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_mlp),
-            'DT':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_dt).sort_index(),
-            'NB':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_nb).sort_index(),
-        }
-        classifiers = ['DT', 'NB'] # 'MLP'
-        combinations = list(itertools.combinations(classifiers, 2))
 
-        df = pd.DataFrame(columns=conditions, index=["{} vs. {}".format(comb[0], comb[1]) for comb in combinations])
-        # print(df)
-        # exit()
-        # print(combinations)
-        print("Welch's t-test + Hedges' g effect size")
-        for condition in conditions:
-            for combination in combinations:
-                a = scores[combination[0]].loc[feature_slice, condition]
-                b = scores[combination[1]].loc[feature_slice, condition]
-                eff_size = EffectSizeSingle().get_value(a, b)
-                # print(a,b,eff_size)
-                df.loc["{} vs. {}".format(combination[0], combination[1]), condition] = eff_size
 
-        print(df)
+        for dataset in self.datasets:
+            # dataset = 'Portuguese'
+            feature_slice = 9
+            conditions = ['csfs', 'domain', 'experts', 'lay', 'random']
+            scores = {
+                # 'MLP': pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_mlp),
+                'DT':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_dt).sort_index(),
+                'NB':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_nb).sort_index(),
+            }
+            classifiers = ['DT', 'NB'] # 'MLP'
+            combinations = list(itertools.combinations(classifiers, 2))
+
+            df_t = pd.DataFrame(columns=conditions, index=["{} vs. {}".format(comb[0], comb[1]) for comb in combinations])
+            df_corr = pd.DataFrame(columns=conditions, index=["{} vs. {}".format(comb[0], comb[1]) for comb in combinations])
+            # print(df)
+            # exit()
+            for condition in conditions:
+                for combination in combinations:
+                    a = scores[combination[0]].loc[feature_slice, condition]
+                    b = scores[combination[1]].loc[feature_slice, condition]
+                    eff_size = EffectSizeSingle().get_value(a, b)
+                    # print(a,b,eff_size)
+                    df_t.loc["{} vs. {}".format(combination[0], combination[1]), condition] = eff_size
+                    df_corr.loc["{} vs. {}".format(combination[0], combination[1]), condition] = EffectSizeSingle().get_correlation(a, b)
+
+            print(dataset, "Welch's t-test + Hedges' g" )
+            print(tabulate(df_t, headers='keys'))
+            print(dataset, "Spearman")
+            print(tabulate(df_corr, headers='keys'))
+            print('--')
 
 
     def compare_classifiers_vis(self):
@@ -410,24 +419,23 @@ class MetaExperiment:
         - correlation of conditions
         :return:
         """
-        dataset = 'Portuguese'
-        feature_slice = 9
-        print(self.datasets[dataset].path_humans_vs_actual_auc_dt)
-        scores = {
-            # 'MLP': pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_mlp),
-            'DT':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_dt).sort_index(),
-            'NB':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_nb).sort_index(),
-        }
-        conditions = ['lay', 'domain', 'experts', 'csfs']
-        for c in conditions:
-            # print(scores['DT'])
-            # exit()
-            data = {
-                s:scores[s][c] for s in scores
+        for dataset in self.datasets:
+            scores = {
+                # 'MLP': pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_mlp),
+                'DT':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_dt).sort_index(),
+                'NB':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_nb).sort_index(),
             }
-            df = pd.DataFrame(data)
-            fig = ClassifiersComparisonBarChart().get_figure(df, range(1,10))
-            plotly.offline.plot(fig)
+            conditions = ['lay', 'domain', 'experts', 'csfs']
+            for c in conditions:
+                # print(scores['DT'])
+                # exit()
+                data = {
+                    s:scores[s][c] for s in scores
+                }
+                df = pd.DataFrame(data)
+                fig = ClassifiersComparisonBarChart().get_figure(df, range(1,10), c)
+                filename = "{}{}_{}_classifier-performance.html".format(self.path_compare_classifiers, dataset, c)
+                plotly.offline.plot(fig, filename=filename, auto_open=False)
 
 
 
@@ -445,8 +453,8 @@ def run():
     # experiment.single_humans_performance()
     # experiment.data_scientist_performance()
     #experiment.chosen_features_ig()
-    experiment.compare_classifiers()
-    # experiment.compare_classifiers_vis()
+    # experiment.compare_classifiers()
+    experiment.compare_classifiers_vis()
 
 
 if __name__ == '__main__':
