@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import scipy
+from scipy.stats import spearmanr
 
 from application.EvaluationRanking import ERCondition
 from csfs_stats import hedges_g
@@ -120,7 +121,26 @@ class EffectSizeSingle:
             return asteriks
 
     def get_value(self, a, b):
+        """
+        Hedges g + t-test welch
+        :param a:
+        :param b:
+        :return:
+        """
         t, p = scipy.stats.ttest_ind(a, b, equal_var=False)
         g = hedges_g(a, b) # effect size
         value = "{:.3f}{}".format(g, self._get_asteriks(p))
         return value
+
+    def get_correlation(self, a, b):
+        """
+        Spearman
+        :param a:
+        :param b:
+        :return:
+        """
+        corr, p = spearmanr(a, b)
+        value = "{:.3f}{}".format(corr, self._get_asteriks(p))
+        return value
+
+
