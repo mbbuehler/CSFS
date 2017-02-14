@@ -479,6 +479,76 @@ class CSFSVsHumansBarChart:
 
         return fig
 
+
+class ClassifiersComparisonBarChart:
+    def get_trace(self, df, cond):
+        # print(df[condition_human]) # index: no features, value: list
+        y = [np.mean(l) for l in df[cond]]
+        list_ci = [CSFSBootstrap.get_ci(l) for l in df[cond]]
+        ci_delta = [ci[1]-ci[0] for ci in list_ci]
+        error_y = [d/2 for d in ci_delta]
+        # error = [np.std(l) for l in df[condition_human]]
+        error = error_y
+
+        return go.Bar(
+            x=df.index,
+            y=y,
+            name=cond,
+            error_y=dict(
+                type='data',
+                array=error,
+                visible=True
+            ),
+            # marker=dict(
+            #     color=colors[cond]
+            # )
+        )
+    def get_layout(self):
+        return go.Layout(
+            # title='Humans vs. Actual',
+            xaxis=dict(
+                # title='Number of Features',
+            ),
+            yaxis=dict(
+                range=[0.5, 0.9],
+                # title='Relative Normalized Performance',
+            ),
+            showlegend=True,
+            font=dict(
+                        family='sans serif',
+                        size=48,
+                    ),
+            legend=dict(
+                x=0.2,
+                y=1,
+                orientation='h',
+                font=dict(
+                        family='sans serif',
+                        size=66,
+                    ),
+            )
+        )
+
+    def get_figure(self, df, feature_range):
+        """
+        :param df:
+        :param feature_range: how many features to show (default 1-9)
+        :return:
+        """
+        conditions = sorted(list(df.columns))
+        df = df.loc[feature_range[0]:feature_range[-1]]
+        data = [self.get_trace(df, condition) for condition in conditions]
+        layout = self.get_layout()
+        fig = go.Figure(data=data, layout=layout)
+        return fig
+
+
+
+
+
+
+
+
 def get_colours():
     alphas = [0.3, 0.6, 1]
     c = [np.random.randint(0, 256) for i in range(3)]

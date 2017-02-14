@@ -99,7 +99,7 @@ class ExperimentIncome(AbstractExperiment):
         # experiment.final_evaluation_visualisation(feature_range=no_features)
         # experiment.crowd_answers_plot()
         # experiment.evaluate_csfs_auc()
-        #experiment.final_evaluation()
+        experiment.final_evaluation()
         # experiment.final_evaluation_visualisation(feature_range)
         # experiment.crowd_answers_plot(auto_open=auto_open_plots)
         # experiment.final_evaluation_combine(feature_range, bootstrap_n=bootstrap_n, repetitions=repetitions)
@@ -109,7 +109,7 @@ class ExperimentIncome(AbstractExperiment):
         # experiment.evaluate_no_answers_get_fig(feature_range)
         # experiment.evaluate_answers_delta()
         # self.evaluate_answers_delta_plot(auto_open=True)
-        self.humans_vs_actual_auc()
+        # self.humans_vs_actual_auc()
         # experiment.humans_vs_actual_auc_plot()
         # self.add_csfs_auc_to_human_vs_actual()
 

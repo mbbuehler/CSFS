@@ -1,5 +1,7 @@
 import json
 import math
+
+import itertools
 import pandas as pd
 import numpy as np
 
@@ -9,7 +11,7 @@ from tabulate import tabulate
 from application.CSFSConditionEvaluation import AUCForOrderedFeaturesCalculator
 from application.EvaluationRanking import ERCondition, ERFilterer, ERParser
 from csfs_visualisations import HumanVsActualBarChart, AnswerDeltaVisualiserBox, HumanComparisonBarChart, \
-    CSFSVsHumansBarChart
+    CSFSVsHumansBarChart, ClassifiersComparisonBarChart
 from experiment_income import ExperimentIncome
 from experiment_olympia import ExperimentOlympia
 from experiment_student_por import ExperimentStudent
@@ -374,11 +376,58 @@ class MetaExperiment:
         :return:
         """
         dataset = 'Portuguese'
-        scores = {'MLP': pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_mlp),
-                  'DT':  pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_dt),
-                    'NB':  pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_nb),
+        feature_slice = 9
+        conditions = ['csfs', 'domain', 'experts', 'lay', 'random']
+        scores = {
+            # 'MLP': pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_mlp),
+            'DT':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_dt).sort_index(),
+            'NB':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_nb).sort_index(),
         }
+        classifiers = ['DT', 'NB'] # 'MLP'
+        combinations = list(itertools.combinations(classifiers, 2))
 
+        df = pd.DataFrame(columns=conditions, index=["{} vs. {}".format(comb[0], comb[1]) for comb in combinations])
+        # print(df)
+        # exit()
+        # print(combinations)
+        print("Welch's t-test + Hedges' g effect size")
+        for condition in conditions:
+            for combination in combinations:
+                a = scores[combination[0]].loc[feature_slice, condition]
+                b = scores[combination[1]].loc[feature_slice, condition]
+                eff_size = EffectSizeSingle().get_value(a, b)
+                # print(a,b,eff_size)
+                df.loc["{} vs. {}".format(combination[0], combination[1]), condition] = eff_size
+
+        print(df)
+
+
+    def compare_classifiers_vis(self):
+        """
+        Compares Naive Bayes with Decision Tree and Multilayer perceptron
+        - t-test
+        if difference:
+        - correlation of conditions
+        :return:
+        """
+        dataset = 'Portuguese'
+        feature_slice = 9
+        print(self.datasets[dataset].path_humans_vs_actual_auc_dt)
+        scores = {
+            # 'MLP': pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_mlp),
+            'DT':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_dt).sort_index(),
+            'NB':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_nb).sort_index(),
+        }
+        conditions = ['lay', 'domain', 'experts', 'csfs']
+        for c in conditions:
+            # print(scores['DT'])
+            # exit()
+            data = {
+                s:scores[s][c] for s in scores
+            }
+            df = pd.DataFrame(data)
+            fig = ClassifiersComparisonBarChart().get_figure(df, range(1,10))
+            plotly.offline.plot(fig)
 
 
 
@@ -397,6 +446,7 @@ def run():
     # experiment.data_scientist_performance()
     #experiment.chosen_features_ig()
     experiment.compare_classifiers()
+    # experiment.compare_classifiers_vis()
 
 
 if __name__ == '__main__':

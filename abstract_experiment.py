@@ -56,7 +56,6 @@ class AbstractExperiment:
     path_budget_evaluation_result = ''
     path_budget_evaluation_cost_rawaucs = ''
     path_budget_evaluation_nofeatures_rawaucs = ''
-    path_final_evaluation_aucs = ''
     path_final_evaluation_aggregated = ''
     path_final_evaluation_combined = ''
     path_auc_plots = ''
@@ -89,15 +88,21 @@ class AbstractExperiment:
         self.path_comparison = '{}evaluation/comparison/'.format(self.base_path)
         self.path_answers_delta_plot_box = '{}results/{}/visualisations/{}_answers_delta_plot_box.html'.format(self.base_path, experiment_name, self.dataset_name)
         self.path_answers_delta_plot_line = '{}results/{}/visualisations/{}_answers_delta_plot_line.html'.format(self.base_path, experiment_name, self.dataset_name)
-        #self.path_humans_vs_actual_auc = '{}evaluation/comparison/humans_vs_actual_auc.json'.format(self.base_path)
-        self.path_humans_vs_actual_auc = '{}evaluation/comparison/humans_vs_actual_auc_mlp.json'.format(self.base_path)
+        self.path_humans_vs_actual_auc_nb = '{}evaluation/comparison/humans_vs_actual_auc_nb.json'.format(self.base_path)
+        self.path_humans_vs_actual_auc_mlp = '{}evaluation/comparison/humans_vs_actual_auc_mlp.json'.format(self.base_path)
+        self.path_humans_vs_actual_auc_dt = '{}evaluation/comparison/humans_vs_actual_auc_dt.json'.format(self.base_path)
+
 
         self.path_human_comparison_table = '{}evaluation/comparison/{}_humans_comparison_table.csv'.format(self.base_path, self.dataset_name)
-        self.path_auc_all_conditions = '{}evaluation/{}_auc_all_conditions.csv'.format(self.base_path, self.dataset_name)
+
+        self.path_auc_all_conditions_nb = '{}evaluation/{}_auc_all_conditions_nb.json'.format(self.base_path, self.dataset_name)
+        self.path_auc_all_conditions_dt = '{}evaluation/{}_auc_all_conditions_dt.json'.format(self.base_path, self.dataset_name)
+        self.path_auc_all_conditions_mlp = '{}evaluation/{}_auc_all_conditions_dt.json'.format(self.base_path, self.dataset_name)
+
         self.path_budget_evaluation_result = 'final_evaluation/private_conditions1-3_result.csv'
         self.path_budget_evaluation_nofeatures_rawaucs = '{}evaluation/budget_evaluation_nofeatures_rawaucs.pickle'.format(self.base_path, experiment_name)
 
-        self.path_final_evaluation_aucs_dt = '{}evaluation/final_evaluation_aucs_decision_tree.pickle'.format(self.base_path)
+        self.path_final_evaluation_aucs_dt = '{}evaluation/final_evaluation_aucs_dt.pickle'.format(self.base_path)
         self.path_final_evaluation_aucs_nb = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
         self.path_final_evaluation_aucs_mlp = '{}evaluation/final_evaluation_aucs_mlp.pickle'.format(self.base_path)
         # self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
@@ -455,7 +460,7 @@ class AbstractExperiment:
         df_actual_metadata = df_actual_metadata['actual']
         evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, df_actual_metadata=df_actual_metadata, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=self.bootstrap_n, repetitions=self.repetitions, replace=False)
         raw_data = evaluator.evaluate_all_to_dict(self.feature_range) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
-        pickle.dump(raw_data, open(self.path_final_evaluation_aucs, 'wb'))
+        pickle.dump(raw_data, open(self.path_final_evaluation_aucs_mlp, 'wb'))
 
     def crowd_auc_plot(self, auto_open=False):
         """
