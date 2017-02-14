@@ -37,13 +37,17 @@ class MetaExperiment:
         self.path_csfs_vs_humans_plot = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans.html'
         self.path_csfs_vs_humans_data = 'paper_plots-and-data/krowdd_vs_humans/'
 
+        self.path_single_human_performance_data = 'final_evaluation/private_single_human_performance.json'
+        self.path_data_scientists = 'final_evaluation/private_participants.csv'
+        self.path_data_scientists_performance = 'final_evaluation/private_data-scientists_performance.json'
+
+        self.path_chosen_features_ig = 'paper_plots-and-data/chosen_features_ig/'
+
         self.ds_student = ExperimentStudent('student', 2, 'experiment2_por')
         self.ds_income = ExperimentIncome('income', 1, 'experiment1')
         self.ds_olympia = ExperimentOlympia('olympia', 4, 'experiment2-4_all')
 
-        self.path_single_human_performance_data = 'final_evaluation/private_single_human_performance.json'
-        self.path_data_scientists = 'final_evaluation/private_participants.csv'
-        self.path_data_scientists_performance = 'final_evaluation/private_data-scientists_performance.json'
+        self.datasets = {'Portuguese': self.ds_student, 'Income': self.ds_income, 'Olympics': self.ds_olympia}
 
 
 
@@ -344,10 +348,28 @@ class MetaExperiment:
         print(tabulate(df_joined, headers='keys'))
         df_joined.to_json(self.path_data_scientists_performance)
 
+    def chosen_features_ig(self):
+        """
+        Lists chosen binary features with their IG. Saves one CSV for each dataset
+        :return:
+        """
+        def get_df_chosen_features(exp):
+            df_meta = pd.read_csv(exp.path_meta, index_col=0)
+            df_meta = df_meta[['IG']]
+            features = pd.read_csv(exp.path_budget_evaluation_base).Feature
+            df_chosen = df_meta.loc[features]
+            df_chosen = df_chosen.sort_values('IG', ascending=False)
+            return df_chosen
+
+        for dataset in self.datasets:
+            df_chosen_features = get_df_chosen_features(self.datasets[dataset])
+            df_chosen_features.to_csv("{}{}_chosen_features_ig.csv".format(self.path_chosen_features_ig, dataset))
+
+
 def run():
     experiment = MetaExperiment()
     # experiment.final_evaluation_combine_all()
-    experiment.plot_humans_vs_actual_all_plot()
+    #experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
     # experiment.table_kahneman()
     # experiment.plot_bar_comparing_humans()
@@ -357,6 +379,7 @@ def run():
     # experiment.move_and_rename_auc_for_all_conditions()
     # experiment.single_humans_performance()
     # experiment.data_scientist_performance()
+    experiment.chosen_features_ig()
 
 
 if __name__ == '__main__':
