@@ -25,8 +25,8 @@ class AUCComparator:
         self.classifiers = [
             # GaussianNB(),
             # LogisticRegression(),
-            #tree.DecisionTreeClassifier(),
-            MLPClassifier(learning_rate_init=1),
+            tree.DecisionTreeClassifier(),
+            # MLPClassifier(learning_rate_init=1),
             # RandomForestClassifier(),
             # SVC(probability=True), # slows it down a lot
             ]
