@@ -4,6 +4,7 @@ import math
 import itertools
 import pandas as pd
 import numpy as np
+import pickle
 
 import plotly
 from tabulate import tabulate
@@ -230,14 +231,13 @@ class MetaExperiment:
         :param auto_plot:
         :return:
         """
-        print(sorted(pd.read_json(self.ds_student.path_auc_all_conditions_dt).sort_index().loc[4].csfs))
-        print(sorted(pd.read_json(self.ds_student.path_auc_all_conditions_mlp).sort_index().loc[4].csfs))
-        exit()
         # plot_conditions=['KrowDD', 'Human', 'Random', 'Laypeople'] # for plotting
-        data = { 'student': pd.read_json(self.ds_student.path_auc_all_conditions_dt).sort_index(),
-                         'income': pd.read_json(self.ds_income.path_auc_all_conditions_dt).sort_index(),
-                         'olympia': pd.read_json(self.ds_olympia.path_auc_all_conditions_dt).sort_index(),
+        data = { 'student': pd.DataFrame(pickle.load(open(self.ds_student.path_final_evaluation_aucs_mlp, 'rb'))),
+                         'income': pd.DataFrame(pickle.load(open(self.ds_income.path_final_evaluation_aucs_mlp, 'rb'))),
+                         'olympia': pd.DataFrame(pickle.load(open(self.ds_olympia.path_final_evaluation_aucs_mlp, 'rb'))),
                 }
+        for ds in data:
+            data[ds].columns = [ERCondition.get_string_short(c) for c in data[ds].columns]
 
         def prepare_row(row):
             """
@@ -254,12 +254,12 @@ class MetaExperiment:
 
         data_filtered = {ds_name: data[ds_name].loc[feature_range].apply(prepare_row, axis='columns') for ds_name in data}
         for d in data_filtered:
-            data_filtered[d].to_json("{}{}_krowdd_vs_human_dt.json".format(self.path_csfs_vs_humans_data, d))
+            data_filtered[d].to_json("{}{}_krowdd_vs_human_mlp.json".format(self.path_csfs_vs_humans_data, d))
 
         # reduce conditions for plotting
         data_filtered = {ds_name: data_filtered[ds_name].loc[feature_range, plot_conditions] for ds_name in data }
         fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, feature_range=range(1,10))
-        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_dt)
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_mlp)
 
     def table_human_vs_csfs(self):
         """
@@ -383,22 +383,17 @@ class MetaExperiment:
         - correlation of conditions
         :return:
         """
-
-
         for dataset in self.datasets:
-            # dataset = 'Portuguese'
             feature_slice = 9
             conditions = ['csfs', 'domain', 'experts', 'lay', 'random']
 
-            data_mlp = pd.read_pickle(self.datasets[dataset].path_final_evaluation_aucs_mlp)
-            df_mlp = pd.DataFrame(data_mlp)
-            df_mlp.columns = [ERCondition.get_string_short(c) for c in df_mlp.columns]
-
             scores = {
-                'MLP': df_mlp,
-                'DT':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_dt).sort_index(),
-                'NB':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_nb).sort_index(),
+                'MLP': pd.DataFrame(pickle.load(open(self.ds_student.path_final_evaluation_aucs_mlp, 'rb'))),
+                'DT':  pd.DataFrame(pickle.load(open(self.ds_student.path_final_evaluation_aucs_dt, 'rb'))),
+                'NB':  pd.DataFrame(pickle.load(open(self.ds_student.path_final_evaluation_aucs_nb, 'rb'))),
             }
+            for c in scores:
+                scores[c].columns = [ERCondition.get_string_short(c) for c in scores[c].columns]
 
             classifiers = [c for c in scores]
             combinations = list(itertools.combinations(classifiers, 2))
@@ -436,10 +431,13 @@ class MetaExperiment:
         """
         for dataset in self.datasets:
             scores = {
-                # 'MLP': pd.read_json(self.datasets[dataset].path_final_evaluation_aucs_mlp),
-                'DT':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_dt).sort_index(),
-                'NB':  pd.read_json(self.datasets[dataset].path_auc_all_conditions_nb).sort_index(),
+                'MLP': pd.DataFrame(pickle.load(open(self.datasets[dataset].path_final_evaluation_aucs_mlp, 'rb'))),
+                'DT':  pd.DataFrame(pickle.load(open(self.datasets[dataset].path_final_evaluation_aucs_dt, 'rb'))),
+                'NB':  pd.DataFrame(pickle.load(open(self.datasets[dataset].path_final_evaluation_aucs_nb, 'rb'))),
             }
+            for c in scores:
+                scores[c].columns = [ERCondition.get_string_short(c) for c in scores[c].columns]
+
             conditions = ['lay', 'domain', 'experts', 'csfs']
             for c in conditions:
                 # print(scores['DT'])
@@ -461,15 +459,16 @@ def run():
     # experiment.plot_no_answers_vs_delta()
     # experiment.table_kahneman()
     # experiment.plot_bar_comparing_humans()
-    experiment.plot_bar_humans_vs_csfs()
     # experiment.table_human_vs_csfs()
     # experiment.table_lay_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
     # experiment.single_humans_performance()
     # experiment.data_scientist_performance()
-    #experiment.chosen_features_ig()
+    # experiment.chosen_features_ig()
+
     # experiment.compare_classifiers()
     # experiment.compare_classifiers_vis()
+    experiment.plot_bar_humans_vs_csfs()
 
 
 if __name__ == '__main__':
