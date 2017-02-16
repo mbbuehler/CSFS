@@ -12,6 +12,7 @@ class COLORS_HEX:
     RED = '#D62728'
     VIOLET = '#AC84E2'
     GREY = '#BABABA'
+    DARKGREY = '#666666'
     YELLOW = '#FFF100'
 
 from application.EvaluationRanking import ERCondition
@@ -20,13 +21,13 @@ colors = {ERCondition.LAYPERSON: COLORS_HEX.VIOLET,
           ERCondition.DOMAIN: COLORS_HEX.GREEN,
           ERCondition.EXPERT: COLORS_HEX.ORANGE_BRIGHT,
           ERCondition.CSFS: COLORS_HEX.BLUE,
-          ERCondition.RANDOM: COLORS_HEX.GREY,
+          ERCondition.RANDOM: COLORS_HEX.DARKGREY,
           ERCondition.HUMAN: COLORS_HEX.ORANGE_DARK,
           'Laypeople': COLORS_HEX.VIOLET,
           'Domain Experts': COLORS_HEX.GREEN,
           'Data Scientists': COLORS_HEX.ORANGE_BRIGHT,
           'KrowDD': COLORS_HEX.BLUE,
-          'Random': COLORS_HEX.GREY,
+          'Random': COLORS_HEX.DARKGREY,
           'Human': COLORS_HEX.ORANGE_DARK,
           }
 

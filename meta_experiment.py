@@ -74,9 +74,9 @@ class MetaExperiment:
         Plots human experts (domain and data science) relative to max/min performance for all datasets.
         :return:
         """
-        df_student = pd.read_json(self.ds_student.path_humans_vs_actual_auc).sort_index()
-        df_income = pd.read_json(self.ds_income.path_humans_vs_actual_auc).sort_index()
-        df_olympia = pd.read_json(self.ds_olympia.path_humans_vs_actual_auc).sort_index()
+        df_student = pd.read_json(self.ds_student.path_humans_vs_actual_auc_nb).sort_index()
+        df_income = pd.read_json(self.ds_income.path_humans_vs_actual_auc_nb).sort_index()
+        df_olympia = pd.read_json(self.ds_olympia.path_humans_vs_actual_auc_nb).sort_index()
         df_all = [df_student, df_income, df_olympia]
         max_feature_count = max(list(df_student.index) + list(df_olympia.index) + list(df_income.index))
         range_features = range(1, max_feature_count+1)
@@ -455,10 +455,10 @@ class MetaExperiment:
 def run():
     experiment = MetaExperiment()
     # experiment.final_evaluation_combine_all()
-    #experiment.plot_humans_vs_actual_all_plot()
+    # experiment.plot_humans_vs_actual_all_plot()
     # experiment.plot_no_answers_vs_delta()
     # experiment.table_kahneman()
-    # experiment.plot_bar_comparing_humans()
+    experiment.plot_bar_comparing_humans()
     # experiment.table_human_vs_csfs()
     # experiment.table_lay_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
@@ -468,7 +468,7 @@ def run():
 
     # experiment.compare_classifiers()
     # experiment.compare_classifiers_vis()
-    experiment.plot_bar_humans_vs_csfs()
+    # experiment.plot_bar_humans_vs_csfs()
 
 
 if __name__ == '__main__':
