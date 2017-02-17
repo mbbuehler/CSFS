@@ -267,7 +267,7 @@ class ERCostEvaluator(EREvaluator):
 class ERNofeaturesEvaluator(EREvaluator):
 
     def evaluate(self, budget_range, condition):
-        sys.stdout.write("> Contition {} started".format(condition))
+        sys.stdout.write("> Condition {} started".format(condition))
         if condition in [ERCondition.LAYPERSON, ERCondition.DOMAIN, ERCondition.EXPERT]: # ranking conditions
             df_result_filtered = self._get_filtered_result(condition)
             list_nofeatures_aucs = [self._get_aucs(row, budget_range) for i,row in df_result_filtered.iterrows()] # list of dfs with index=nofeature and one column 'auc'
@@ -318,7 +318,9 @@ class ERNofeaturesEvaluator(EREvaluator):
             df_ordered = pd.DataFrame({'Feature': features})
             result = {nofeatures: list() for nofeatures in budget_range}
             for i in range(100):
+                sys.stdout.write("Random Repetition {}".format(i))
                 df_shuffled = df_ordered.sample(frac=1).reset_index(drop=True)
+                # print(df_shuffled)
                 evaluator = AUCForOrderedFeaturesCalculator(df_shuffled, self.df_cleaned_bin, self.target)
                 df_aucs = evaluator.get_auc_for_nofeatures_range(budget_range) # df with one col: AUC and index= cost
                 for nofeature in df_aucs.index:

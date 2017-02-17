@@ -269,6 +269,8 @@ class HumanVsActualBarChart:
         )
 
     def get_trace(self, df, condition_human):
+        if condition_human == 'Random':
+            df[condition_human] = df[condition_human].apply(lambda v: np.random.choice(v, 19))
         # print(df[condition_human]) # index: no features, value: list
         y = [np.mean(l) for l in df[condition_human]]
         list_ci = [CSFSBootstrap.get_ci(l) for l in df[condition_human]]
@@ -347,13 +349,22 @@ class HumanComparisonBarChart:
     def get_trace(self, df, feature_range, condition, show_legend):
         # print(df[condition_human]) # index: no features, value: list
         df_sel = df[condition].loc[feature_range]
-        y = list(df_sel['mean'])
-        ci = list((df_sel['ci_hi'] - df_sel['ci_lo']) / 2)
+        if condition == 'Random':
+            df[condition] = df[condition].apply(lambda v: np.random.choice(v, 19))
+        # y = list(df_sel['mean'])
+        # ci = list((df_sel['ci_hi'] - df_sel['ci_lo']) / 2)
+        # print(condition)
+        y = [np.mean(l) for l in df.loc[feature_range, condition]]
+        list_ci = [CSFSBootstrap.get_ci(l) for l in df.loc[feature_range, condition]]
+        ci_delta = [ci[1]-ci[0] for ci in list_ci]
+        error_y = [d/2 for d in ci_delta]
+        # error = [np.std(l) for l in df[condition_human]]
+        ci = error_y
 
         return go.Bar(
             x=list(feature_range),
             y=y,
-            name=ERCondition.get_string_paper(condition),
+            name=condition,
             error_y=dict(
                 type='data',
                 array=ci,
@@ -393,10 +404,11 @@ class HumanComparisonBarChart:
         """
         datasets = sorted(list(data.keys()))
         dataset_count = len(datasets)
-        fig = tools.make_subplots(rows=1, cols=dataset_count, shared_xaxes=True, subplot_titles=[get_dataset_name_paper(name) for name in datasets], ) #  vertical_spacing=0.05
+        fig = tools.make_subplots(rows=1, cols=dataset_count, shared_xaxes=True, subplot_titles=[name for name in datasets], ) #  vertical_spacing=0.05
         show_legend = True
         for i in range(dataset_count):
             df_dataset = data[datasets[i]]
+            print(datasets[i])
             for condition in conditions:
                 trace = self.get_trace(df_dataset, feature_range, condition, show_legend)
                 fig.append_trace(trace, 1, i+1)
@@ -575,6 +587,6 @@ def get_dataset_name_paper(identifier):
     NAMES = {
         'income': 'Income',
         'olympia': 'Olympics',
-        'student': 'Portuguese',
+        'student': 'Student',
     }
     return NAMES[identifier]

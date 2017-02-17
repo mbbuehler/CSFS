@@ -61,6 +61,7 @@ class AUCForOrderedFeaturesCalculator(AUCCalculator):
 
     def get_auc_for_nofeatures(self, n):
         features = list(self.df_features_ranked['Feature'].loc[:n-1]) # index starting with 0 and includes n
+        # print(n, features)
         auc = self.auc_evaluator.evaluate_features(features)
         return auc
 

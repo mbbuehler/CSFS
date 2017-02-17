@@ -23,9 +23,9 @@ class AUCComparator:
         self.target = target
         self.fast = fast
         self.classifiers = [
-            # GaussianNB(),
+            GaussianNB(),
             # LogisticRegression(),
-            tree.DecisionTreeClassifier(),
+            # tree.DecisionTreeClassifier(),
             # MLPClassifier(learning_rate_init=1),
             # RandomForestClassifier(),
             # SVC(probability=True), # slows it down a lot
@@ -80,8 +80,9 @@ class AUCCalculator:
         roc_aucs = list()
         for i, (train,test) in enumerate(cv):
             probas_ = classifier.fit(X[train], y[train]).predict_proba(X[test])
-            fpr, tpr, thresholds = roc_curve(y[test], probas_[:,1])
-            roc_aucs.append(auc(fpr, tpr))
+            if not np.isnan(probas_).any():
+                fpr, tpr, thresholds = roc_curve(y[test], probas_[:,1])
+                roc_aucs.append(auc(fpr, tpr))
 
         with_p_r_f = False # with precision, recall, f-score
         if with_p_r_f:

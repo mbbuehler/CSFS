@@ -460,7 +460,7 @@ class AbstractExperiment:
         df_actual_metadata = df_actual_metadata['actual']
         evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, df_actual_metadata=df_actual_metadata, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=self.bootstrap_n, repetitions=self.repetitions, replace=False)
         raw_data = evaluator.evaluate_all_to_dict(self.feature_range) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
-        pickle.dump(raw_data, open(self.path_final_evaluation_aucs_dt, 'wb'))
+        pickle.dump(raw_data, open(self.path_final_evaluation_aucs_nb, 'wb'))
 
     def crowd_auc_plot(self, auto_open=False):
         """

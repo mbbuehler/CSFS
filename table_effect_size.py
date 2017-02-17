@@ -139,6 +139,14 @@ class EffectSizeSingle:
         :param b:
         :return:
         """
+        print('--')
+        print(len(a))
+        print(len(b))
+        if len(a) != len(b):
+            m = min(len(a), len(b))
+            print(m)
+            a = np.random.choice(a, m, replace=False)
+            b = np.random.choice(b, m, replace=False)
         corr, p = spearmanr(a, b)
         value = "{:.3f}{}".format(corr, self._get_asteriks(p))
         return value

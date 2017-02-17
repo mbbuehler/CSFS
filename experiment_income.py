@@ -10,7 +10,7 @@ class ExperimentIncome(AbstractExperiment):
 
     def __init__(self, dataset_name, experiment_number, experiment_name):
         super().__init__(dataset_name, experiment_number, experiment_name)
-        self.feature_range = range(1, 18)
+        self.feature_range = range(1, 16)
 
         self.path_raw = '{}raw/{}/income.csv'.format(self.base_path, experiment_name)
         self.path_cleaned = '{}cleaned/{}/income_clean.csv'.format(self.base_path, experiment_name)

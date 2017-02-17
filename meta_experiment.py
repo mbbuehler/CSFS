@@ -19,6 +19,9 @@ from experiment_student_por import ExperimentStudent
 from table_effect_size import EffectSizeTable, EffectSizeSingle
 from scipy.stats import spearmanr
 
+from util.util_features import remove_binning_cond_markup, get_features_from_questions
+
+
 class MetaExperiment:
     def __init__(self):
         self.path_final_evaluation_combined = 'final_evaluation/combined.csv'
@@ -50,11 +53,13 @@ class MetaExperiment:
 
         self.path_compare_classifiers = 'final_evaluation/compare_classifiers/'
 
+        self.path_data = 'paper_plots-and-data/datasets/'
+
         self.ds_student = ExperimentStudent('student', 2, 'experiment2_por')
         self.ds_income = ExperimentIncome('income', 1, 'experiment1')
         self.ds_olympia = ExperimentOlympia('olympia', 4, 'experiment2-4_all')
 
-        self.datasets = {'Portuguese': self.ds_student, 'Income': self.ds_income, 'Olympics': self.ds_olympia}
+        self.datasets = {'Student': self.ds_student, 'Income': self.ds_income, 'Olympics': self.ds_olympia}
 
 
 
@@ -141,6 +146,74 @@ class MetaExperiment:
         # fig = HumanVsActualBarChart().get_histograms(df_result)
         # plotly.offline.plot(fig, auto_open=True, image='png', filename=self.path_human_vs_actual_histogram)
 
+    def plot_humans_vs_actual_all_plot2(self):
+        """
+        Plots human experts (domain and data science) relative to max/min performance for all datasets.
+        :return:
+        """
+        data = {ds: pd.read_json("{}{}_evaluated_nb.json".format(self.path_data, ds)) for ds in self.datasets}
+        range_features = range(1, 10)
+        conditions = ['Domain Experts', 'Data Scientists', 'Random'] # 'lay',
+
+        def normalise(x, min, max):
+            if x == min == max:
+                z = -1
+            # only for debugging
+            elif min == max:
+                return -1
+            else:
+                z = (x - min) / (max - min)
+            print(x,min,max,z)
+            assert 0 <= round(z,1) <= 1 or z == -1
+
+            return z
+
+        def normalise_row(row):
+            """
+            Returns row with normalised values. only returns human conditions (others are 1 and 0, respectively)
+            """
+            row_norm = row[conditions].copy()
+            for c in conditions:
+                print(row[c])
+                values_normalised = [normalise(x, min=row['worst'], max=row['best']) for x in row[c]]
+                # print('vals')
+                # print(values_normalised)
+                values_normalised = [v for v in values_normalised if v != -1]
+                # print(values_normalised)
+                row_norm[c] = values_normalised
+            return row_norm
+
+        df_result = pd.DataFrame({c: {i: list() for i in range_features} for c in conditions}) # initialize dataframe with lists
+        data_norm_all = {ds: data[ds].loc[range_features].apply(normalise_row, axis='columns') for ds in data}
+        for ds in data_norm_all:
+            df = data_norm_all[ds]
+            for column in df:
+                for index in df[column].index: # list scores is array with float values
+                    if index in df.index:
+                        df_result.loc[index, column] += df.loc[index, column]
+                    # print(df.loc[index, column])
+
+        # print(tabulate(df_result, headers='keys'))
+        #
+        # exit()
+        # df_result has index=range_answers and columns 'domain', 'experts',... values are lists of normalised scores
+        def filter_row(row):
+            # filters na and -1 values
+            def filter(l):
+                if isinstance(l, list):
+                    return [e for e in l if 0 <= round(e,3) <= 1]
+                if np.isnan(l):
+                    return list()
+            row = row.apply(filter)
+            return row
+            # filter na and -1 values
+        df_result = df_result.apply(filter_row)
+        # df_result.columns = ['Domain Experts', 'Data Scientists', 'Random'] #'Laypeople'
+        # df_result.to_json(self.path_human_vs_actual_data)
+
+        fig = HumanVsActualBarChart().get_figure(df_result, feature_range=range(1,10))
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_human_vs_actual_barchart)
+
     def plot_no_answers_vs_delta(self):
         """
         Combined Boxplot for number of answers versus combined error for all three conditions.
@@ -203,9 +276,6 @@ class MetaExperiment:
             b = df_data.loc[cond, 'Portuguese'] + df_data.loc[cond, 'Olympics']
             print("{}: {}".format(cond, EffectSizeSingle().get_value(a, b)))
 
-
-
-
     def plot_bar_comparing_humans(self, auto_plot=False):
         """
         Bar chart with CI error bars comparing condition 1-3
@@ -218,6 +288,22 @@ class MetaExperiment:
                  'olympia': pd.read_pickle(self.ds_olympia.path_final_evaluation_aggregated),
         }
         fig = HumanComparisonBarChart().get_figure(data, feature_range=range(1, 10), conditions=[ERCondition.EXPERT, ERCondition.DOMAIN, ERCondition.RANDOM]) # , 1
+        plotly.offline.plot(fig, auto_open=auto_plot, filename=self.path_human_comparison_plot)
+        for dataset in data:
+            path = "{}human-comparison_{}.json".format(self.path_human_comparison_data, dataset)
+            data[dataset].to_json(path) # TODO: remove count, std, ... which is not visualised
+        return fig
+
+    def plot_bar_comparing_humans2(self, auto_plot=False):
+        """
+        Bar chart with CI error bars comparing condition 1-3
+        :param auto_plot:
+        :return:
+        """
+        auto_plot=True
+        data = {ds: pd.read_json("{}{}_evaluated_nb.json".format(self.path_data, ds)) for ds in self.datasets}
+
+        fig = HumanComparisonBarChart().get_figure(data, feature_range=range(1, 10), conditions=['Data Scientists', 'Domain Experts', 'Random']) # , 1
         plotly.offline.plot(fig, auto_open=auto_plot, filename=self.path_human_comparison_plot)
         for dataset in data:
             path = "{}human-comparison_{}.json".format(self.path_human_comparison_data, dataset)
@@ -288,9 +374,6 @@ class MetaExperiment:
             df_result[d] = series
         df_result.columns=['Portuguese', 'Income', 'Olympics']
         print(df_result.to_latex(escape=False))
-
-
-
 
     def move_and_rename_auc_for_all_conditions(self):
         """
@@ -388,9 +471,9 @@ class MetaExperiment:
             conditions = ['csfs', 'domain', 'experts', 'lay', 'random']
 
             scores = {
-                'MLP': pd.DataFrame(pickle.load(open(self.ds_student.path_final_evaluation_aucs_mlp, 'rb'))),
-                'DT':  pd.DataFrame(pickle.load(open(self.ds_student.path_final_evaluation_aucs_dt, 'rb'))),
-                'NB':  pd.DataFrame(pickle.load(open(self.ds_student.path_final_evaluation_aucs_nb, 'rb'))),
+                'MLP': pd.DataFrame(pickle.load(open(self.datasets[dataset].path_final_evaluation_aucs_mlp, 'rb'))),
+                'DT':  pd.DataFrame(pickle.load(open(self.datasets[dataset].path_final_evaluation_aucs_dt, 'rb'))),
+                'NB':  pd.DataFrame(pickle.load(open(self.datasets[dataset].path_final_evaluation_aucs_nb, 'rb'))),
             }
             for c in scores:
                 scores[c].columns = [ERCondition.get_string_short(c) for c in scores[c].columns]
@@ -407,8 +490,11 @@ class MetaExperiment:
             # exit()
             for condition in conditions:
                 for combination in combinations:
+                    print(combination)
                     a = scores[combination[0]].loc[feature_slice, condition]
                     b = scores[combination[1]].loc[feature_slice, condition]
+                    # print(a)
+                    # print(b)
                     eff_size = EffectSizeSingle().get_value(a, b)
                     # print(a,b,eff_size)
                     df_t.loc["{} vs. {}".format(combination[0], combination[1]), condition] = eff_size
@@ -450,15 +536,46 @@ class MetaExperiment:
                 filename = "{}{}_{}_classifier-performance.html".format(self.path_compare_classifiers, dataset, c)
                 plotly.offline.plot(fig, filename=filename, auto_open=False)
 
+    def save_data_for_paper(self):
+        for dataset in self.datasets:
+            df = pd.DataFrame(pickle.load(open(self.datasets[dataset].path_final_evaluation_aucs_nb, 'rb')))
+            df.columns = [ERCondition.get_string_paper(c) for c in df.columns]
+            path = "{}{}_evaluated_nb.json".format(self.path_data, dataset)
+            df.to_json(path)
+
+    def tmp(self):
+        for dataset in self.datasets:
+            path = "{}{}_evaluated_nb.json".format(self.path_data, dataset)
+            df = pd.read_json(path)
+            df.columns = [c[:1].upper()+c[1:] for c in df.columns]
+            # df['Random'] = df['Random'].apply(lambda x: np.random.choice(x, 19, replace=False))
+            print(list(df.columns))
+            df.to_json("{}{}_evaluated_nb.json".format(self.path_data, dataset))
+
+    def copy_bin_datasets(self):
+        for dataset in self.datasets:
+            df = pd.read_csv(self.datasets[dataset].path_bin)
+            # remove features that have not been used in evaluation
+            df_questions = pd.read_csv(self.datasets[dataset].path_questions, header=None)
+            features = get_features_from_questions(self.datasets[dataset].path_questions, remove_cond=True)
+            features.append(self.datasets[dataset].target)
+            df = df[features]
+            path = "{}{}_bin.csv".format(self.path_data, dataset)
+            df.to_csv(path, index=False)
+            # exit()
+
+
+
 
 
 def run():
     experiment = MetaExperiment()
     # experiment.final_evaluation_combine_all()
     # experiment.plot_humans_vs_actual_all_plot()
+    # experiment.plot_humans_vs_actual_all_plot2()
     # experiment.plot_no_answers_vs_delta()
     # experiment.table_kahneman()
-    experiment.plot_bar_comparing_humans()
+    # experiment.plot_bar_comparing_humans()
     # experiment.table_human_vs_csfs()
     # experiment.table_lay_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
@@ -469,7 +586,10 @@ def run():
     # experiment.compare_classifiers()
     # experiment.compare_classifiers_vis()
     # experiment.plot_bar_humans_vs_csfs()
-
+    # experiment.save_data_for_paper()
+    # experiment.plot_bar_comparing_humans2()
+    # experiment.tmp()
+    experiment.copy_bin_datasets()
 
 if __name__ == '__main__':
     run()
