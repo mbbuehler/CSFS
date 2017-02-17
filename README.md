@@ -34,7 +34,7 @@ NUMBER_OF_FEATURES denotes the number of features used to train the classifier. 
 
 Figure 5: Crowd Estimate Errors
 -------------
-Data for creating [Figure 5](answers-delta/no_answers_vs_delta.png) can be found as .json [here](answers-delta/no_answers_vs_delta_data.json).
+Data for creating [Figure 5](paper_plots-and-data/fig5_no_answers_vs_delta.png) can be found as .json [here](paper_plots-and-data/fig5_no_answers_vs_delta_data.json).
 The File is structured as follow:
 {NUMBER_OF_ANSWERS:{INDEX_0: Delta_0, INDEX_1: Delta_1,...},...}
 NUMBER_OF_ANSWERS denotes the numbers of estimates sampled from all acquired crowd estimates (without replacement). DELTA_X denotes the average of the absolute difference between the means calculated from the actual dataset and the aggregated crowd estimates. INDEX_X is an internal index.
