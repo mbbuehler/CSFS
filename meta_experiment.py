@@ -310,40 +310,43 @@ class MetaExperiment:
             data[dataset].to_json(path) # TODO: remove count, std, ... which is not visualised
         return fig
 
-    def plot_bar_humans_vs_csfs(self, auto_plot=True, feature_range=range(1,10), plot_conditions=['KrowDD', 'Human']):
+    def plot_bar_humans_vs_csfs(self, auto_plot=True, feature_range=range(1,10), plot_conditions=['KrowDD', 'Human'], recalc=False):
         """
         Bar chart comparing the combined condition (data scientsts + domain experts) with csfs
         change classifier 3 times (data in, data out, vis filename)
         :param auto_plot:
         :return:
         """
-        # plot_conditions=['KrowDD', 'Human', 'Random', 'Laypeople'] # for plotting
-        data = { 'student': pd.DataFrame(pickle.load(open(self.ds_student.path_final_evaluation_aucs_mlp, 'rb'))),
-                         'income': pd.DataFrame(pickle.load(open(self.ds_income.path_final_evaluation_aucs_mlp, 'rb'))),
-                         'olympia': pd.DataFrame(pickle.load(open(self.ds_olympia.path_final_evaluation_aucs_mlp, 'rb'))),
-                }
-        for ds in data:
-            data[ds].columns = [ERCondition.get_string_short(c) for c in data[ds].columns]
+        datasets = ['income', 'student', 'olympia']
+        if recalc:
+            # plot_conditions=['KrowDD', 'Human', 'Random', 'Laypeople'] # for plotting
+            data = { 'student': pd.DataFrame(pickle.load(open(self.ds_student.path_final_evaluation_aucs_nb, 'rb'))),
+                             'income': pd.DataFrame(pickle.load(open(self.ds_income.path_final_evaluation_aucs_nb, 'rb'))),
+                             'olympia': pd.DataFrame(pickle.load(open(self.ds_olympia.path_final_evaluation_aucs_nb, 'rb'))),
+                    }
+            for ds in data:
+                data[ds].columns = [ERCondition.get_string_short(c) for c in data[ds].columns]
 
-        def prepare_row(row):
-            """
-            Returns new row with two columns: combined experts and data scientists + cfs
-            :param row:
-            :return:
-            """
-            values_csfs = row['csfs']
-            values_human = row['experts'] + row['domain']
-            values_random = row['random']
-            values_lay = row['lay']
-            row_new = pd.Series({'KrowDD': values_csfs, 'Human': values_human, 'Random': values_random, 'Laypeople': values_lay})
-            return row_new
+            def prepare_row(row):
+                """
+                Returns new row with two columns: combined experts and data scientists + cfs
+                :param row:
+                :return:
+                """
+                values_csfs = row['csfs']
+                values_human = row['experts'] + row['domain']
+                values_random = row['random']
+                values_lay = row['lay']
+                row_new = pd.Series({'KrowDD': values_csfs, 'Human': values_human, 'Random': values_random, 'Laypeople': values_lay})
+                return row_new
 
-        data_filtered = {ds_name: data[ds_name].loc[feature_range].apply(prepare_row, axis='columns') for ds_name in data}
-        for d in data_filtered:
-            data_filtered[d].to_json("{}{}_krowdd_vs_human_mlp.json".format(self.path_csfs_vs_humans_data, d))
-
+            data_filtered = {ds_name: data[ds_name].loc[feature_range].apply(prepare_row, axis='columns') for ds_name in data}
+            for d in data_filtered:
+                data_filtered[d].to_json("{}{}_krowdd_vs_human_nb.json".format(self.path_csfs_vs_humans_data, d))
+        else:
+            data_filtered = {ds_name: pd.read_json("{}{}_krowdd_vs_human_nb.json".format(self.path_csfs_vs_humans_data, ds_name)).sort_index() for ds_name in datasets}
         # reduce conditions for plotting
-        data_filtered = {ds_name: data_filtered[ds_name].loc[feature_range, plot_conditions] for ds_name in data }
+        data_filtered = {ds_name: data_filtered[ds_name].loc[feature_range, plot_conditions] for ds_name in datasets }
         fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, feature_range=range(1,10))
         plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_mlp)
 
@@ -360,7 +363,7 @@ class MetaExperiment:
             df = data[d]
             series = EffectSizeTable(df, feature_range=feature_range).get_result_series(dataset_name=d, condition_better='KrowDD', condition_other='Human')
             df_result[d] = series
-        df_result.columns=['Portuguese', 'Income', 'Olympics']
+        df_result.columns=['Student', 'Income', 'Olympics']
         print(df_result.to_latex(escape=False))
 
     def table_lay_vs_csfs(self):
@@ -585,11 +588,11 @@ def run():
 
     # experiment.compare_classifiers()
     # experiment.compare_classifiers_vis()
-    # experiment.plot_bar_humans_vs_csfs()
+    experiment.plot_bar_humans_vs_csfs()
     # experiment.save_data_for_paper()
     # experiment.plot_bar_comparing_humans2()
     # experiment.tmp()
-    experiment.copy_bin_datasets()
+    # experiment.copy_bin_datasets()
 
 if __name__ == '__main__':
     run()
