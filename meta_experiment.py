@@ -16,7 +16,7 @@ from csfs_visualisations import HumanVsActualBarChart, AnswerDeltaVisualiserBox,
 from experiment_income import ExperimentIncome
 from experiment_olympia import ExperimentOlympia
 from experiment_student_por import ExperimentStudent
-from table_effect_size import EffectSizeTable, EffectSizeSingle
+from table_effect_size import EffectSizeTable, EffectSizeSingle, EffectSizeMatrix
 from scipy.stats import spearmanr
 
 from util.util_features import remove_binning_cond_markup, get_features_from_questions
@@ -393,16 +393,39 @@ class MetaExperiment:
         df_result.columns=['Student', 'Income', 'Olympics']
         print(df_result.to_latex(escape=False))
 
+    def table_human_vs_csfs2(self):
+        """
+        :pre: json data already saved in plot above
+        :return:
+        """
+        data = self.get_evaluation_data()
+        feature_range = range(1,10)
+        def prepare_row(row): # copy from plot function
+                """
+                Returns new row with two columns: combined experts and data scientists + cfs
+                :param row:
+                :return:
+                """
+                values_csfs = row['KrowDD']
+                values_human = row['Domain Experts'] + row['Data Scientists']
+                row_new = pd.Series({'KrowDD': values_csfs, 'Human': values_human})
+                return row_new
+        data_filtered = {ds_name: data[ds_name].loc[feature_range].apply(prepare_row, axis='columns') for ds_name in data}
+        df_result = pd.DataFrame(index=feature_range)
+        for d in data_filtered:
+            df = data_filtered[d]
+            series = EffectSizeTable(df, feature_range=feature_range).get_result_series(dataset_name=d, condition_better='KrowDD', condition_other='Human')
+            df_result[d] = series
+        print(df_result.to_latex(escape=False))
+
     def table_lay_vs_csfs(self):
-        datasets = ['student', 'income', 'olympia']
-        data = { d: pd.read_json("{}{}_krowdd_vs_human.json".format(self.path_csfs_vs_humans_data, d)).sort_index() for d in datasets}
+        data = self.get_evaluation_data()
         feature_range = range(1,10)
         df_result = pd.DataFrame(index=feature_range)
-        for d in datasets:
+        for d in data:
             df = data[d]
             series = EffectSizeTable(df, feature_range=feature_range, conditions=['KrowDD', 'Laypeople']).get_result_series(dataset_name=d, condition_better='KrowDD', condition_other='Laypeople')
             df_result[d] = series
-        df_result.columns=['Portuguese', 'Income', 'Olympics']
         print(df_result.to_latex(escape=False))
 
     def move_and_rename_auc_for_all_conditions(self):
@@ -594,6 +617,18 @@ class MetaExperiment:
             df.to_csv(path, index=False)
             # exit()
 
+    def human_comparison_table(self):
+        # effect size table for human comparison. previously in experiments
+        data = self.get_evaluation_data()
+        # print(data)
+        conditions = ['Domain Experts', 'Data Scientists', 'Random']
+        for dataset in data:
+            print(dataset)
+            df = data[dataset]
+            table = EffectSizeMatrix(df, conditions, remove_null=True, rename_columns=False)
+            latex = table.get_latex()
+            print(latex)
+
 
 
 
@@ -602,12 +637,13 @@ def run():
     experiment = MetaExperiment()
     # experiment.final_evaluation_combine_all()
     # experiment.plot_humans_vs_actual_all_plot()
-    experiment.plot_humans_vs_actual_all_plot2()
+    # experiment.plot_humans_vs_actual_all_plot2()
     # experiment.plot_no_answers_vs_delta()
     # experiment.table_kahneman()
     # experiment.plot_bar_comparing_humans()
     # experiment.table_human_vs_csfs()
-    # experiment.table_lay_vs_csfs()
+    # experiment.table_human_vs_csfs2()
+    experiment.table_lay_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
     # experiment.single_humans_performance()
     # experiment.data_scientist_performance()
@@ -620,6 +656,7 @@ def run():
     # experiment.plot_bar_comparing_humans2()
     # experiment.tmp()
     # experiment.copy_bin_datasets()
+    # experiment.human_comparison_table()
 
 if __name__ == '__main__':
     run()
