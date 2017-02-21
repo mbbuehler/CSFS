@@ -317,7 +317,7 @@ class ERNofeaturesEvaluator(EREvaluator):
             features = list(self.df_answers_grouped.drop(self.target).index)
             df_ordered = pd.DataFrame({'Feature': features})
             result = {nofeatures: list() for nofeatures in budget_range}
-            for i in range(100):
+            for i in range(19):
                 sys.stdout.write("Random Repetition {}".format(i))
                 df_shuffled = df_ordered.sample(frac=1).reset_index(drop=True)
                 # print(df_shuffled)

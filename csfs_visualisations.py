@@ -32,15 +32,16 @@ colors = {ERCondition.LAYPERSON: COLORS_HEX.VIOLET,
           'Human': COLORS_HEX.ORANGE_DARK,
           }
 # thesis colors
-colors = {ERCondition.LAYPERSON: COLORS_HEX.VIOLET,
-          ERCondition.DOMAIN: COLORS_HEX.GREEN,
-          ERCondition.EXPERT: COLORS_HEX.ORANGE_BRIGHT,
-          ERCondition.CSFS: COLORS_HEX.BLUE,
-          ERCondition.RANDOM: COLORS_HEX.DARKGREY,
-          ERCondition.HUMAN: COLORS_HEX.YELLOW,
+colors = {
+    # ERCondition.LAYPERSON: COLORS_HEX.VIOLET,
+    #       ERCondition.DOMAIN: COLORS_HEX.GREEN,
+    #       ERCondition.EXPERT: COLORS_HEX.ORANGE_BRIGHT,
+    #       ERCondition.CSFS: COLORS_HEX.BLUE,
+    #       ERCondition.RANDOM: COLORS_HEX.DARKGREY,
+    #       ERCondition.HUMAN: COLORS_HEX.YELLOW,
           'Laypeople': COLORS_HEX.VIOLET,
-          'Domain Experts': COLORS_HEX.GREEN,
-          'Data Scientists': COLORS_HEX.ORANGE_BRIGHT,
+          'Domain Experts': COLORS_HEX.ORANGE_BRIGHT,
+          'Data Scientists': COLORS_HEX.BLUE,
           'KrowDD': COLORS_HEX.GREEN,
           'Random': COLORS_HEX.DARKGREY,
           'Human': COLORS_HEX.ORANGE_BRIGHT,
@@ -364,8 +365,6 @@ class HumanComparisonBarChart:
     def get_trace(self, df, feature_range, condition, show_legend):
         # print(df[condition_human]) # index: no features, value: list
         df_sel = df[condition].loc[feature_range]
-        if condition == 'Random':
-            df[condition] = df[condition].apply(lambda v: np.random.choice(v, 19))
         # y = list(df_sel['mean'])
         # ci = list((df_sel['ci_hi'] - df_sel['ci_lo']) / 2)
         # print(condition)

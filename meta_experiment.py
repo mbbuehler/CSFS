@@ -156,7 +156,7 @@ class MetaExperiment:
         Plots human experts (domain and data science) relative to max/min performance for all datasets.
         :return:
         """
-        data = {ds: pd.read_json("{}{}_evaluated_nb.json".format(self.path_data, ds)) for ds in self.datasets}
+        data = self.get_evaluation_data()
         range_features = range(1, 10)
         conditions = ['Domain Experts', 'Data Scientists', 'Random'] # 'lay',
 
@@ -168,7 +168,7 @@ class MetaExperiment:
                 return -1
             else:
                 z = (x - min) / (max - min)
-            print(x,min,max,z)
+            # print(x,min,max,z)
             assert 0 <= round(z,1) <= 1 or z == -1
 
             return z
@@ -178,9 +178,10 @@ class MetaExperiment:
             Returns row with normalised values. only returns human conditions (others are 1 and 0, respectively)
             """
             row_norm = row[conditions].copy()
+            print(row)
             for c in conditions:
-                print(row[c])
-                values_normalised = [normalise(x, min=row['worst'], max=row['best']) for x in row[c]]
+
+                values_normalised = [normalise(x, min=row['Worst'], max=row['Best']) for x in row[c]]
                 # print('vals')
                 # print(values_normalised)
                 values_normalised = [v for v in values_normalised if v != -1]
@@ -299,20 +300,18 @@ class MetaExperiment:
             data[dataset].to_json(path) # TODO: remove count, std, ... which is not visualised
         return fig
 
-    def plot_bar_comparing_humans2(self, auto_plot=False):
+    def plot_bar_comparing_humans2(self):
         """
         Bar chart with CI error bars comparing condition 1-3
         :param auto_plot:
         :return:
         """
-        auto_plot=True
-        data = {ds: pd.read_json("{}{}_evaluated_nb.json".format(self.path_data, ds)) for ds in self.datasets}
-
+        data = self.get_evaluation_data()
         fig = HumanComparisonBarChart().get_figure(data, feature_range=range(1, 10), conditions=['Data Scientists', 'Domain Experts', 'Random']) # , 1
-        plotly.offline.plot(fig, auto_open=auto_plot, filename=self.path_human_comparison_plot)
-        for dataset in data:
-            path = "{}human-comparison_{}.json".format(self.path_human_comparison_data, dataset)
-            data[dataset].to_json(path) # TODO: remove count, std, ... which is not visualised
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_human_comparison_plot)
+        # for dataset in data:
+        #     path = "{}human-comparison_{}.json".format(self.path_human_comparison_data, dataset)
+        #     data[dataset].to_json(path) # TODO: remove count, std, ... which is not visualised
         return fig
 
     def plot_bar_humans_vs_csfs(self, auto_plot=True, feature_range=range(1,10), plot_conditions=['KrowDD', 'Human'], recalc=False):
@@ -603,7 +602,7 @@ def run():
     experiment = MetaExperiment()
     # experiment.final_evaluation_combine_all()
     # experiment.plot_humans_vs_actual_all_plot()
-    # experiment.plot_humans_vs_actual_all_plot2()
+    experiment.plot_humans_vs_actual_all_plot2()
     # experiment.plot_no_answers_vs_delta()
     # experiment.table_kahneman()
     # experiment.plot_bar_comparing_humans()
@@ -616,7 +615,7 @@ def run():
 
     # experiment.compare_classifiers()
     # experiment.compare_classifiers_vis()
-    experiment.plot_bar_humans_vs_csfs2()
+    # experiment.plot_bar_humans_vs_csfs2()
     # experiment.save_data_for_paper()
     # experiment.plot_bar_comparing_humans2()
     # experiment.tmp()

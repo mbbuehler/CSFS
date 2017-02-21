@@ -165,7 +165,7 @@ paid==yes                1    1    0    0    1    2    0    0    0     0     1  
         # experiment.evaluate_csfs_auc()
         # experiment.domain_evaluation()
         # experiment.autocorrelation()
-        experiment.final_evaluation()
+        # experiment.final_evaluation()
         # experiment.final_evaluation_visualisation(feature_range)
         # experiment.crowd_answers_plot(auto_open=auto_open_plots)
         # experiment.final_evaluation_combine(feature_range, bootstrap_n=12, repetitions=20)
@@ -179,6 +179,8 @@ paid==yes                1    1    0    0    1    2    0    0    0     0     1  
         # experiment.humans_vs_actual_auc_plot()
         #self.human_comparison_table(feature_slice=self.feature_slice)
         # self.add_csfs_auc_to_human_vs_actual()
+
+        experiment.evaluate_condition(ERCondition.RANDOM)
 
 
 

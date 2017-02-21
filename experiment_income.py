@@ -115,7 +115,7 @@ class ExperimentIncome(AbstractExperiment):
         # self.add_csfs_auc_to_human_vs_actual()
 
         #self.human_comparison_table(feature_slice=self.feature_slice)
-        experiment.evaluate_condition(ERCondition.CSFS)
+        experiment.evaluate_condition(ERCondition.RANDOM)
 
 if __name__ == '__main__':
     experiment = ExperimentIncome('income', 1, 'experiment1')

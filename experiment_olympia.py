@@ -11,6 +11,7 @@ from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdAnalyser, CSFSCrowdCl
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from abstract_experiment import AbstractExperiment
+from application.EvaluationRanking import ERCondition
 from infoformulas_listcomp import _H, IG_from_series, H
 
 
@@ -181,7 +182,7 @@ class ExperimentOlympia(AbstractExperiment):
         # experiment.final_evaluation(no_features, bootstrap_n=12, repetitions=20)
         # experiment.final_evaluation_visualisation(no_features)
         # experiment.crowd_answers_plot()
-        experiment.final_evaluation()
+        # experiment.final_evaluation()
         # experiment.final_evaluation_visualisation(feature_range)
         # experiment.crowd_answers_plot(auto_open=auto_open_plots)
         # experiment.final_evaluation_combine(feature_range, bootstrap_n=bootstrap_n, repetitions=repetitions)
@@ -195,6 +196,8 @@ class ExperimentOlympia(AbstractExperiment):
         # experiment.humans_vs_actual_auc_plot()
         # self.add_csfs_auc_to_human_vs_actual()
         #self.human_comparison_table(feature_slice=self.feature_slice)
+
+        experiment.evaluate_condition(ERCondition.RANDOM)
 
 if __name__ == '__main__':
     experiment = ExperimentOlympia('olympia', 4, 'experiment2-4_all')
