@@ -17,6 +17,7 @@ class COLORS_HEX:
 
 from application.EvaluationRanking import ERCondition
 from bootstrap import CSFSBootstrap
+# paper colors
 colors = {ERCondition.LAYPERSON: COLORS_HEX.VIOLET,
           ERCondition.DOMAIN: COLORS_HEX.GREEN,
           ERCondition.EXPERT: COLORS_HEX.ORANGE_BRIGHT,
@@ -29,6 +30,20 @@ colors = {ERCondition.LAYPERSON: COLORS_HEX.VIOLET,
           'KrowDD': COLORS_HEX.BLUE,
           'Random': COLORS_HEX.DARKGREY,
           'Human': COLORS_HEX.ORANGE_DARK,
+          }
+# thesis colors
+colors = {ERCondition.LAYPERSON: COLORS_HEX.VIOLET,
+          ERCondition.DOMAIN: COLORS_HEX.GREEN,
+          ERCondition.EXPERT: COLORS_HEX.ORANGE_BRIGHT,
+          ERCondition.CSFS: COLORS_HEX.BLUE,
+          ERCondition.RANDOM: COLORS_HEX.DARKGREY,
+          ERCondition.HUMAN: COLORS_HEX.YELLOW,
+          'Laypeople': COLORS_HEX.VIOLET,
+          'Domain Experts': COLORS_HEX.GREEN,
+          'Data Scientists': COLORS_HEX.ORANGE_BRIGHT,
+          'KrowDD': COLORS_HEX.GREEN,
+          'Random': COLORS_HEX.DARKGREY,
+          'Human': COLORS_HEX.ORANGE_BRIGHT,
           }
 
 class CIVisualiser:
@@ -468,7 +483,7 @@ class CSFSVsHumansBarChart:
         """
         datasets = sorted(list(data.keys()))
         dataset_count = len(datasets)
-        fig = tools.make_subplots(rows=1, cols=dataset_count, subplot_titles=[get_dataset_name_paper(name) for name in datasets]) #  vertical_spacing=0.05
+        fig = tools.make_subplots(rows=1, cols=dataset_count, subplot_titles=datasets) #  vertical_spacing=0.05
         showlegend = True
         for i in range(dataset_count):
             df_dataset = data[datasets[i]]

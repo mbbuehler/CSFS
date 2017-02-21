@@ -61,7 +61,12 @@ class MetaExperiment:
 
         self.datasets = {'Student': self.ds_student, 'Income': self.ds_income, 'Olympics': self.ds_olympia}
 
-
+    def get_evaluation_data(self):
+        """
+        Returns dict with key: dataset name as in Paper and value: pd.DataFrame with columns=Conditions (names from paper, e.g. Data Scientists) and rows=NoFeatures
+        :return: dict
+        """
+        return {ds: pd.read_json("{}{}_evaluated_nb.json".format(self.path_data, ds)) for ds in self.datasets}
 
     def final_evaluation_combine_all(self):
         # for patrick
@@ -350,6 +355,29 @@ class MetaExperiment:
         fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, feature_range=range(1,10))
         plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_mlp)
 
+    def plot_bar_humans_vs_csfs2(self, feature_range=range(1,10)):
+        """
+        Bar chart comparing the combined condition (data scientsts + domain experts) with csfs
+        change classifier 3 times (data in, data out, vis filename)
+        :param auto_plot:
+        :return:
+        """
+        data = self.get_evaluation_data()
+        def prepare_row(row):
+                """
+                Returns new row with two columns: combined experts and data scientists + cfs
+                :param row:
+                :return:
+                """
+                values_csfs = row['KrowDD']
+                values_human = row['Domain Experts'] + row['Data Scientists']
+                row_new = pd.Series({'KrowDD': values_csfs, 'Human': values_human})
+                return row_new
+        data_filtered = {ds_name: data[ds_name].loc[feature_range].apply(prepare_row, axis='columns') for ds_name in data}
+
+        fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, feature_range=range(1,10))
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_nb)
+
     def table_human_vs_csfs(self):
         """
         :pre: json data already saved in plot above
@@ -588,7 +616,7 @@ def run():
 
     # experiment.compare_classifiers()
     # experiment.compare_classifiers_vis()
-    experiment.plot_bar_humans_vs_csfs()
+    experiment.plot_bar_humans_vs_csfs2()
     # experiment.save_data_for_paper()
     # experiment.plot_bar_comparing_humans2()
     # experiment.tmp()

@@ -1,3 +1,4 @@
+import json
 import os
 import pickle
 import sys
@@ -18,7 +19,6 @@ from CSFSCrowdCleaner import CSFSCrowdAggregator, CSFSCrowdCleaner, CSFSCrowdAna
 from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from FinalEvaluation import FinalEvaluationCombiner
-from analysis_noisy_means_drop import _conduct_analysis, visualise_results
 from application.CSFSConditionEvaluation import TestEvaluation
 from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
 from csfs_stats import hedges_g, cohen_d
@@ -763,6 +763,23 @@ class AbstractExperiment:
         data = pd.read_json(self.path_humans_vs_actual_auc).sort_index()
         data = data.join(series_csfs)
         data.to_json(self.path_auc_all_conditions) # index: no_features, columns: conditions
+
+    def evaluate_condition(self, condition):
+        """
+        Evaluates a condition (e.g. CSFS)
+        """
+        df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'ip', 'date'])
+        df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
+        df_cleaned_bin = pd.read_csv(self.path_bin)
+        df_answers_grouped = pd.read_pickle(self.path_answers_clean_grouped)
+        df_actual_metadata = pd.read_csv(self.path_answers_metadata, index_col=0, header=[0, 1])
+        df_actual_metadata = df_actual_metadata['actual']
+        evaluator = ERNofeaturesEvaluator(df_evaluation_result, df_evaluation_base, df_cleaned_bin, df_actual_metadata=df_actual_metadata, target=self.target, dataset_name=self.dataset_name, df_answers_grouped=df_answers_grouped, bootstrap_n=self.bootstrap_n, repetitions=self.repetitions, replace=False)
+        raw_data = evaluator.evaluate(self.feature_range, condition) # raw_data is dict: {CONDITION: {NOFEATURES: [AUCS]}}
+
+        print(json.dumps(raw_data[condition]))
+        exit()
+
 
 
 

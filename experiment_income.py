@@ -4,6 +4,7 @@ import pandas as pd
 from CSFSCrowdCleaner import CSFSCrowdCleaner, CSFSCrowdAggregator, CSFSCrowdAnalyser
 from CSFSDataPreparator import DataPreparator
 from abstract_experiment import AbstractExperiment
+from application.EvaluationRanking import ERCondition
 
 
 class ExperimentIncome(AbstractExperiment):
@@ -99,7 +100,7 @@ class ExperimentIncome(AbstractExperiment):
         # experiment.final_evaluation_visualisation(feature_range=no_features)
         # experiment.crowd_answers_plot()
         # experiment.evaluate_csfs_auc()
-        experiment.final_evaluation()
+        # experiment.final_evaluation()
         # experiment.final_evaluation_visualisation(feature_range)
         # experiment.crowd_answers_plot(auto_open=auto_open_plots)
         # experiment.final_evaluation_combine(feature_range, bootstrap_n=bootstrap_n, repetitions=repetitions)
@@ -114,6 +115,7 @@ class ExperimentIncome(AbstractExperiment):
         # self.add_csfs_auc_to_human_vs_actual()
 
         #self.human_comparison_table(feature_slice=self.feature_slice)
+        experiment.evaluate_condition(ERCondition.CSFS)
 
 if __name__ == '__main__':
     experiment = ExperimentIncome('income', 1, 'experiment1')
