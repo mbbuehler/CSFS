@@ -20,8 +20,13 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
+    <!-- Datatables js  -->
+<script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js" ></script>
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+
     <!-- Custom CSS -->
     <link href="{% static "css/logo-nav.css" %}" rel="stylesheet">
+    <link href="{% static "css/style.css" %}" rel="stylesheet">
 
     <script src="{% static "js/setup.js" %}"></script>
 
@@ -85,7 +90,12 @@
         </div>
         {% endblock %}
     </div>
+
     <!-- /.container -->
+    <div id="footer">
+
+
+    </div>
 
 
 {% block javascript %}

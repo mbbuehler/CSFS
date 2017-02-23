@@ -3,24 +3,52 @@
 {% block content %}
 
     <h1>Job: {{ job.name }}</h1>
+    <div class="container">
     <div class="col-md-3">Job uuid:</div>
     <div class="col-md-9">{{ job.uuid }}</div>
     <div class="col-md-3">Your email:</div>
     <div class="col-md-9">{{ job.email }}</div>
+    <div class="col-md-3">Job Status:</div>
+    <div class="col-md-9">{{ job.status }}</div>
+    </div>
+<h3>Feature Ranking</h3>
+    <div class="container">
+    <div class="col-md-6">
+    <table id="tbl-feature-ranking">
+    <thead><th>Feature Name</th><th>Estimated IG</th></thead>
+    <tbody>
+    {% for feature in job.get_features %}
+        <tr>
+            <td>{{ feature.name }}</td> <td>{{ feature.ig | floatformat:3 }}</td>
+        </tr>
+    {% endfor %}
 
+    </tbody>
+
+
+    </table></div>
+
+
+    </div>
+    <h3>Download Results</h3>
+<div class="container"><div class="control-group">
     <div class="col-md-4">
         <form method="'get" action="{{ links.download_answers }}"><button type="submit" class="btn btn-default">Download Crowd Answers (csv)</button> </form>
         </div>
     <div class="col-md-4">
     <form method="'get" action="{{ links.download_features }}"><button type="submit" class="btn btn-primary">Download Feature Ranking (csv)</button> </form>
     </div>
-
+</div>
+</div>
 
 {% endblock %}
 
 {% block javascript %}
     <script>
         $(document).ready(function () {
+    $('#tbl-feature-ranking').DataTable({
+                "order": [[ 1, "desc" ]]
+    });
         });
     </script>
 {% endblock %}

@@ -48,6 +48,7 @@ def job_overview(request, job_id=-1):
     }
     return render(request, 'input/job_overview.html', context)
 
+
 def job_start(request, job_id):
     job = Job.objects.get(pk=job_id)
     job = job.run()
@@ -59,7 +60,11 @@ def job_start(request, job_id):
     }
     return JsonResponse(context)
 
+
 def job_result(request, job_id=-1):
+    job = Job.objects.get(pk=job_id)
+    job.finish()
+
     context = {
         'job': Job.objects.get(pk=job_id),
         'links': {
