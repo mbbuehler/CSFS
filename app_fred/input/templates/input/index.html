@@ -1,79 +1,91 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Instructions</h1>
-<p>blablab</p>
-<form id='form-new-job' method="POST" class="post-form">
-    {% csrf_token %}
-{{ form.as_p }}
+    <h1>Instructions</h1>
+    <p>blablab</p>
+    <div class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Error:
+    <ul>
+        {% for key, msg in messages.items %}
+            <li>{{ key }}: {{ msg }}</li>
+        {% endfor %}
+    </ul>
+    </div>
+    <form id='form-new-job' method="POST" class="post-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
         <button id='btn-reset' type="reset" class="btn btn-default">Reset</button>
-    <button id='btn-submit' type="submit" class="save btn btn-primary">Save</button>
+        <button id='btn-submit' type="submit" class="save btn btn-primary">Save</button>
     </form>
-<div id="div-costs">
-    <p>Estimated costs for this job: <span id="span-costs">0</span></p>
-</div>
+    <div id="div-costs">
+        <p>Estimated costs for this job: <span id="span-costs">0</span></p>
+    </div>
 
-<div id="div-user-token">
-    <p>This is your token: <span id="span-user-token"></span></p>
-<p>Store it carefully. You will need your token and your e-mail to query the results of this job.</p>
-</div>
+    <div id="div-user-token">
+        <p>This is your token: <span id="span-user-token"></span></p>
+        <p>Store it carefully. You will need your token and your e-mail to query the results of this job.</p>
+    </div>
 {% endblock %}
 
 {% block javascript %}
-<script>
-    function onSubmit(e){
-        e.preventDefault();
-        //Check validity (automatic?)
-        // Ask if ok with estimated costs
-        // Start job and return token -> show to user
-        $.ajax({
-            url: "{{links.onFormSubmit}}",
-            data: {
-            },
-            dataType: 'json',
-            success: function (data) {
-                console.log(data);
-                if(data.success === 'success'){
-                    console.log('success');
-                    // do whatever
-                    $('#span-costs').text(data.costs);
-                    $('#div-costs').show();
-                    $('#span-user-token').text(data.user_token).show();
-                    $('#div-user-token').show();
+    <script>
+        function onSubmit(e) {
+            e.preventDefault();
+            //Check validity (automatic?)
+            // Ask if ok with estimated costs
+            // Start job and return token -> show to user
+            $.ajax({
+                url: "{{links.onFormSubmit}}",
+                data: {},
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    if (data.success === 'success') {
+                        console.log('success');
+                        // do whatever
+                        $('#span-costs').text(data.costs);
+                        $('#div-costs').show();
+                        $('#span-user-token').text(data.user_token).show();
+                        $('#div-user-token').show();
+                    }
+                    else {
+                        // complain
+                    }
                 }
-                else{
-                    // complain
-                }
-            }
-        });
-    }
+            });
+        }
 
-    function reset(){
-        $(this).closest('form').find("input[type=text], textarea").val("");
+        function reset() {
+            $(this).closest('form').find("input[type=text], textarea").val("");
 
-        $('#user-token').hide();
-        $('#div-costs').hide();
-        update_target_mean_field();
+            $('#user-token').hide();
+            $('#div-costs').hide();
+            update_target_mean_field();
 
-        $('#id_target_mean_checkbox').click(update_target_mean_field);
+            $('#id_target_mean_checkbox').click(update_target_mean_field);
 //        $('#form-new-job').submit(function(e){onSubmit(e);});
 
-    }
-    /**
-     * Shows and hides target mean field based on checkbox
-     */
-    function update_target_mean_field(){
-        if ($('#id_target_mean_checkbox').is(':checked')){
-            $('#id_target_mean').hide();
-            $('label[for="id_target_mean"]').hide();
-        } else{
-            $('#id_target_mean').show();
-            $('label[for="id_target_mean"]').show();
         }
-    }
+        /**
+         * Shows and hides target mean field based on checkbox
+         */
+        function update_target_mean_field() {
+            if ($('#id_target_mean_checkbox').is(':checked')) {
+                $('#id_target_mean').hide();
+                $('label[for="id_target_mean"]').hide();
+                $('#id_target_mean_question').show();
+                $('label[for="id_target_mean_question"]').show();
 
-    $(document).ready(function(){
-        reset();
-    });
-</script>
+            } else {
+                $('#id_target_mean').show();
+                $('label[for="id_target_mean"]').show();
+                $('#id_target_mean_question').hide();
+                $('label[for="id_target_mean_question"]').hide();
+            }
+        }
+
+        $(document).ready(function () {
+            reset();
+        });
+    </script>
 {% endblock %}

@@ -4,5 +4,5 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'jobs/new/on-submit', views.on_form_submit, name='new-job-on-submit'),
+    url(r'jobs/(?P<job_id>[0-9]+)', views.job_overview, name='job_overview'),
 ]

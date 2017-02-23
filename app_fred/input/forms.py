@@ -3,27 +3,6 @@ from django import forms
 import csv
 from django.core.exceptions import ValidationError
 
-class NewJobForm(forms.Form):
-    email = forms.EmailField(label='E-mail')
-    amt_key = forms.CharField(label='AMT key', max_length=21, min_length=20)
-    features_csv = CSVField(label='CSV file', expected_fieldnames=['Feature',
-                                                                   'Question P(X|Y=0)',
-                                                                   'Question P(X|Y=1)',
-                                                                   'Question P(X)',
-                                                                   'P(X|Y=0)',
-                                                                   'P(X|Y=1)',
-                                                                   'P(X)'
-                                                                   ]
-                            )
-    target_mean_checkbox = forms.BooleanField(label='Query the target mean', initial=True, required=False)
-    target_mean = forms.FloatField(label='Target mean', initial=0.5, required=False)
-    target_mean_question = forms.CharField(label='Question for target mean (P(Y))')
-
-
-
-
-
-
 class CSVField(forms.FileField):
     """
     FileField that checks that the file is a valid CSV and if specified
@@ -67,3 +46,23 @@ class CSVField(forms.FileField):
                     u','.join(self.expected_fieldnames)))
 
         return value
+
+class NewJobForm(forms.Form):
+    email = forms.EmailField(label='E-mail')
+    amt_key = forms.CharField(label='AMT key', max_length=21, min_length=20)
+    features_csv = CSVField(label='CSV file', expected_fieldnames=['Feature',
+                                                                   'Question P(X|Y=0)',
+                                                                   'Question P(X|Y=1)',
+                                                                   'Question P(X)',
+                                                                   'P(X|Y=0)',
+                                                                   'P(X|Y=1)',
+                                                                   'P(X)'
+                                                                   ]
+                            )
+    target_mean_checkbox = forms.BooleanField(label='Query the target mean', initial=True, required=False)
+    target_mean = forms.FloatField(label='Target mean', initial=0.5, required=False)
+    target_mean_question = forms.CharField(label='Question for target mean (P(Y))', required=False)
+    job_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+
+
+
