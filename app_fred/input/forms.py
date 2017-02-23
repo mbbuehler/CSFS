@@ -31,6 +31,7 @@ class CSVField(forms.FileField):
                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
 
     def clean(self, data, initial=None):
+        print(data)
         value = super(CSVField, self).clean(data)
         reader = csv.reader(data)
         # Check it's a valid CSV file
@@ -48,9 +49,10 @@ class CSVField(forms.FileField):
         return value
 
 class NewJobForm(forms.Form):
+    name = forms.CharField(label='Job title')
     email = forms.EmailField(label='E-mail')
     amt_key = forms.CharField(label='AMT key', max_length=21, min_length=20)
-    features_csv = CSVField(label='CSV file', expected_fieldnames=['Feature',
+    features_csv = CSVField(label='CSV file',required=False, expected_fieldnames=['Feature',
                                                                    'Question P(X|Y=0)',
                                                                    'Question P(X|Y=1)',
                                                                    'Question P(X)',

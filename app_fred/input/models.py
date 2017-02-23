@@ -13,6 +13,7 @@ class Job(models.Model):
         FINISHED = 'finished'
         FAILED = 'failed'
 
+    name = models.CharField(max_length=100, default="Job")
     email = models.EmailField()
     amt_key = models.TextField()
     query_target_mean = models.BooleanField(default=False)
@@ -34,6 +35,15 @@ class Job(models.Model):
                 msg['Feature {} invalid'.format(f.name)] = msg
         is_valid = len(msg) == 0
         return is_valid, msg
+
+    def estimate_costs(self):
+        no_features = self.feature_set.count()
+        no_workers = 9
+        price_per_feature = 0.10
+        costs = no_features * price_per_feature * no_workers
+        if self.query_target_mean:
+            costs += 0.04 * no_workers
+        return costs
 
 
 class Feature(models.Model):
@@ -57,7 +67,7 @@ class Feature(models.Model):
 
 
 class JobFactory:
-    job_fields = {'email', 'amt_key', 'query_target_mean', 'target_mean', 'target_mean_question'}
+    job_fields = {'name', 'email', 'amt_key', 'query_target_mean', 'target_mean', 'target_mean_question'}
     file_destination = 'job_files/input/'
 
     @classmethod
