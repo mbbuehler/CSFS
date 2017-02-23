@@ -37,27 +37,34 @@ def index(request, job_id=-1):
     return render(request, 'input/index.html', context)
 
 
-def job_overview(request, job_id):
+def job_overview(request, job_id=-1):
     context = {
         'job': Job.objects.get(pk=job_id),
         'links': {
             'edit': reverse('job_edit', kwargs={'job_id': job_id}),
             'start': reverse('job_start', kwargs={'job_id': job_id}),
+            'result': reverse('job_result', kwargs={'job_id': job_id}),
         }
     }
     return render(request, 'input/job_overview.html', context)
 
 def job_start(request, job_id):
-    print('got here')
+    job = Job.objects.get(pk=job_id)
+    job = job.run()
     # start job here
     context = {
         'success': 'success',
         'message': 'Job successfully started. ',
-        'links': {
-            'job_status': reverse('job_status', kwargs={'job_id': job_id})
-        }
+        'job_status': job.status,
     }
     return JsonResponse(context)
 
-def job_status(request, job_id):
-    pass
+def job_result(request, job_id=-1):
+    context = {
+        'job': Job.objects.get(pk=job_id),
+        'links': {
+            'download_answers': "",
+            'download_features': "",
+        }
+    }
+    return render(request, 'input/job_result.html', context)

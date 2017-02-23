@@ -1,21 +1,25 @@
 import csv
+import uuid
 
 from django.db import models
 from django.utils import timezone
+
+from app_fred.settings import STATIC_URL
 
 
 class Job(models.Model):
 
     class Status:
         CREATED = 'created'
-        STARTED = 'started'
         PROCESSING = 'processing'
         FINISHED = 'finished'
         FAILED = 'failed'
 
     name = models.CharField(max_length=100, default="Job")
     email = models.EmailField()
+    uuid = models.CharField(max_length=36)
     amt_key = models.TextField()
+    amt_secret = models.TextField()
     query_target_mean = models.BooleanField(default=False)
     target_mean = models.FloatField()
     target_mean_question = models.TextField()
@@ -45,6 +49,18 @@ class Job(models.Model):
             costs += 0.04 * no_workers
         return costs
 
+    def run(self):
+        # start to gather results from AMT
+        self.status = self.Status.PROCESSING
+        self.save()
+        return self
+
+    def finish(self):
+        """
+        Calcs IG for each of its features
+        :return:
+        """
+        pass
 
 class Feature(models.Model):
     name = models.CharField(max_length=100)
@@ -68,7 +84,7 @@ class Feature(models.Model):
 
 class JobFactory:
     job_fields = {'name', 'email', 'amt_key', 'query_target_mean', 'target_mean', 'target_mean_question'}
-    file_destination = 'job_files/input/'
+    file_destination = 'static/job_files/input/'
 
     @classmethod
     def create(cls, data, files):
@@ -78,6 +94,7 @@ class JobFactory:
         :return:
         """
         d = {key: data[key] for key in cls.job_fields if key in data}
+        d['uuid'] = uuid.uuid1()
         job = Job.objects.create(**d)
 
         # save file and features

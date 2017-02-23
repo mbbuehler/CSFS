@@ -3,20 +3,27 @@
 {% block content %}
 
     <h1>Job: {{ job.name }}</h1>
-    <div class="col-md-3">Job id:</div>
-    <div class="col-md-9">{{ job.pk }}</div>
+    <div class="col-md-3">Job uuid:</div>
+    <div class="col-md-9">{{ job.uuid }}</div>
     <div class="col-md-3">Number of features:</div>
     <div class="col-md-9">{{ job.feature_set.count }}</div>
     <div class="col-md-3">Target mean</div>
     <div class="col-md-9">{% if job.query_target_mean %}Will be queried {% else %}{{ job.target_mean }}{% endif %}</div>
     <div class="col-md-3">Estimated costs:</div>
     <div class="col-md-9">${{ job.estimate_costs }}</div>
+    <div class="col-md-3">Job status:</div>
+    <div id="div-job-status" class="col-md-9">{{ job.status }}</div>
 
     <form classt="form-inline" action="{{ links.edit }}">
         <!-- does not work yet (data set) <button type="submit" class="btn btn-default">Edit</button> -->
     </form>
 <div class="col-md-12">
+    {% if job.status == 'created' %}
         <button id="btn-start" class="btn btn-primary">Start</button>
+        {% elif job.status == 'finished' %}
+        <form class="form-inline" action="{{ links.result }}"><button type="submit" class="btn btn-primary">Results</button> </form>
+
+{% endif %}
 
     </div>
 
@@ -32,8 +39,9 @@
         function onStarted(data) {
             if (data.success === 'success'){
                 var msg = data.message;
-                msg += "<a href="+data.links.job_status+">Click here to check the status of this job.</a>";
-                $('#div-message').html(msg).show();
+                $('#div-message').text(msg).show();
+                $('#btn-start').hide();
+                $('#div-job-status').text(data.job_status);
             }
         }
 

@@ -25,3 +25,16 @@ body {
         padding: 15px 0;
     }
 }
+
+.navbar-inverse .navbar-nav > li > a{
+    color: white;
+}
+
+#img-logo{
+    width: 180px;
+    height: 60px;
+}
+
+#nav{
+    background-color: #c0c0c0 !important;
+}
