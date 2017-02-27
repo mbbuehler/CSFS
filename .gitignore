@@ -103,7 +103,6 @@ local.php
 /application/htdocs/nbproject
 application/htdocs/nbproject/
 
-settings.py
 
 
 *.egg-info
@@ -123,3 +122,4 @@ tests/report/
 
 private_*
 job_files/*.csv 
+secret.py
