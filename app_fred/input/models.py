@@ -1,4 +1,5 @@
 import csv
+import os
 import subprocess
 import uuid
 import shlex
@@ -124,14 +125,14 @@ class Job(models.Model):
             messages['Still Processing'] = 'The answers are still being collected on AMT.'
         if self.status != self.Status.PROCESSING:
             messages['Incorrect Status'] = 'Invalid job status detected: {}'.format(self.status)
-        # if self.status == self.Status.PROCESSING and self.amt_is_done():
-        if self.status == self.Status.FINISHED and self.amt_is_done():
+        if self.status == self.Status.PROCESSING and self.amt_is_done():
+        # if self.status == self.Status.FINISHED and self.amt_is_done():
             self.path_crowd_answers = 'static/job_files/output/{}_raw.csv'.format(self.pk)
-            answers_raw = Queries.objects.filter(process_id=self.pk).filter(~Q(answer='None'))
+            answers_raw = Queries.objects.filter(process_id=self.pk).filter(~Q(answer='None')).distinct()
             dump(answers_raw, self.path_crowd_answers)
             number_saved = CrowdOutputProcessor(self.path_crowd_answers, self).save_answers()
             CrowdAggregator(self).aggregate_answers()
-            print('> number of answers saved', number_saved)
+            print('> number of estimates saved', number_saved)
 
             if self.query_target_mean:
                 target_answers = CrowdAnswer.objects.filter(feature__job=self, feature__name='target')
@@ -276,7 +277,10 @@ class CrowdOutputProcessor:
             answer_type = CrowdAnswer.Type.P
             feature = Feature.objects.get(q_p=question, job=self.job)
         if feature is not None:
-            crowd_answer = CrowdAnswer.objects.create(feature=feature, type=answer_type, worker_id=worker_id, answer=answer)
+            crowd_answer = CrowdAnswer(feature=feature, type=answer_type, worker_id=worker_id, answer=answer)
+            if CrowdAnswer.objects.filter(feature=feature).filter(type=answer_type).filter(worker_id=worker_id).count() == 0:
+                # do not save duplicate answers
+                crowd_answer.save()
         else:
             print('> Feature is None')
         return crowd_answer
@@ -333,6 +337,7 @@ class CrowdOutputProcessor:
         df_raw = pd.read_csv(self.path_crowd_answers)
         df_raw = df_raw.apply(self.save_row, axis='columns')
         number_saved = sum(df_raw['saved'])
+        print(df_raw)
         return number_saved
 
 
@@ -384,7 +389,7 @@ class JobFactory:
         :return:
         """
         d = {key: data[key] for key in cls.job_fields if key in data}
-        d['query_target_mean'] = d['query_target_mean'] == 'on'
+        d['query_target_mean'] = True if 'query_target_mean' in d else False
         d['uuid'] = uuid.uuid1()
         print(d)
         job = Job.objects.create(**d)
@@ -539,6 +544,7 @@ def dump(qs, outfile_path):
 
     """
     model = qs.model
+    print(os.getcwd())
     writer = csv.writer(open(outfile_path, 'w'))
 
     headers = []

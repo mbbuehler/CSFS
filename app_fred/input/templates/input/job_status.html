@@ -7,7 +7,11 @@
     <div class="col-md-9">{{ job.uuid }}</div>
     <div class="col-md-3">Number of features:</div>
     <div class="col-md-9">{{ job.feature_set.count }}</div>
-    <div class="col-md-3">Target mean</div>
+    <div class="col-md-3">Number of estimates per feature:</div>
+    <div class="col-md-9">{{ job.number_answers }}</div>
+    <div class="col-md-3">Price per estimate:</div>
+    <div class="col-md-9">¢{{ job.price_per_feature }}</div>
+    <div class="col-md-3">Target mean:</div>
     <div class="col-md-9">{% if job.query_target_mean %}Will be queried {% else %}{{ job.target_mean }}{% endif %}</div>
     <div class="col-md-3">Estimated costs:</div>
     <div class="col-md-9">${{ job.estimate_costs }}</div>
@@ -20,16 +24,20 @@
 <div class="col-md-12">
     {% if job.status == 'created' %}
         <button id="btn-start" class="btn btn-primary">Start</button>
-        {% elif job.status == 'finished' %}
+
+        {% elif job.amt_is_done %}
         <form class="form-inline" action="{{ links.result }}"><button type="submit" class="btn btn-primary">Results</button> </form>
 
 {% endif %}
+ <div class="form-group"></div>
+    <div id="div-message" class="col-md-6">
+    <div  class="alert alert-info">
+        Job successfully started. Make sure you keep track of your job uuid. You can query the results using your email and the job uuid. You can always check the status of your job on this page.
 
     </div>
-
-    <div class="col-md-6">
-    <div id="div-message" class="alert-info"></div>
     </div>
+    </div>
+
 
 
 {% endblock %}
@@ -38,16 +46,19 @@
     <script>
         function onStarted(data) {
             if (data.success === 'success'){
-                var msg = data.message;
-                msg += " Make sure you keep track of your job uuid. You will be querying the results using your email and the job uuid. You can check the status of your job <a target='_blank' title='Job Results' href='{{ links.result }}'>here</a>"
-                $('#div-message').text(msg).show();
+                $('#div-message').show();
                 $('#btn-start').hide();
                 $('#div-job-status').text(data.job_status);
             }
         }
 
         $(document).ready(function () {
-            $('#div-message').hide();
+            if("{{ job.status }}"==='processing'){
+                $('#div-message').show();
+            } else{
+                $('#div-message').hide();
+            }
+
 
             $('#btn-start').click(function() {
                 var url = "{{ links.start }}";

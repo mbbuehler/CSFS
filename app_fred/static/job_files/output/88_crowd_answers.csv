@@ -1,0 +1,6 @@
+feature,type,estimate,worker_id
+Mjob_other,P(X),0.3,A2ATUI26P1FEH7
+Mjob_other,P(Y|X=0),0.8,A2ATUI26P1FEH7
+Mjob_other,P(Y|X=1),0.4,A2ATUI26P1FEH7
+higher,P(Y|X=0),0.9,A2ATUI26P1FEH7
+higher,P(Y|X=1),1.0,A2ATUI26P1FEH7
