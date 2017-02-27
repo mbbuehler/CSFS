@@ -15,6 +15,8 @@ from math import log
 
 from app_fred.settings import PATH_KROWDD_FILES, PATH_PPLIB, BASE_DIR
 
+from app_fred.settings import STATIC_URL
+
 
 class Job(models.Model):
 
@@ -34,6 +36,8 @@ class Job(models.Model):
     target_mean_question = models.TextField()
     status = models.TextField(default=Status.CREATED)
     path_questions = models.CharField(max_length=500, default="")
+    path_out_crowd_answers = models.CharField(max_length=100, blank=True, null=True)
+    path_out_feature_data = models.CharField(max_length=100, blank=True, null=True)
     date_created = models.DateField(default=timezone.now)
     date_started = models.DateField(blank=True, null=True)
     date_finished = models.DateField(blank=True, null=True)
@@ -92,8 +96,11 @@ class Job(models.Model):
         number_of_answers_obtained = Queries.objects.filter(process_id=self.pk).filter(~Q(answer='None')).count()
         return number_of_answers_required == number_of_answers_obtained
 
-    def get_features(self):
-        return self.feature_set.filter(is_target=False)
+    def get_features(self, include_target=False):
+        if include_target:
+            return self.feature_set.all()
+        else:
+            return self.feature_set.filter(is_target=False)
 
     def validate_ready_for_finishing(self):
         if not 0 <= self.target_mean <= 1:
@@ -104,6 +111,7 @@ class Job(models.Model):
                     return False
         return True
 
+    @atomic
     def finish(self):
         """
         Calcs IG for each of its features
@@ -115,7 +123,8 @@ class Job(models.Model):
             messages['Still Processing'] = 'The answers are still being collected on AMT.'
         if self.status != self.Status.PROCESSING:
             messages['Incorrect Status'] = 'Invalid job status detected: {}'.format(self.status)
-        if self.status == self.Status.PROCESSING and self.amt_is_done():
+        # if self.status == self.Status.PROCESSING and self.amt_is_done():
+        if self.status == self.Status.FINISHED and self.amt_is_done():
 
             self.path_crowd_answers = 'static/job_files/output/{}_raw.csv'.format(self.pk)
             answers_raw = Queries.objects.filter(process_id=self.pk).filter(~Q(answer='None'))
@@ -124,23 +133,28 @@ class Job(models.Model):
             CrowdAggregator(self).aggregate_answers()
             print('> number of answers saved', number_saved)
 
-            # aggregate answers
-
-
             if self.query_target_mean:
                 target_answers = CrowdAnswer.objects.filter(feature__job=self, feature__name='target')
                 estimates = [a.answer for a in target_answers]
-                print(estimates)
                 self.target_mean = np.median(estimates)
+                target_feature = Feature.objects.get(job=self, name='target')
+                target_feature.p = self.target_mean
+                target_feature.save()
+
+            assert self.validate_ready_for_finishing()
 
             features = self.get_features()
             # get target mean
             features = [feature.compute_ig(self.target_mean) for feature in features if not feature.is_target]
             print('> IG calculated')
 
-            assert self.validate_ready_for_finishing()
+            self.path_out_crowd_answers, no_answers = AnswerFileOutput(self).create()
+            print('> {} answers saved'.format(no_answers))
 
-            self.status == self.Status.FINISHED
+            self.path_out_feature_data, no_features = FeatureFileOutput(self).create()
+            print('> {} features saved'.format(no_features))
+
+            self.status = self.Status.FINISHED
             self.date_finished = timezone.now()
             self.save()
             done = True
@@ -184,6 +198,51 @@ class Feature(models.Model):
     @property
     def details(self):
         return "{} -- p: {} | p_0: {} | p_1: {}".format(self.name, self.p, self.p_0, self.p_1)
+
+
+class AnswerFileOutput:
+    def __init__(self, job):
+        self.job = job
+
+    def _extract_data(self, answer):
+        return {
+            'feature': answer.feature.name,
+            'type': answer.type,
+            'estimate': answer.answer,
+            'worker_id': answer.worker_id
+        }
+
+    def create(self):
+        answers = CrowdAnswer.objects.filter(feature__job=self.job)
+        data = [self._extract_data(a) for a in answers]
+        df = pd.DataFrame(data, columns=['feature', 'type', 'estimate', 'worker_id']).sort_values(['feature', 'type', 'estimate'])
+        path_pref = "static/"
+        path = "job_files/output/{}_crowd_answers.csv".format(self.job.pk)
+        df.to_csv(path_pref+path, index=False)
+        return path, len(df)
+
+
+class FeatureFileOutput:
+    def __init__(self, job):
+        self.job = job
+
+    def _extract_data(self, feature):
+        return {
+            'feature': feature.name,
+            'P(X)': feature.p,
+            'P(Y|X=0)': feature.p_0,
+            'P(Y|X=1)': feature.p_1,
+            'IG*': feature.ig,
+        }
+
+    def create(self):
+        features = self.job.get_features(include_target=True)
+        data = [self._extract_data(f) for f in features]
+        df = pd.DataFrame(data, columns=['feature', 'P(X)', 'P(Y|X=0)', 'P(Y|X=1)', 'IG*']).sort_values(['IG*', 'feature'])
+        path_pref = "static/"
+        path = "job_files/output/{}_feature_data.csv".format(self.job.pk)
+        df.to_csv(path_pref+path, index=False)
+        return path, len(df)
 
 
 class CrowdOutputProcessor:
@@ -270,30 +329,30 @@ class CrowdOutputProcessor:
         return number_saved
 
 
+
 class CrowdAggregator:
     def __init__(self, job):
         self.job = job
 
     def aggregate_answers(self):
-        features = self.job.get_features()
-        conditions = {'P(X)': 'p', 'P(X|Y=0)': 'p_0', 'P(X|Y=1)': 'p_1'}
+        features = self.job.get_features(include_target=False)
+        conditions = {'P(X)': 'p', 'P(Y|X=0)': 'p_0', 'P(Y|X=1)': 'p_1'}
         for f in features:
-            print('--')
-            print(f.details)
             for c in conditions:
                 if getattr(f, conditions[c]) == -1:
                     answers = CrowdAnswer.objects.filter(feature=f, type=c)
                     assert answers.count() > 0
                     estimates = [a.answer for a in answers]
                     setattr(f, conditions[c], np.median(estimates))
+
             f.save()
 
 
 class CrowdAnswer(models.Model):
     class Type:
         P = 'P(X)'
-        P_0 = 'P(X|Y=0)'
-        P_1 = 'P(X|Y=1)'
+        P_0 = 'P(Y|X=0)'
+        P_1 = 'P(Y|X=1)'
         P_TARGET = 'P(Y)'
 
     worker_id = models.CharField(max_length=20)
@@ -383,11 +442,11 @@ class FeatureFactory:
         """
         data = {
             'name': row['Feature'],
-            'q_p_0': row['Question P(X|Y=0)'],
-            'q_p_1': row['Question P(X|Y=1)'],
+            'q_p_0': row['Question P(Y|X=0)'],
+            'q_p_1': row['Question P(Y|X=1)'],
             'q_p': row['Question P(X)'],
-            'p_0': float(row['P(X|Y=0)']) if row['P(X|Y=0)'] != "" else -1,
-            'p_1': float(row['P(X|Y=1)']) if row['P(X|Y=1)'] != "" else -1,
+            'p_0': float(row['P(Y|X=0)']) if row['P(Y|X=0)'] != "" else -1,
+            'p_1': float(row['P(Y|X=1)']) if row['P(Y|X=1)'] != "" else -1,
             'p': float(row['P(X)']) if row['P(X)'] != "" else -1,
             'job': job,
             'is_target': is_target,
@@ -405,13 +464,13 @@ class Calculator:
         :param h_x: H(x) entropy of target variable
         :return:
         """
-        h_x = self.compute_H([p_target, 1-p_target])
-        cond_h = self.compute_H_X_Y(p, p_0, p_1)
-        return h_x - cond_h
+        h_y = self.compute_H([p_target, 1-p_target])
+        cond_h = self.compute_H_Y_X(p, p_0, p_1)
+        return h_y - cond_h
 
-    def compute_H_X_Y(self, p, p_0, p_1):
+    def compute_H_Y_X(self, p, p_0, p_1):
         """
-        Conditonal entropy H(X|Y)
+        Conditonal entropy H(Y|X)
         :param p: P(X=1)
         :param p_0: P(X=1|Y=0)
         :param p_1: P(X=1|Y=1)

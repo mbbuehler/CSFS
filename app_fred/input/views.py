@@ -103,10 +103,10 @@ def job_result(request, job_id=-1):
 
     context = {
         'success': 'success' if success else 'failed',
-        'job': Job.objects.get(pk=job_id),
+        'job': job,
         'links': {
-            'download_answers': "",
-            'download_features': "",
+            'download_answers': job.path_out_crowd_answers,
+            'download_features': job.path_out_feature_data,
         },
         'messages': messages
     }
