@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Your job</h1>
+   <p>Please enter the job uuid and your email to display your job.</p>
+
+    {% for title, msg in messages.items %}
+    <div class="alert alert-danger">{{ title }}. {{ msg }}</div>
+    {% endfor %}
+
+    <form class="form-inline" method="get">
+        {% csrf_token %}
+{#        {{ form }}#}
+
+    {% for field in form %}
+        <div class="fieldWrapper">
+        <div class="row">
+        <div class="col-md-3">
+            {{ field.errors }}
+            {{ field.label_tag }}</div><div class="col-md3"> {{ field }}</div>
+        </div>
+        </div>
+    {% endfor %}
+        <button id='btn-reset' type="reset" class="btn btn-default">Reset</button>
+        <button id='btn-submit' type="submit" class="save btn btn-primary">Go</button>
+    </form>
+
+    </div>
+
+    <div class="col-md-6">
+    <div id="div-message" class="alert-info"></div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+
+        $(document).ready(function () {
+        });
+    </script>
+{% endblock %}

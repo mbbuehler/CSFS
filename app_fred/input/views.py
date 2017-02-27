@@ -9,9 +9,17 @@ from input.forms import NewJobForm
 
 from input.models import JobFactory, Job
 
+from input.forms import SelectJobForm
+
+
+@require_http_methods(['GET'])
+def index(request):
+    return render(request, 'input/index.html', {})
+
+
 
 @require_http_methods(['GET', 'POST'])
-def index(request, job_id=-1):
+def job_new(request, job_id=-1):
     newjobform = NewJobForm()
     msg = ""
     if Job.objects.filter(pk=job_id).count() == 1:
@@ -34,10 +42,36 @@ def index(request, job_id=-1):
 
     context = {'form': newjobform, 'messages': msg}
 
-    return render(request, 'input/index.html', context)
+    return render(request, 'input/job_new.html', context)
 
 
-def job_overview(request, job_id=-1):
+@require_http_methods(['GET'])
+def job_status_select(request):
+    messages = {}
+    if 'uuid' in request.GET:
+        qs_job_id = Job.objects.\
+            filter(uuid=request.GET['uuid']).\
+            filter(email=request.GET['email']).\
+            values('id')
+        if qs_job_id.count() == 0:
+            messages['No job found'] = "Did you provide the correct credentials?"
+        elif qs_job_id.count() > 1:
+            messages['Several jobs found'] = "Sorry, this should not happen. Please contact the admin."
+        else:
+            job_id = qs_job_id.first()
+            job_id = job_id['id']
+            print('id', job_id)
+            return HttpResponseRedirect(reverse('job_status', kwargs={'job_id': job_id}))
+
+    context = {
+        'form': SelectJobForm(),
+        'messages': messages
+    }
+    return render(request, 'input/job_select.html', context)
+
+
+@require_http_methods(['GET'])
+def job_status(request, job_id):
     context = {
         'job': Job.objects.get(pk=job_id),
         'links': {
@@ -46,7 +80,7 @@ def job_overview(request, job_id=-1):
             'result': reverse('job_result', kwargs={'job_id': job_id}),
         }
     }
-    return render(request, 'input/job_overview.html', context)
+    return render(request, 'input/job_status.html', context)
 
 
 def job_start(request, job_id):
