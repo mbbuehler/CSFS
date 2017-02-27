@@ -37,7 +37,7 @@ def job_new(request, job_id=-1):
             job = JobFactory.create(data, files) if data['job_id'] == '' else JobFactory.update(data)
             is_valid, msg = job.is_valid()
             if is_valid:
-                return HttpResponseRedirect(reverse('job_overview', kwargs=dict(job_id=job.pk)))
+                return HttpResponseRedirect(reverse('job_status', kwargs=dict(job_id=job.pk)))
             newjobform = NewJobForm(initial=data)
 
     context = {'form': newjobform, 'messages': msg}

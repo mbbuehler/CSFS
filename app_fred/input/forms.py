@@ -52,7 +52,7 @@ class NewJobForm(forms.Form):
     name = forms.CharField(label='Job title')
     email = forms.EmailField(label='E-mail')
     amt_key = forms.CharField(label='AMT access key ID', max_length=21, min_length=20)
-    amt_secret = forms.CharField(label='AMT secret access key', max_length=51, min_length=50)
+    amt_secret = forms.CharField(label='AMT secret access key', max_length=51, min_length=50, widget=forms.PasswordInput)
     features_csv = CSVField(label='CSV file',required=False, expected_fieldnames=['Feature',
                                                                    'Question P(X|Y=0)',
                                                                    'Question P(X|Y=1)',

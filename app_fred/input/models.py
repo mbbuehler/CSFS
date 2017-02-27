@@ -1,14 +1,18 @@
 import csv
+import subprocess
 import uuid
+import shlex
 
 import pandas as pd
 import re
 from django.db import models
 from django.db.models import Q
+from django.db.transaction import atomic
 from django.utils import timezone
 
-from app_fred.settings import STATIC_URL
 from math import log
+
+from app_fred.settings import PATH_KROWDD_FILES, PATH_PPLIB, BASE_DIR
 
 
 class Job(models.Model):
@@ -19,7 +23,7 @@ class Job(models.Model):
         FINISHED = 'finished'
         FAILED = 'failed'
 
-    name = models.CharField(max_length=100, default="Job")
+    name = models.CharField(max_length=100, default="Estimation Job")
     email = models.EmailField()
     uuid = models.CharField(max_length=36)
     amt_key = models.TextField()
@@ -28,9 +32,14 @@ class Job(models.Model):
     target_mean = models.FloatField()
     target_mean_question = models.TextField()
     status = models.TextField(default=Status.CREATED)
+    path_questions = models.CharField(max_length=500, default="")
     date_created = models.DateField(default=timezone.now)
     date_started = models.DateField(blank=True, null=True)
     date_finished = models.DateField(blank=True, null=True)
+
+    number_answers = 1
+    sandbox = 1
+    price_per_feature = 3
 
     path_crowd_answers = models.CharField(max_length=100)
 
@@ -56,7 +65,14 @@ class Job(models.Model):
         return costs
 
     def run(self):
-        # TODO: run AMT task
+        # TODO: adjust variables
+        process_id = self.pk
+        print('starting task')
+
+        command = '(cd {}; sbt "run-main main.scala.ch.uzh.ifi.pdeboer.pplib.examples.gdpinfluence.krowdd_run {} {} {} {} {} {} {} {}")'.format(PATH_PPLIB, self.name, self.amt_key, self.amt_secret, process_id, self.number_answers, BASE_DIR+'/'+self.path_questions, self.sandbox, self.price_per_feature)
+        process = subprocess.Popen(command, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
+        print('> AMT task started')
+        print(process)
         self.status = self.Status.PROCESSING
         self.date_started = timezone.now()
         self.save()
@@ -67,8 +83,13 @@ class Job(models.Model):
         Checks whether the AMT task is completed
         :return:
         """
-        completed = True
-        return completed
+        features = pd.read_csv(self.path_questions, header=None)[0]
+        queried_features = set([f[:-2] if re.search(r'_\d$', f) else f for f in features])
+        number_queried_features = len(queried_features)
+        number_of_answers_required = number_queried_features * self.number_answers
+
+        number_of_answers_obtained = Queries.objects.filter(process_id=self.pk).filter(~Q(answer='None')).count()
+        return number_of_answers_required == number_of_answers_obtained
 
     def get_features(self):
         return self.feature_set.all()
@@ -87,23 +108,25 @@ class Job(models.Model):
         Calcs IG for each of its features
         :return: boolean True if computation happened and false if not
         """
-        assert self.validate_ready_for_finishing()
-        self.path_crowd_answers = 'static/job_files/output/56_raw.xlsx'
+        # if
 
         if self.status == self.Status.PROCESSING and self.amt_is_done():
-            # CrowdOutputProcessor(self.path_crowd_answers).save_answers()
 
+            self.path_crowd_answers = 'static/job_files/output/{}_raw.csv'.format(self.pk)
+            answers_raw = Queries.objects.filter(process_id=self.pk).filter(~Q(answer='None'))
+            dump(answers_raw, self.path_crowd_answers)
+            number_saved = CrowdOutputProcessor(self.path_crowd_answers, self).save_answers()
+            print('> number of answers saved', number_saved)
 
 
             features = self.get_features()
-            # read and clean crowd answers. save as csv
-            # add crows answers to corresponding feature
-            # call compute_ig() on each feature
-
-
+            # get target mean
             features = [feature.compute_ig(self.target_mean) for feature in features]
+            print('> IG calculated')
 
-            # self.status == self.Status.FINISHED
+            assert self.validate_ready_for_finishing()
+
+            self.status == self.Status.FINISHED
             self.date_finished = timezone.now()
             self.save()
             return True
@@ -134,6 +157,7 @@ class Feature(models.Model):
     p_1 = models.FloatField(blank=True, default=-1)
     p = models.FloatField(blank=True, default=-1)
     ig = models.FloatField(blank=True, default=-1)
+    is_target = models.BooleanField(default=False)
 
     def is_valid(self):
         msg = {}
@@ -152,8 +176,9 @@ class Feature(models.Model):
 
 class CrowdOutputProcessor:
 
-    def __init__(self, path_crowd_answers):
+    def __init__(self, path_crowd_answers, job):
         self.path_crowd_answers = path_crowd_answers
+        self.job = job
 
     def _preprocess_field(self, field):
         field = field.replace('\n', '') # remove new lines
@@ -164,13 +189,13 @@ class CrowdOutputProcessor:
         crowd_answer = None
         if Feature.objects.filter(q_p_0=question).exists():
             answer_type = CrowdAnswer.Type.P_0
-            feature = Feature.objects.get(q_p_0=question)
+            feature = Feature.objects.get(q_p_0=question, job=self.job)
         elif Feature.objects.filter(q_p_1=question).exists():
             answer_type = CrowdAnswer.Type.P_1
-            feature = Feature.objects.get(q_p_1=question)
+            feature = Feature.objects.get(q_p_1=question, job=self.job)
         elif Feature.objects.filter(q_p=question).exists():
             answer_type = CrowdAnswer.Type.P
-            feature = Feature.objects.get(q_p=question)
+            feature = Feature.objects.get(q_p=question, job=self.job)
         else:
             answer_type = CrowdAnswer.Type.P_TARGET
         if feature is not None:
@@ -216,18 +241,22 @@ class CrowdOutputProcessor:
         return question, answer
 
     def save_row(self, row):
-        worker_id = row.answerUser
+        print(row)
+        worker_id = row.answeruser
 
         field_answer = self._preprocess_field(row.answer)
         number_of_estimates = field_answer.count('::')
         for i in range(1, number_of_estimates+1):
             q, a = self._get_nth(i, field_answer)
             answer = self._save_single(q, a, worker_id)
-
+        row['saved'] = number_of_estimates
+        return row
 
     def save_answers(self):
-        df_raw = pd.read_excel(self.path_crowd_answers)
-        df_raw.loc[:1].apply(self.save_row, axis='columns')
+        df_raw = pd.read_csv(self.path_crowd_answers)
+        df_raw = df_raw.apply(self.save_row, axis='columns')
+        number_saved = sum(df_raw['saved'])
+        return number_saved
 
 
 class CrowdAnswer(models.Model):
@@ -247,10 +276,10 @@ class CrowdAnswer(models.Model):
 
 
 class JobFactory:
-    job_fields = {'name', 'email', 'amt_key', 'query_target_mean', 'target_mean', 'target_mean_question'}
-    file_destination = 'static/job_files/input/'
+    job_fields = {'name', 'email', 'amt_key', 'amt_secret', 'query_target_mean', 'target_mean', 'target_mean_question'}
 
     @classmethod
+    @atomic
     def create(cls, data, files):
         """
         Creates a new job from form data
@@ -262,7 +291,7 @@ class JobFactory:
         job = Job.objects.create(**d)
 
         # save file and features
-        file_path = "{}{}.csv".format(cls.file_destination, job.pk)
+        file_path = "{}{}.csv".format(PATH_KROWDD_FILES+'input/', job.pk)
         file = files['features_csv']
         with open(file_path, 'wb+') as destination:
             for chunk in file.chunks():
@@ -270,8 +299,33 @@ class JobFactory:
 
         csv_data = csv.DictReader(open(file_path))
         features = [FeatureFactory.create(row, job) for row in csv_data]
+        if job.query_target_mean:
+            features.append(Feature.objects.create(q_p=job.target_mean_question, is_target=True, job=job,  name='target'))
+
         Feature.objects.bulk_create(features)
+        questions_path = cls.create_questions_csv(features, job)
+        job.path_questions = questions_path
+        job.save()
         return job
+
+    @staticmethod
+    def create_questions_csv(features, job):
+        conditions = ['p_0', 'p_1', 'p']
+        data = []
+        for f in features:
+            if f.name == 'target':
+                data.append([f.name, f.q_p])
+            else:
+                for c in conditions:
+                    if not 0 <= getattr(f, c) <= 1: # if we dont already have a value for it
+                        identifier = "{}".format(f.name) if c == 'p' else "{}{}".format(f.name, c[-2:])
+                        question = getattr(f, "q_{}".format(c))
+                        data.append([identifier, question])
+
+        questions = pd.DataFrame(data, columns=None)
+        path = "{}input/{}_questions.csv".format(PATH_KROWDD_FILES, job.pk)
+        questions.to_csv(path, index=False, header=False)
+        return path
 
     @classmethod
     def update(cls, data):
@@ -287,7 +341,7 @@ class FeatureFactory:
     Creates Features
     """
     @classmethod
-    def create(cls, row, job):
+    def create(cls, row, job, is_target=False):
         """
 
         :param row: frow from csv with fields 'Feature', 'Question P(X|Y=0)', 'Question P(X|Y=1)', 'Question P(X)', 'P(X|Y=0)', 'P(X|Y=1)', 'P(X)'
@@ -298,10 +352,11 @@ class FeatureFactory:
             'q_p_0': row['Question P(X|Y=0)'],
             'q_p_1': row['Question P(X|Y=1)'],
             'q_p': row['Question P(X)'],
-            'p_0': float(row['P(X|Y=0)']) if row['P(X|Y=0)'] != "" else None,
-            'p_1': float(row['P(X|Y=1)']) if row['P(X|Y=1)'] != "" else None,
-            'p': float(row['P(X)']) if row['P(X)'] != "" else None,
-            'job': job
+            'p_0': float(row['P(X|Y=0)']) if row['P(X|Y=0)'] != "" else -1,
+            'p_1': float(row['P(X|Y=1)']) if row['P(X|Y=1)'] != "" else -1,
+            'p': float(row['P(X)']) if row['P(X)'] != "" else -1,
+            'job': job,
+            'target': is_target,
         }
         feature = Feature(**data)
         return feature
@@ -339,3 +394,63 @@ class Calculator:
         """
         assert sum(probabilities) == 1
         return sum([-p_0 * log(p_0, 2) for p_0 in probabilities if p_0 != 0])
+
+
+class Queries(models.Model):
+    """
+    DB Log from PPLib
+    """
+    process_id = models.IntegerField(blank=True, null=True)
+    question = models.TextField(blank=True, null=True)
+    fullquery = models.TextField(db_column='fullQuery', blank=True, null=True)  # Field name made lowercase.
+    answer = models.TextField(blank=True, null=True)
+    fullanswer = models.TextField(db_column='fullAnswer', blank=True, null=True)  # Field name made lowercase.
+    paymentcents = models.IntegerField(db_column='paymentCents', blank=True, null=True)  # Field name made lowercase.
+    fullproperties = models.TextField(db_column='fullProperties', blank=True, null=True)  # Field name made lowercase.
+    questioncreationdate = models.DateTimeField(db_column='questionCreationDate', blank=True, null=True)  # Field name made lowercase.
+    questionanswerdate = models.DateTimeField(db_column='questionAnswerDate', blank=True, null=True)  # Field name made lowercase.
+    createdate = models.DateTimeField(db_column='createDate', blank=True, null=True)  # Field name made lowercase.
+    answeruser = models.CharField(db_column='answerUser', max_length=255, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'queries'
+
+
+import csv
+
+def dump(qs, outfile_path):
+    """
+    http://palewi.re/posts/2009/03/03/django-recipe-dump-your-queryset-out-as-a-csv-file/
+    Takes in a Django queryset and spits out a CSV file.
+
+    Usage::
+
+        >> from utils import dump2csv
+        >> from dummy_app.models import *
+        >> qs = DummyModel.objects.all()
+        >> dump2csv.dump(qs, './data/dump.csv')
+
+    Based on a snippet by zbyte64::
+
+        http://www.djangosnippets.org/snippets/790/
+
+    """
+    model = qs.model
+    writer = csv.writer(open(outfile_path, 'w'))
+
+    headers = []
+    for field in model._meta.fields:
+        headers.append(field.name)
+    writer.writerow(headers)
+
+    for obj in qs:
+        row = []
+        for field in headers:
+            val = getattr(obj, field)
+            if callable(val):
+                val = val()
+            # if type(val) == unicode:
+            # val = val.encode("utf-8")
+            row.append(val)
+        writer.writerow(row)
