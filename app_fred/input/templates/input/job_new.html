@@ -5,7 +5,7 @@
 {% block content %}
     <h1>New Job</h1>
     <p>Please fill the form below to start a new <b>KrowDD</b> job. You will need your email address to query the results. You can acquire your personal AMT access key ID and AMT secret access key from <a target="_blank" href="https://aws.amazon.com/">Amazon webservices</a>.</p>
-    <p>Please upload a CSV file with seven columns, including the exact headers "Feature", "Question P(X|Y=0)", "Question P(X|Y=1)", "Question P(X)", "P(X|Y=0)", "P(X|Y=1)", "P(X)". You need to fill at least one field for each sibling (e.g. "Question P(X|Y=1)" and "P(X|Y=1)").  If you do not provide a question, you need to specify a probability. <a target="_blank" href="{% static 'job_files/input/example.csv'  %}">Here</a> you find an example csv file. </p>
+    <p>Please upload a CSV file with seven columns, including the exact headers "Feature", "Question P(Y|X=0)", "Question P(Y|X=1)", "Question P(X)", "P(Y|X=0)", "P(Y|X=1)", "P(X)". You need to fill at least one field for each sibling (e.g. "Question P(X|Y=1)" and "P(X|Y=1)").  If you do not provide a question, you need to specify a probability. <a target="_blank" href="{% static 'job_files/input/example.csv'  %}">Here</a> you find an example CSV file. </p>
     <p>For the target mean, you can either provide a question (in this case, the mean will be queried from the crowd) or enter a target mean between 0 and 1.</p>
             <p>After submitting the form, you will be presented an overview of the job including a cost estimation. Then you can start the job.</p>
 
@@ -35,6 +35,15 @@
         <button id='btn-reset' type="reset" class="btn btn-default">Reset</button>
         <button id='btn-submit' type="submit" class="save btn btn-primary">Preview...</button>
     </form>
+    <div class="form-group"></div>
+<div class="alert alert-info">
+    <b>Hints</b>
+    <ul>
+    <li>Provide good semantic descriptions</li>
+    <li>You have to end all your questions with a question mark: ?</li>
+    <li>Your results will be saved for 14 days. Please download your data early to make sure you keep your results</li>
+    </ul>
+    </div>
 
 {% endblock %}
 

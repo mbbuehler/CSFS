@@ -14,7 +14,9 @@ class FeatureAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 class CrowdAnswerAdmin(admin.ModelAdmin):
-    list_display = ('answer', 'type', 'worker_id')
+    def feature_name(self, obj):
+        return obj.feature.name
+    list_display = ('answer', 'type', 'worker_id', 'feature_name')
     ordering = ('answer', 'type', 'worker_id')
     search_fields = ('type',)
 

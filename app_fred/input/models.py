@@ -69,6 +69,7 @@ class Job(models.Model):
             costs += 0.04 * no_workers
         return costs
 
+    @atomic
     def run(self):
         # TODO: adjust variables
         process_id = self.pk
@@ -125,7 +126,6 @@ class Job(models.Model):
             messages['Incorrect Status'] = 'Invalid job status detected: {}'.format(self.status)
         # if self.status == self.Status.PROCESSING and self.amt_is_done():
         if self.status == self.Status.FINISHED and self.amt_is_done():
-
             self.path_crowd_answers = 'static/job_files/output/{}_raw.csv'.format(self.pk)
             answers_raw = Queries.objects.filter(process_id=self.pk).filter(~Q(answer='None'))
             dump(answers_raw, self.path_crowd_answers)
@@ -139,6 +139,9 @@ class Job(models.Model):
                 self.target_mean = np.median(estimates)
                 target_feature = Feature.objects.get(job=self, name='target')
                 target_feature.p = self.target_mean
+                target_feature.p_0 = 0
+                target_feature.p_1 = 1
+                target_feature.ig = Calculator().compute_ig(target_feature.p, target_feature.p_0, target_feature.p_1, self.target_mean)
                 target_feature.save()
 
             assert self.validate_ready_for_finishing()
@@ -183,10 +186,6 @@ class Feature(models.Model):
         return is_valid, msg
 
     def compute_ig(self, p_target):
-        print(p_target)
-        print(self.p)
-        print(self.p_0)
-        print(self.p_1)
         ig = Calculator().compute_ig(self.p, self.p_0, self.p_1, p_target)
         self.ig = max(ig, 0) # IG can't be lower than 0
         self.save()
@@ -227,13 +226,22 @@ class FeatureFileOutput:
         self.job = job
 
     def _extract_data(self, feature):
-        return {
+        if feature.name == 'target':
+            return {
             'feature': feature.name,
             'P(X)': feature.p,
-            'P(Y|X=0)': feature.p_0,
-            'P(Y|X=1)': feature.p_1,
-            'IG*': feature.ig,
-        }
+            'P(Y|X=0)': 0,
+            'P(Y|X=1)': 1,
+            'IG*': "",
+            }
+        else:
+            return {
+                'feature': feature.name,
+                'P(X)': feature.p,
+                'P(Y|X=0)': feature.p_0,
+                'P(Y|X=1)': feature.p_1,
+                'IG*': feature.ig,
+            }
 
     def create(self):
         features = self.job.get_features(include_target=True)
@@ -267,12 +275,10 @@ class CrowdOutputProcessor:
         elif Feature.objects.filter(q_p=question).exists():
             answer_type = CrowdAnswer.Type.P
             feature = Feature.objects.get(q_p=question, job=self.job)
-        else:
-            answer_type = CrowdAnswer.Type.P_TARGET
         if feature is not None:
             crowd_answer = CrowdAnswer.objects.create(feature=feature, type=answer_type, worker_id=worker_id, answer=answer)
         else:
-            print('Feature is None')
+            print('> Feature is None')
         return crowd_answer
 
     def _get_nth(self, n, field_answer):
@@ -322,6 +328,7 @@ class CrowdOutputProcessor:
         row['saved'] = number_of_estimates
         return row
 
+    @atomic
     def save_answers(self):
         df_raw = pd.read_csv(self.path_crowd_answers)
         df_raw = df_raw.apply(self.save_row, axis='columns')
@@ -334,6 +341,7 @@ class CrowdAggregator:
     def __init__(self, job):
         self.job = job
 
+    @atomic
     def aggregate_answers(self):
         features = self.job.get_features(include_target=False)
         conditions = {'P(X)': 'p', 'P(Y|X=0)': 'p_0', 'P(Y|X=1)': 'p_1'}
@@ -434,6 +442,7 @@ class FeatureFactory:
     Creates Features
     """
     @classmethod
+    @atomic
     def create(cls, row, job, is_target=False):
         """
 

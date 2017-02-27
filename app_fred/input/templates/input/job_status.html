@@ -39,6 +39,7 @@
         function onStarted(data) {
             if (data.success === 'success'){
                 var msg = data.message;
+                msg += " Make sure you keep track of your job uuid. You will be querying the results using your email and the job uuid. You can check the status of your job <a target='_blank' title='Job Results' href='{{ links.result }}'>here</a>"
                 $('#div-message').text(msg).show();
                 $('#btn-start').hide();
                 $('#div-job-status').text(data.job_status);
