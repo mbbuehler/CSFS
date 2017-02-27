@@ -48,11 +48,13 @@ def job_new(request, job_id=-1):
 @require_http_methods(['GET'])
 def job_status_select(request):
     messages = {}
+    form = SelectJobForm()
     if 'uuid' in request.GET:
         qs_job_id = Job.objects.\
             filter(uuid=request.GET['uuid']).\
             filter(email=request.GET['email']).\
             values('id')
+        form = SelectJobForm(request.GET)
         if qs_job_id.count() == 0:
             messages['No job found'] = "Did you provide the correct credentials?"
         elif qs_job_id.count() > 1:
@@ -60,11 +62,10 @@ def job_status_select(request):
         else:
             job_id = qs_job_id.first()
             job_id = job_id['id']
-            print('id', job_id)
             return HttpResponseRedirect(reverse('job_status', kwargs={'job_id': job_id}))
 
     context = {
-        'form': SelectJobForm(),
+        'form': form,
         'messages': messages
     }
     return render(request, 'input/job_select.html', context)
