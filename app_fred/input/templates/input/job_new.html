@@ -73,7 +73,7 @@
             $('#div-costs').hide();
             update_target_mean_field();
 
-            $('#id_target_mean_checkbox').click(update_target_mean_field);
+            $('#id_query_target_mean').click(update_target_mean_field);
 //        $('#form-new-job').submit(function(e){onSubmit(e);});
 
         }
@@ -81,7 +81,7 @@
          * Shows and hides target mean field based on checkbox
          */
         function update_target_mean_field() {
-            if ($('#id_target_mean_checkbox').is(':checked')) {
+            if ($('#id_query_target_mean').is(':checked')) {
                 $('#id_target_mean').hide();
                 $('label[for="id_target_mean"]').hide();
                 $('#id_target_mean_question').show();

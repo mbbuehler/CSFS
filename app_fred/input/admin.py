@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from input.models import Job, Feature
+from input.models import Job, Feature, CrowdAnswer
 
 
 class JobAdmin(admin.ModelAdmin):
@@ -13,7 +13,13 @@ class FeatureAdmin(admin.ModelAdmin):
     ordering = ('name', 'q_p_0', 'q_p_1', 'q_p', 'p_0', 'p_1', 'p', 'ig')
     search_fields = ('name',)
 
+class CrowdAnswerAdmin(admin.ModelAdmin):
+    list_display = ('answer', 'type', 'worker_id')
+    ordering = ('answer', 'type', 'worker_id')
+    search_fields = ('type',)
+
 
 
 admin.site.register(Job, JobAdmin)
 admin.site.register(Feature, FeatureAdmin)
+admin.site.register(CrowdAnswer, CrowdAnswerAdmin)

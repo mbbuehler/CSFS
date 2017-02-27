@@ -3,6 +3,7 @@ import subprocess
 import uuid
 import shlex
 
+import numpy as np
 import pandas as pd
 import re
 from django.db import models
@@ -57,7 +58,7 @@ class Job(models.Model):
 
     def estimate_costs(self):
         no_features = self.feature_set.count()
-        no_workers = 9
+        no_workers = self.number_answers
         price_per_feature = 0.10
         costs = no_features * price_per_feature * no_workers
         if self.query_target_mean:
@@ -92,7 +93,7 @@ class Job(models.Model):
         return number_of_answers_required == number_of_answers_obtained
 
     def get_features(self):
-        return self.feature_set.all()
+        return self.feature_set.filter(is_target=False)
 
     def validate_ready_for_finishing(self):
         if not 0 <= self.target_mean <= 1:
@@ -108,20 +109,33 @@ class Job(models.Model):
         Calcs IG for each of its features
         :return: boolean True if computation happened and false if not
         """
-        # if
-
+        done = False
+        messages = dict()
+        if not self.amt_is_done():
+            messages['Still Processing'] = 'The answers are still being collected on AMT.'
+        if self.status != self.Status.PROCESSING:
+            messages['Incorrect Status'] = 'Invalid job status detected: {}'.format(self.status)
         if self.status == self.Status.PROCESSING and self.amt_is_done():
 
             self.path_crowd_answers = 'static/job_files/output/{}_raw.csv'.format(self.pk)
             answers_raw = Queries.objects.filter(process_id=self.pk).filter(~Q(answer='None'))
             dump(answers_raw, self.path_crowd_answers)
             number_saved = CrowdOutputProcessor(self.path_crowd_answers, self).save_answers()
+            CrowdAggregator(self).aggregate_answers()
             print('> number of answers saved', number_saved)
 
+            # aggregate answers
+
+
+            if self.query_target_mean:
+                target_answers = CrowdAnswer.objects.filter(feature__job=self, feature__name='target')
+                estimates = [a.answer for a in target_answers]
+                print(estimates)
+                self.target_mean = np.median(estimates)
 
             features = self.get_features()
             # get target mean
-            features = [feature.compute_ig(self.target_mean) for feature in features]
+            features = [feature.compute_ig(self.target_mean) for feature in features if not feature.is_target]
             print('> IG calculated')
 
             assert self.validate_ready_for_finishing()
@@ -129,19 +143,9 @@ class Job(models.Model):
             self.status == self.Status.FINISHED
             self.date_finished = timezone.now()
             self.save()
-            return True
-        return False
-
-    # def get_feature_ranking(self):
-    #     """
-    #     Returns data for feature ranking
-    #     :return:
-    #     """
-    #     fields = {'name', 'ig'}
-    #     features = self._get_features()
-    #     data = {
-    #
-    #     }
+            done = True
+            messages['Job Finished'] = 'Job successfully finished.'
+        return done, messages
 
 
 class Feature(models.Model):
@@ -165,6 +169,10 @@ class Feature(models.Model):
         return is_valid, msg
 
     def compute_ig(self, p_target):
+        print(p_target)
+        print(self.p)
+        print(self.p_0)
+        print(self.p_1)
         ig = Calculator().compute_ig(self.p, self.p_0, self.p_1, p_target)
         self.ig = max(ig, 0) # IG can't be lower than 0
         self.save()
@@ -172,6 +180,10 @@ class Feature(models.Model):
 
     def get_fields_as_dict(self, fields):
         return {field: getattr(self, field) for field in fields}
+
+    @property
+    def details(self):
+        return "{} -- p: {} | p_0: {} | p_1: {}".format(self.name, self.p, self.p_0, self.p_1)
 
 
 class CrowdOutputProcessor:
@@ -241,7 +253,6 @@ class CrowdOutputProcessor:
         return question, answer
 
     def save_row(self, row):
-        print(row)
         worker_id = row.answeruser
 
         field_answer = self._preprocess_field(row.answer)
@@ -257,6 +268,25 @@ class CrowdOutputProcessor:
         df_raw = df_raw.apply(self.save_row, axis='columns')
         number_saved = sum(df_raw['saved'])
         return number_saved
+
+
+class CrowdAggregator:
+    def __init__(self, job):
+        self.job = job
+
+    def aggregate_answers(self):
+        features = self.job.get_features()
+        conditions = {'P(X)': 'p', 'P(X|Y=0)': 'p_0', 'P(X|Y=1)': 'p_1'}
+        for f in features:
+            print('--')
+            print(f.details)
+            for c in conditions:
+                if getattr(f, conditions[c]) == -1:
+                    answers = CrowdAnswer.objects.filter(feature=f, type=c)
+                    assert answers.count() > 0
+                    estimates = [a.answer for a in answers]
+                    setattr(f, conditions[c], np.median(estimates))
+            f.save()
 
 
 class CrowdAnswer(models.Model):
@@ -287,7 +317,9 @@ class JobFactory:
         :return:
         """
         d = {key: data[key] for key in cls.job_fields if key in data}
+        d['query_target_mean'] = d['query_target_mean'] == 'on'
         d['uuid'] = uuid.uuid1()
+        print(d)
         job = Job.objects.create(**d)
 
         # save file and features
@@ -299,8 +331,10 @@ class JobFactory:
 
         csv_data = csv.DictReader(open(file_path))
         features = [FeatureFactory.create(row, job) for row in csv_data]
+        print(job.query_target_mean)
         if job.query_target_mean:
-            features.append(Feature.objects.create(q_p=job.target_mean_question, is_target=True, job=job,  name='target'))
+            job.target_mean = -1
+            features.append(Feature(q_p=job.target_mean_question, is_target=True, job=job,  name='target'))
 
         Feature.objects.bulk_create(features)
         questions_path = cls.create_questions_csv(features, job)
@@ -356,7 +390,7 @@ class FeatureFactory:
             'p_1': float(row['P(X|Y=1)']) if row['P(X|Y=1)'] != "" else -1,
             'p': float(row['P(X)']) if row['P(X)'] != "" else -1,
             'job': job,
-            'target': is_target,
+            'is_target': is_target,
         }
         feature = Feature(**data)
         return feature

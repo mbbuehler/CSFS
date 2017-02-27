@@ -34,7 +34,8 @@ def job_new(request, job_id=-1):
         newjobform = NewJobForm(data, files)
         if True: #newjobform.is_valid(): # does not work with csv reader TODO
             # csrfmiddlewaretoken=CUa2JJgJv22UnYj0nynyX10lfFNW8gOSujjv3mzAESMuGEPZl2Tkx1bUZDNpLCPT&email=marcel.buehler%40uzh.ch&amt_key=abcde&features_csv=features_student.csv&target_mean=0.5&target_mean_question=&job_id=
-            job = JobFactory.create(data, files) if data['job_id'] == '' else JobFactory.update(data)
+            # job = JobFactory.create(data, files) if data['job_id'] == '' else JobFactory.update(data)
+            job = JobFactory.create(data, files)
             is_valid, msg = job.is_valid()
             if is_valid:
                 return HttpResponseRedirect(reverse('job_status', kwargs=dict(job_id=job.pk)))
@@ -98,13 +99,15 @@ def job_start(request, job_id):
 
 def job_result(request, job_id=-1):
     job = Job.objects.get(pk=job_id)
-    job.finish()
+    success, messages = job.finish()
 
     context = {
+        'success': 'success' if success else 'failed',
         'job': Job.objects.get(pk=job_id),
         'links': {
             'download_answers': "",
             'download_features': "",
-        }
+        },
+        'messages': messages
     }
     return render(request, 'input/job_result.html', context)

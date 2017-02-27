@@ -62,7 +62,7 @@ class NewJobForm(forms.Form):
                                                                    'P(X)'
                                                                    ]
                             )
-    target_mean_checkbox = forms.BooleanField(label='Query the target mean', initial=True, required=False)
+    query_target_mean = forms.BooleanField(label='Query the target mean', initial=True, required=False)
     target_mean = forms.FloatField(label='Target mean', initial=0.5, required=False)
     target_mean_question = forms.CharField(label='Question for target mean P(Y)', required=False)
     job_id = forms.IntegerField(widget=forms.HiddenInput(), required=False, label="")
