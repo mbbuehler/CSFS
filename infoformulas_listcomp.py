@@ -204,7 +204,7 @@ def test():
 
 
     instance = pd.Series({'p': 3/5, 'p|f=0': 0.5, 'p|f=1': 2/3})
-    cond_entropy = H_X_Y_from_series(instance)
+    cond_entropy = H_X_Y_from_series(instance, identifier='p')
     cond_entropy_true = .9509775
     print(cond_entropy,' == ', cond_entropy_true, '?')
     assert round(cond_entropy, 5) == round(cond_entropy_true, 5)
@@ -213,13 +213,25 @@ def test():
     h_x = _H([3/5, 1-3/5])
     ig_true = h_x - cond_entropy_true
     # print(instance)
-    ig = IG_from_series(instance, h_x)
+    ig = IG_from_series(instance, h_x, identifier='p')
     print(ig, ' == ', ig_true, '?')
     assert round(ig, 5) == round(ig_true, 5)
 
     print(_H([5/14, 5/14, 4/14]))
 
     print(' == Tests OK ==')
+
+    instance = pd.Series({'mean': 0.9, 'mean|f=0':0.6, 'mean|f=1':0.5})
+    h_x = _H([0.6, 0.4])
+    print(IG_from_series(instance, h_x, identifier='mean'))
+    instance = pd.Series({'mean': 0.3, 'mean|f=0':0.7, 'mean|f=1':0.1})
+    h_x = _H([0.6, 0.4])
+    print(IG_from_series(instance, h_x, identifier='mean'))
+    instance = pd.Series({'mean': 0.6, 'mean|f=0':0.7, 'mean|f=1':0.1})
+    h_x = _H([0.6, 0.4])
+    print(IG_from_series(instance, h_x, identifier='mean'))
+
+
 
 if __name__ == '__main__':
     test()
