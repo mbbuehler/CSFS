@@ -123,8 +123,8 @@ class Job(models.Model):
             messages['Still Processing'] = 'The answers are still being collected on AMT.'
         if self.status != self.Status.PROCESSING:
             messages['Incorrect Status'] = 'Invalid job status detected: {}'.format(self.status)
-        if self.status == self.Status.PROCESSING and self.amt_is_done():
-        # if self.status == self.Status.FINISHED and self.amt_is_done():
+        # if self.status == self.Status.PROCESSING and self.amt_is_done():
+        if self.status == self.Status.FINISHED and self.amt_is_done():
             self.path_crowd_answers = 'static/job_files/output/{}_raw.csv'.format(self.pk)
             answers_raw = Queries.objects.filter(process_id=self.pk).filter(~Q(answer='None')).distinct()
             dump(answers_raw, self.path_crowd_answers)
@@ -197,6 +197,13 @@ class Feature(models.Model):
     def details(self):
         return "{} -- p: {} | p_0: {} | p_1: {}".format(self.name, self.p, self.p_0, self.p_1)
 
+def static_prefix():
+    from app_fred.secret import MODE
+    if MODE == 'DEV':
+        return "static/"
+    else:
+        from app_fred.settings_prod import STATIC_ROOT
+        return STATIC_ROOT+'/'
 
 class AnswerFileOutput:
     def __init__(self, job):
@@ -214,9 +221,10 @@ class AnswerFileOutput:
         answers = CrowdAnswer.objects.filter(feature__job=self.job)
         data = [self._extract_data(a) for a in answers]
         df = pd.DataFrame(data, columns=['feature', 'type', 'estimate', 'worker_id']).sort_values(['feature', 'type', 'estimate'])
-        path_pref = "static/"
-        path = "job_files/output/{}_crowd_answers.csv".format(self.job.pk)
-        df.to_csv(path_pref+path, index=False)
+        path_pref = static_prefix()
+        path = "{}job_files/output/{}_crowd_answers.csv".format(path_pref, self.job.pk)
+        print('> Answer file:',path)
+        df.to_csv(path, index=False)
         return path, len(df)
 
 
@@ -246,9 +254,10 @@ class FeatureFileOutput:
         features = self.job.get_features(include_target=True)
         data = [self._extract_data(f) for f in features]
         df = pd.DataFrame(data, columns=['feature', 'P(X)', 'P(Y|X=0)', 'P(Y|X=1)', 'IG*']).sort_values(['IG*', 'feature'])
-        path_pref = "static/"
-        path = "job_files/output/{}_feature_data.csv".format(self.job.pk)
-        df.to_csv(path_pref+path, index=False)
+        path_pref = static_prefix()
+        path = "{}job_files/output/{}_feature_data.csv".format(path_pref, self.job.pk)
+        print('> Feature file:', path)
+        df.to_csv(path, index=False)
         return path, len(df)
 
 
@@ -335,7 +344,6 @@ class CrowdOutputProcessor:
         df_raw = pd.read_csv(self.path_crowd_answers)
         df_raw = df_raw.apply(self.save_row, axis='columns')
         number_saved = sum(df_raw['saved'])
-        print(df_raw)
         return number_saved
 
 
