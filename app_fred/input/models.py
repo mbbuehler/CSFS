@@ -72,9 +72,9 @@ class Job(models.Model):
     def run(self):
         # TODO: adjust variables
         process_id = self.pk
-        print('starting task')
-
         command = '(cd {}; sbt "run-main main.scala.ch.uzh.ifi.pdeboer.pplib.examples.gdpinfluence.krowdd_run {} {} {} {} {} {} {} {}")'.format(settings.PATH_PPLIB, self.name, self.amt_key, self.amt_secret, process_id, self.number_answers, settings.BASE_DIR+'/'+self.path_questions, self.sandbox, self.price_per_feature)
+        print('> AMT command: ')
+        print(command)
         process = subprocess.Popen(command, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
         print('> AMT task started')
         print(process)
@@ -389,7 +389,6 @@ class JobFactory:
         d = {key: data[key] for key in cls.job_fields if key in data}
         d['query_target_mean'] = True if 'query_target_mean' in d else False
         d['uuid'] = uuid.uuid1()
-        print(d)
         job = Job.objects.create(**d)
 
         # save file and features
@@ -401,11 +400,9 @@ class JobFactory:
 
         csv_data = csv.DictReader(open(file_path))
         features = [FeatureFactory.create(row, job) for row in csv_data]
-        print(job.query_target_mean)
         if job.query_target_mean:
             job.target_mean = -1
             features.append(Feature(q_p=job.target_mean_question, is_target=True, job=job,  name='target'))
-
         Feature.objects.bulk_create(features)
         questions_path = cls.create_questions_csv(features, job)
         job.path_questions = questions_path

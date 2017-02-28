@@ -230,6 +230,9 @@ def test():
     instance = pd.Series({'mean': 0.6, 'mean|f=0':0.7, 'mean|f=1':0.1})
     h_x = _H([0.6, 0.4])
     print(IG_from_series(instance, h_x, identifier='mean'))
+    instance = pd.Series({'mean': 0.4, 'mean|f=0':0.1, 'mean|f=1':0.5})
+    h_x = _H([1, 0])
+    print(IG_from_series(instance, h_x, identifier='mean'))
 
 
 

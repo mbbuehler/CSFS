@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
-
+from app_fred import secret
 
 
 from django.db import connections
@@ -9,7 +9,12 @@ from django.db.utils import OperationalError
 
 
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app_fred.settings")
+    if secret.MODE == 'DEV':
+        print('DEV MODE')
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app_fred.settings_dev")
+    else:
+        print('PROD MODE')
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app_fred.settings_prod")
     try:
         from django.core.management import execute_from_command_line
     except ImportError:

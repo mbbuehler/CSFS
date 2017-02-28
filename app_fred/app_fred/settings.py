@@ -104,7 +104,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -118,3 +118,6 @@ STATICFILES_DIRS = [
 ]
 
 print('got 3')
+# TODO: check is this still needed?
+import pymysql
+pymysql.install_as_MySQLdb()
