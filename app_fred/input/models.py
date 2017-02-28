@@ -41,8 +41,8 @@ class Job(models.Model):
     date_started = models.DateField(blank=True, null=True)
     date_finished = models.DateField(blank=True, null=True)
 
-    number_answers = 1
-    sandbox = 1
+    number_answers = 9
+    sandbox = 0
     price_per_feature = 3
 
     path_crowd_answers = models.CharField(max_length=100)
