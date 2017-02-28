@@ -14,9 +14,7 @@ from django.utils import timezone
 
 from math import log
 
-from app_fred.settings import PATH_KROWDD_FILES, PATH_PPLIB, BASE_DIR
-
-from app_fred.settings import STATIC_URL
+from django.conf import settings
 
 
 class Job(models.Model):
@@ -76,7 +74,7 @@ class Job(models.Model):
         process_id = self.pk
         print('starting task')
 
-        command = '(cd {}; sbt "run-main main.scala.ch.uzh.ifi.pdeboer.pplib.examples.gdpinfluence.krowdd_run {} {} {} {} {} {} {} {}")'.format(PATH_PPLIB, self.name, self.amt_key, self.amt_secret, process_id, self.number_answers, BASE_DIR+'/'+self.path_questions, self.sandbox, self.price_per_feature)
+        command = '(cd {}; sbt "run-main main.scala.ch.uzh.ifi.pdeboer.pplib.examples.gdpinfluence.krowdd_run {} {} {} {} {} {} {} {}")'.format(settings.PATH_PPLIB, self.name, self.amt_key, self.amt_secret, process_id, self.number_answers, settings.BASE_DIR+'/'+self.path_questions, self.sandbox, self.price_per_feature)
         process = subprocess.Popen(command, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
         print('> AMT task started')
         print(process)
@@ -395,7 +393,7 @@ class JobFactory:
         job = Job.objects.create(**d)
 
         # save file and features
-        file_path = "{}{}.csv".format(PATH_KROWDD_FILES+'input/', job.pk)
+        file_path = "{}{}.csv".format(settings.PATH_KROWDD_FILES+'input/', job.pk)
         file = files['features_csv']
         with open(file_path, 'wb+') as destination:
             for chunk in file.chunks():
@@ -429,7 +427,7 @@ class JobFactory:
                         data.append([identifier, question])
 
         questions = pd.DataFrame(data, columns=None)
-        path = "{}input/{}_questions.csv".format(PATH_KROWDD_FILES, job.pk)
+        path = "{}input/{}_questions.csv".format(settings.PATH_KROWDD_FILES, job.pk)
         questions.to_csv(path, index=False, header=False)
         return path
 

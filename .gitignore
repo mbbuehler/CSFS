@@ -123,3 +123,4 @@ tests/report/
 private_*
 job_files/*.csv 
 secret.py
+*.sql

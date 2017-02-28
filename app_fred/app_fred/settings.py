@@ -21,8 +21,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 
-
-ALLOWED_HOSTS = []
+print('base dir', BASE_DIR)
+ALLOWED_HOSTS = ['mbuehler.ch', 'geokokos.ch', '62.202.31.20', 'localhost']
 
 
 PATH_KROWDD_FILES = 'static/job_files/'
@@ -52,10 +52,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'app_fred.urls'
 
+print('got 2')
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': ['templates', os.path.join(BASE_DIR, 'templates').replace('\\', '/'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -114,3 +116,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+print('got 3')
