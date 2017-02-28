@@ -63,13 +63,16 @@ mean of 0.5) or querying the target mean from the crowd.
 
 The estimates acquired from the crowd and the feature data (Information Gain and probability
 estimates) can be downloaded as CSV files.
-![New Job View](/app_fred/screenshots/new_job.png "New Job View")
-![Job Status View](/app_fred/screenshots/job_status.png "Job Status View")
-![Job Result View](/app_fred/screenshots/job_result.png "Job Result View")
 
 Questions / Feedback
 -------------
 For questions / feedback, don't hesitate and contact me.
+
+Screenshots
+-------------
+![New Job View](/app_fred/screenshots/new_job.png "New Job View")
+![Job Status View](/app_fred/screenshots/job_status.png "Job Status View")
+![Job Result View](/app_fred/screenshots/job_result.png "Job Result View")
 
 
 
