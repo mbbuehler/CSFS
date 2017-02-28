@@ -46,18 +46,18 @@ Web Application
 Try KrowDD online! 
 On http://mbuehler.ch/krowdd you can upload your own data and obtain a relevance estimation for each feature. 
 You only need the following:
-• Job title: the title of the job
-• E-mail: your email
-• AMT access key ID and AMT secret access key: your Amazon Mechanical
+- Job title: the title of the job
+- E-mail: your email
+- AMT access key ID and AMT secret access key: your Amazon Mechanical
 Turk access key ID and the corresponding secret access key. These credentials are
 required to collect the crowd estimates on Amazon Mechanical Turk.
-• CSV file: a CSV file with seven columns: Feature, Question P (X|Y = 0), Question
+- CSV file: a CSV file with seven columns: Feature, Question P (X|Y = 0), Question
 P (X|Y = 1), Question P (X), P (X|Y = 0), P (X|Y = 1), P (X). Users need to fill
 at least one field for each sibling (e.g. Question P (X|Y = 1) and P (X|Y = 1)). For
 each feature, the user can either provide descriptions for the (conditional) means
 of this feature or directly enter a value. KrowDD only queries feature means for
 which no value has been provided.
-• Target mean (optional): you can decide between defining a target mean (e.g. if it is
+- Target mean (optional): you can decide between defining a target mean (e.g. if it is
 already known that the target variable is balanced, the user might use a target
 mean of 0.5) or querying the target mean from the crowd.
 
