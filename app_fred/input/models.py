@@ -72,7 +72,7 @@ class Job(models.Model):
     def run(self):
         # TODO: adjust variables
         process_id = self.pk
-        command = '(cd {}; sbt "run-main main.scala.ch.uzh.ifi.pdeboer.pplib.examples.gdpinfluence.krowdd_run {} "{}" {} {} {} {} {} {}")'.format(settings.PATH_PPLIB, self.name, self.amt_key, self.amt_secret, process_id, self.number_answers, settings.BASE_DIR+'/'+self.path_questions, self.sandbox, self.price_per_feature)
+        command = '(cd {}; sbt "run-main main.scala.ch.uzh.ifi.pdeboer.pplib.examples.gdpinfluence.krowdd_run \\"{}\\" {} {} {} {} {} {} {}")'.format(settings.PATH_PPLIB, self.name, self.amt_key, self.amt_secret, process_id, self.number_answers, settings.BASE_DIR+'/'+self.path_questions, self.sandbox, self.price_per_feature)
         print('> AMT command: ')
         print(command)
         process = subprocess.Popen(command, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
@@ -123,8 +123,8 @@ class Job(models.Model):
             messages['Still Processing'] = 'The answers are still being collected on AMT.'
         if self.status != self.Status.PROCESSING:
             messages['Incorrect Status'] = 'Invalid job status detected: {}'.format(self.status)
-        # if self.status == self.Status.PROCESSING and self.amt_is_done():
-        if self.status == self.Status.FINISHED and self.amt_is_done():
+        if self.status == self.Status.PROCESSING and self.amt_is_done():
+        # if self.status == self.Status.FINISHED and self.amt_is_done():
             self.path_crowd_answers = 'static/job_files/output/{}_raw.csv'.format(self.pk)
             answers_raw = Queries.objects.filter(process_id=self.pk).filter(~Q(answer='None')).distinct()
             dump(answers_raw, self.path_crowd_answers)
@@ -225,7 +225,8 @@ class AnswerFileOutput:
         path = "{}job_files/output/{}_crowd_answers.csv".format(path_pref, self.job.pk)
         print('> Answer file:',path)
         df.to_csv(path, index=False)
-        return path, len(df)
+        path_web = "job_files/output/{}_crowd_answers.csv".format(self.job.pk)
+        return path_web, len(df)
 
 
 class FeatureFileOutput:
@@ -258,7 +259,8 @@ class FeatureFileOutput:
         path = "{}job_files/output/{}_feature_data.csv".format(path_pref, self.job.pk)
         print('> Feature file:', path)
         df.to_csv(path, index=False)
-        return path, len(df)
+        path_web = "job_files/output/{}_feature_data.csv".format(self.job.pk)
+        return path_web, len(df)
 
 
 class CrowdOutputProcessor:
