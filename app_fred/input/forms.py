@@ -5,6 +5,7 @@ from django import forms
 import csv
 from django.core.exceptions import ValidationError
 
+
 class KrowDDCSVField(forms.FileField):
     """
     FileField that checks that the file is a valid CSV and if specified
@@ -80,16 +81,29 @@ class KrowDDCSVField(forms.FileField):
                         raise ValidationError(u'Please end all you questions with a question mark (please check feature {} and {}'.format(row['Feature'], row[question]))
         return value
 
+
+class QuestionField(forms.CharField):
+
+    #def __init__(self, *args, **kwargs):
+     #   super(QuestionField, self).__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        value = super(QuestionField, self).clean(data)
+        if data != "" and data[-1] != '?':
+            raise ValidationError(u'Please end your question with a question mark (?)')
+        return value
+
+
 class NewJobForm(forms.Form):
     # TODO: implement validator for target mean (either mean or question has to be available, question with question mark)+ Check amt key for validity
     name = forms.CharField(label='Job title')
     email = forms.EmailField(label='Email')
     amt_key = forms.CharField(label='AMT access key ID', max_length=21, min_length=20)
     amt_secret = forms.CharField(label='AMT secret access key', max_length=41, min_length=40, widget=forms.PasswordInput)
-    features_csv = KrowDDCSVField(label='CSV file', required=False, expected_fieldnames=['Feature', 'Question P(Y|X=0)', 'Question P(Y|X=1)', 'Question P(X)', 'P(Y|X=0)', 'P(Y|X=1)', 'P(X)'])
+    features_csv = KrowDDCSVField(label='CSV file', required=True, expected_fieldnames=['Feature', 'Question P(Y|X=0)', 'Question P(Y|X=1)', 'Question P(X)', 'P(Y|X=0)', 'P(Y|X=1)', 'P(X)'])
     query_target_mean = forms.BooleanField(label='Query the target mean', initial=True, required=False)
     target_mean = forms.FloatField(label='Target mean', initial=0.5, required=False)
-    target_mean_question = forms.CharField(label='Question for target mean P(Y)', required=False)
+    target_mean_question = QuestionField(label='Question for target mean P(Y)', required=False)
     job_id = forms.IntegerField(widget=forms.HiddenInput(), required=False, label="")
 
 
