@@ -72,9 +72,16 @@ class KrowDDCSVField(forms.FileField):
                         assert 0 <= mean <= 1
                     except:
                         raise ValidationError(u'Provided invalid value for feature {} and field {}'.format(row['Feature'], row['key']))
+
+            # make sure all questions contain a question mark at the end
+            for question in siblings:
+                if row[question] != "":
+                    if row[question][-1] != '?':
+                        raise ValidationError(u'Please end all you questions with a question mark (please check feature {} and {}'.format(row['Feature'], row[question]))
         return value
 
 class NewJobForm(forms.Form):
+    # TODO: implement validator for target mean (either mean or question has to be available, question with question mark)+ Check amt key for validity
     name = forms.CharField(label='Job title')
     email = forms.EmailField(label='Email')
     amt_key = forms.CharField(label='AMT access key ID', max_length=21, min_length=20)
@@ -84,6 +91,7 @@ class NewJobForm(forms.Form):
     target_mean = forms.FloatField(label='Target mean', initial=0.5, required=False)
     target_mean_question = forms.CharField(label='Question for target mean P(Y)', required=False)
     job_id = forms.IntegerField(widget=forms.HiddenInput(), required=False, label="")
+
 
 class SelectJobForm(forms.Form):
     uuid = forms.CharField(max_length=36)
