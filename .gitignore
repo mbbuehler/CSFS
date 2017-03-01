@@ -124,3 +124,9 @@ private_*
 job_files/*.csv 
 secret.py
 *.sql
+test_data/*.csv
+static/job_files/input/*
+static/job_files/output/*
+C
+D
+ static/job_files/input/
