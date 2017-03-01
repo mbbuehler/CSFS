@@ -58,7 +58,6 @@ class KrowDDCSVField(forms.FileField):
         reader = csv.DictReader(rows)
         for row in reader:
             # check if feature has a name
-            print(row['Feature'])
             if 'Feature' not in row or row['Feature'] == '':
                 raise ValidationError(u'There is a feature name missing')
             # we need a question or a given mean
@@ -98,13 +97,31 @@ class NewJobForm(forms.Form):
     # TODO: implement validator for target mean (either mean or question has to be available, question with question mark)+ Check amt key for validity
     name = forms.CharField(label='Job title')
     email = forms.EmailField(label='Email')
-    amt_key = forms.CharField(label='AMT access key ID', max_length=21, min_length=20)
-    amt_secret = forms.CharField(label='AMT secret access key', max_length=41, min_length=40, widget=forms.PasswordInput)
+    amt_key = forms.CharField(label='AMT access key ID', max_length=21, min_length=10) #TODO check min and max amt secret and key length
+    amt_secret = forms.CharField(label='AMT secret access key', max_length=41, min_length=30, widget=forms.PasswordInput)
     features_csv = KrowDDCSVField(label='CSV file', required=True, expected_fieldnames=['Feature', 'Question P(Y|X=0)', 'Question P(Y|X=1)', 'Question P(X)', 'P(Y|X=0)', 'P(Y|X=1)', 'P(X)'])
     query_target_mean = forms.BooleanField(label='Query the target mean', initial=True, required=False)
     target_mean = forms.FloatField(label='Target mean', initial=0.5, required=False)
     target_mean_question = QuestionField(label='Question for target mean P(Y)', required=False)
     job_id = forms.IntegerField(widget=forms.HiddenInput(), required=False, label="")
+
+    def clean(self):
+        cleaned_data = super(NewJobForm, self).clean()
+        print('here')
+        print(self.data)
+        query_target_mean = 'query_target_mean' in cleaned_data and self.data['query_target_mean'] == 'on'
+        print('query?',query_target_mean)
+        if query_target_mean:
+            if cleaned_data['target_mean_question'] == '':
+                raise ValidationError(u'Please provide a question for the target mean.')
+        else:
+            try:
+                target_mean = float(cleaned_data['target_mean'])
+                assert 0 <= target_mean <= 1
+            except:
+                raise ValidationError(u'Please provide a valid target mean')
+
+        return cleaned_data
 
 
 class SelectJobForm(forms.Form):
