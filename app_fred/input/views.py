@@ -31,6 +31,8 @@ def job_new(request, job_id=-1):
     if request.method == 'POST':
         data = request.POST
         files = request.FILES
+        print(data)
+        print(files)
         newjobform = NewJobForm(data, files)
         if True: #newjobform.is_valid(): # does not work with csv reader TODO
             # csrfmiddlewaretoken=CUa2JJgJv22UnYj0nynyX10lfFNW8gOSujjv3mzAESMuGEPZl2Tkx1bUZDNpLCPT&email=marcel.buehler%40uzh.ch&amt_key=abcde&features_csv=features_student.csv&target_mean=0.5&target_mean_question=&job_id=

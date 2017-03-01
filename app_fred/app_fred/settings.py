@@ -21,7 +21,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 
-print('base dir', BASE_DIR)
 ALLOWED_HOSTS = ['mbuehler.ch', 'geokokos.ch', '62.202.31.20', 'localhost']
 
 
@@ -52,7 +51,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'app_fred.urls'
 
-print('got 2')
 
 TEMPLATES = [
     {
@@ -117,7 +115,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-print('got 3')
 # TODO: check is this still needed?
 import pymysql
 pymysql.install_as_MySQLdb()
