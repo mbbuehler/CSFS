@@ -10,4 +10,6 @@ urlpatterns = [
     url(r'jobs/status$', views.job_status_select, name='job_status_select'),
     url(r'jobs/(?P<job_id>[0-9]+)/result', views.job_result, name='job_result'),
     url(r'jobs/(?P<job_id>[0-9]+)/start$', views.job_start, name='job_start'),
+    url(r'links$', views.links, name='links'),
+    url(r'thanks$', views.thanks, name='thanks'),
 ]

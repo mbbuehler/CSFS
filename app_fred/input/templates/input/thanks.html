@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+    <h1>Thank You</h1>
+    <p>
+I would like to thank Patrick M. de Boer for his guidance and <a href="http://www.ifi.uzh.ch/en/ddis/people/bernstein.html"
+                                                                 title="Prof. Abraham Bernstein" target="_blank">Prof. Abraham Bernstein</a>
+for supervising this thesis. Furthermore, I am grateful to all study participants (human
+experts, data scientists and
+        <a href="https://www.mturk.com/mturk/welcome" title="Amazon Mechanical Turk" target="_blank">Amazon Mechanical Turk</a> crowd workers) and all the people
+providing feedback at any stage of this thesis. This work was supported in part by the
+<a href="http://www.snf.ch" title="Swiss National Science Foundation" target="_blank">Swiss National Science Foundation</a> (SNSF-Project: 200021-143411/1).
+    </p>
+
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+        });
+    </script>
+{% endblock %}

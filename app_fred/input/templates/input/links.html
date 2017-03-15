@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+    <div class="col-md-6 col-sm-12">
+    <h1>Links</h1>
+    <ul>
+    {% for label, link in links.items %}
+        <li><b>{{ label }}</b>: <a href="{{ link }}" target="_blank" title="{{ label }}">{{ link }}</a></li>
+    {% endfor %}
+    </ul>
+    </div>
+
+    <div class="col-md-6 col-sm-12">
+    <h1>Downloads</h1>
+    <ul>
+    {% for label, path in downloads.items %}
+        <li><b>{{ label }}</b>: <a href="{% static path %}" title="Click to download" target="_blank">Click to download</a></li>
+    {% endfor %}
+    </ul></div>
+
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+        });
+    </script>
+{% endblock %}

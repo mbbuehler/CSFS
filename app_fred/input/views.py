@@ -96,7 +96,7 @@ def job_start(request, job_id):
     }
     return JsonResponse(context)
 
-
+@require_http_methods(['GET'])
 def job_result(request, job_id=-1):
     job = Job.objects.get(pk=job_id)
     success, messages = job.finish()
@@ -111,3 +111,20 @@ def job_result(request, job_id=-1):
         'messages': messages
     }
     return render(request, 'input/job_result.html', context)
+
+def links(request):
+    context = {
+        'downloads': {
+            'Written Thesis': 'downloads/buehler_2017_krowdd.pdf'
+        },
+        'links': {
+            'KrowDD GitHub': 'https://github.com/mbbuehler/KrowDD',
+            'PPLib GitHub': 'https://github.com/uzh/PPLib',
+        }
+    }
+    return render(request, 'input/links.html', context)
+
+def thanks(request):
+    context = {
+    }
+    return render(request, 'input/thanks.html', context)

@@ -17,7 +17,7 @@ DATABASES = {
     }
 }
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 USE_TZ = False # django.db.utils.DatabaseError: Incorrect datetime value: '2017-02-28 10:50:04.839615+00:00' for column 'applied' at row 1
 
 USE_X_FORWARDED_HOST = True # If using proxy

@@ -14,3 +14,7 @@
     text-align: justify;
     text-justify: inter-word;
  }
+
+ .nav-link:hover{
+     background-color: grey;
+ }

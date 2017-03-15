@@ -53,21 +53,24 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="{% url 'index' %}">
                     <img id="img-logo" src="{% static 'images/logo.png' %}" alt="">
                 </a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li>
-                        <a href="{% url 'index' %}">Home</a>
-                    </li>
-                    <li>
+                    <li class="nav-link">
                         <a href="{% url 'job_new' %}">New Job</a>
                     </li>
-                    <li>
+                    <li class="nav-link">
                         <a href="{% url 'job_status_select' %}">Job Status</a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="{% url 'links' %}">Links / Downloads</a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="{% url 'thanks' %}">Thank You</a>
                     </li>
                 </ul>
             </div>
