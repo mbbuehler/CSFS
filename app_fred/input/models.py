@@ -7,6 +7,8 @@ import shlex
 import numpy as np
 import pandas as pd
 import re
+
+from django.core.mail import send_mail
 from django.db import models
 from django.db.models import Q
 from django.db.transaction import atomic
@@ -162,6 +164,10 @@ class Job(models.Model):
             done = True
             messages['Job Finished'] = 'Job successfully finished.'
         return done, messages
+
+    @property
+    def mail_details(self):
+        return "{} started by {}".format(self.name, self.email)
 
 
 class Feature(models.Model):
@@ -417,6 +423,16 @@ class JobFactory:
         questions_path = cls.create_questions_csv(features, job)
         job.path_questions = questions_path
         job.save()
+
+        # send email for notification
+        send_mail(
+            'KrowDD: Job Created',
+            'Someone created a new job. Job details: {}'.format(job.mail_details),
+            settings.EMAIL_HOST_USER,
+            [settings.EMAIL_HOST_USER],
+            fail_silently=False,
+        )
+
         return job
 
     @staticmethod

@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.mail import send_mail
 from django.http import QueryDict
 from django.test import TestCase
 from django.utils.datastructures import MultiValueDict
@@ -14,6 +16,18 @@ from input.models import CrowdOutputProcessor
 #         CrowdOutputProcessor(self.path).save_answers()
 from input.forms import NewJobForm
 
+
+class EmailTest(TestCase):
+
+    def test_send(self):
+        sent = send_mail(
+            'KrowDD: Job Created',
+            'Someone created a new job.',
+            settings.EMAIL_HOST_USER,
+            [settings.EMAIL_HOST_USER],
+            fail_silently=False,
+        )
+        self.assertEqual(1, sent)
 
 class NewJobFormTest(TestCase):
 
@@ -46,7 +60,9 @@ class NewJobFormTest(TestCase):
         data = {'query_target_mean': 'on', 'amt_secret': 'bPxRfiCYEXAMPLEKEY/i5WmI/VBW7ZGfW7E6', 'name': 'Estimate Student Performance', 'amt_key': 'AKIAIOSFODNN7EXAMPLE', 'email': 'marcel.buehler@uzh.ch', 'job_id': '', 'csrfmiddlewaretoken': 'ruca4jTObc7QPKbxjoBKfKATGuyWERv7BbrMHUM6AEXRDM37lqX5A7s9MNsVtlRW', 'target_mean': '0.5', 'target_mean_question': ''}
         files = {'features_csv': SimpleUploadedFile(uploaded_file.name, uploaded_file.read(), content_type='text/csv')}
         form = NewJobForm(data, files)
-        print('test')
-        print('valid', form.is_valid())
-        print(form.errors)
+        # print('test')
+        # print('valid', form.is_valid())
+        # print(form.errors)
+
+
 
