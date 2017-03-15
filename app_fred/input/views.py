@@ -128,3 +128,14 @@ def thanks(request):
     context = {
     }
     return render(request, 'input/thanks.html', context)
+
+def evaluation(request):
+    context = {
+        'student': {
+            'graph_ranking_count': 'graphs/student_ranking_count_plot.html',
+            'graph_scores': 'graphs/student_scores_plot.html',
+        }
+
+    }
+    return render(request, 'input/evaluation.html', context)
+

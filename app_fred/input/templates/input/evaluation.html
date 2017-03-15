@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+  <div class="col-md-12 col-sm-12">
+    <h1>Evaluation Domain Experts</h1>
+      <p>
+        Domain Experts ranked feature relevance for three different datasets. This page shows the human expert performance when training a Naive Bayes classifier with the N highest ranked features. As most of the participating domain experts are German speakers, the results are presented in German.
+      </p>
+    <ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#tab-student">Student</a></li>
+  <li><a data-toggle="tab" href="#tab-olympics">Olympics</a></li>
+  <li><a data-toggle="tab" href="#tab-income">Income</a></li>
+</ul>
+
+    <div class="tab-content">
+  <div id="tab-student" class="tab-pane fade in active">
+    <h3>Student Dataset</h3>
+      <p>
+    <p>
+      <b>Anzahl Teilnehmer</b>: 18<br>
+      <b>Quelle</b>: <a href="http://archive.ics.uci.edu/ml/datasets/Student+Performance"
+                                                    title="UCI Student Dataset" target="_blank"> UCI Machine Learning Repository</a>
+  </p>
+      <h4>Aufgabenstellung</h4>
+      <i>
+      <p>Dein Freund Beat ist ein erfahrener Sekundarlehrer. Er glaubt, dass er mit Hilfe von gewissen Informationen über einen SuS (z. B. das Alter) voraussagen kann, ob der SuS eher gute oder eher schlechte Noten schreiben wird. Insbesondere will er voraussagen können, ob die Noten des SuS besser oder schlechter als die Hälfte der Klasse sein werden.</p><p>
+Momentan ist er sich nicht sicher, welche Informationen für eine solche Voraussage relevant sind. Du und Beat sitzen zusammen und brainstormen mögliche Ideen. Gemeinsam findet ihr 15 verschiedene Aspekte. Beat fragt dich nun nach deiner Meinung, wie wichtig jede dieser Informationen ist. Er bittet dich, die 15 verschiedenen Aspekte nach ihrer Relevanz zu sortieren. Die Information, die du am wichtigsten findest, sollte ganz oben stehen und die Information, die du als unwichtig betrachtest ganz unten. </p>
+</i>
+      <h4>Beliebteste Aspekte</h4>
+      <p>Diese Graphik zeigt die Verteilung der Features auf den ersten drei Plätzen. <br>
+          Lesebeispiel 1: <i>Der Aspekt "Höhere Ausbildung" wurde von 33.33% der Teilnehmer als besten Aspekt gewählt (Position 1).</i><br>
+          Lesebeispiel 2: <i>Der Aspekt "Kleine Familie" wurde von 16.7% der Teilnehmer als drittbesten Aspekt gewählt (Position 3).</i>
+      </p>
+      <iframe class="graph-plotly" src="{% static student.graph_ranking_count %}"></iframe>
+
+
+      <h4>Scores (anonymisiert)</h4>
+      <p>Jeder Teilnehmer erhält eine Score. 100 Punkte entsprechen einem perfekten Ranking (alle Positionen korrekt).
+          Für die Berechnung der Scores wurden nur die 8 am höchsten gerankten Aspekte in Betracht gezogen. Um den persönlichen Score zu erfahren, bitte eine E-Mail schicken an <i>marcel PUNKT buehler AT uzh.ch</i> (nur für Teilnehmer).</p>
+    <iframe class="graph-plotly" src="{% static student.graph_scores %}"></iframe>
+
+  </div>
+  <div id="tab-olympics" class="tab-pane fade">
+    <h3>Olympics Dataset</h3>
+    <p>The Olympics dataset consists of features about countries participating in Olympic
+Games since 1996. The target variable ’medals’ indicates the winning of at least one
+gold medal (YES if a gold medal was won and NO if no gold medal was won). The
+target variable distribution for this dataset is approximately balanced (43% YES and
+57% NO).
+Similar to Bredtmann et al. [Bredtmann et al., 2016], the feature region was included,
+as well as some features from the CIA World Factbook. Concretely, the following addi-
+tional features were included: education expenditures, electricity consumption, exports,
+inflation rate, internet users, public debt and unemployment rate.
+From all binary variants of above features, our final dataset included eight features
+with an Information Gain (IG) of more than 0.08 (relevant features) and five features
+with an IG less than 0.02 (irrelevant features).
+For this dataset, 10 in 46 contacted domain experts participated in the survey (22%
+response rate). Seven domain experts were athletes, among them one gold medal winner
+in the Paralympics and three sport officials in private or governmental institutions.</p>
+  </div>
+  <div id="tab-income" class="tab-pane fade">
+    <h3>Income Dataset</h3>
+    <p>Some content in menu 2.</p>
+  </div>
+</div>
+
+
+    </div>
+
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+        });
+    </script>
+{% endblock %}

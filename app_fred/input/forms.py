@@ -109,7 +109,8 @@ class NewJobForm(forms.Form):
         cleaned_data = super(NewJobForm, self).clean()
         print('here')
         print(self.data)
-        query_target_mean = 'query_target_mean' in cleaned_data and self.data['query_target_mean'] == 'on'
+        query_target_mean = 'query_target_mean' in cleaned_data and cleaned_data['query_target_mean'] == 'on'
+        # self.data['query_target_mean'] == 'on'
         print('query?',query_target_mean)
         if query_target_mean:
             if cleaned_data['target_mean_question'] == '':

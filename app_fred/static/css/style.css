@@ -18,3 +18,8 @@
  .nav-link:hover{
      background-color: grey;
  }
+
+ .graph-plotly{
+     width: 100%;
+     height: 600px;
+ }
