@@ -2,7 +2,7 @@ import json
 import os
 import pickle
 import sys
-
+from collections import Counter
 import math
 import numpy as np
 import pandas as pd
@@ -20,10 +20,10 @@ from CSFSEvaluator import CSFSEvaluator
 from CSFSSelector import CSFSBestActualSelector, CSFSBestFromMetaSelector
 from FinalEvaluation import FinalEvaluationCombiner
 from application.CSFSConditionEvaluation import TestEvaluation
-from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator
+from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator, ERFilterer, ERParser
 from csfs_stats import hedges_g, cohen_d
 from csfs_visualisations import CIVisualiser, AnswerDeltaVisualiserLinePlot, \
-    AnswerDeltaVisualiserBar, AnswerDeltaVisualiserBox
+    AnswerDeltaVisualiserBar, AnswerDeltaVisualiserBox, DomainFeedbackPieChart, DomainScoresBarChart
 from humans_vs_actual_auc import FeatureRankerAUC, FeatureCombinationCalculator
 from infoformulas_listcomp import H, _H, IG_from_series
 from table_effect_size import EffectSizeMatrix
@@ -62,12 +62,15 @@ class AbstractExperiment:
     path_comparison = ''
     path_no_answers_vs_auc = ''
     path_humans_vs_actual_auc = ''
+    path_descriptions_domain = ''
     target = ''
     answer_range = range(1, 17)
     feature_range = range(1, 10)
     bootstrap_n = 9
     repetitions = 19
     feature_slice = 6
+
+    no_relevant_features = 8
 
     sec = 80
     x = 1
@@ -100,12 +103,18 @@ class AbstractExperiment:
         self.path_auc_all_conditions_mlp = '{}evaluation/{}_auc_all_conditions_dt.json'.format(self.base_path, self.dataset_name)
 
         self.path_budget_evaluation_result = 'final_evaluation/private_conditions1-3_result.csv'
+        self.path_budget_evaluation_result_domain = '{}evaluation/experts_domain/result_domain.csv'.format(self.base_path)
         self.path_budget_evaluation_nofeatures_rawaucs = '{}evaluation/budget_evaluation_nofeatures_rawaucs.pickle'.format(self.base_path, experiment_name)
 
         self.path_final_evaluation_aucs_dt = '{}evaluation/final_evaluation_aucs_dt.pickle'.format(self.base_path)
         self.path_final_evaluation_aucs_nb = '{}evaluation/final_evaluation_aucs_nb.pickle'.format(self.base_path)
         self.path_final_evaluation_aucs_mlp = '{}evaluation/final_evaluation_aucs_mlp.pickle'.format(self.base_path)
         # self.path_final_evaluation_aucs = '{}evaluation/final_evaluation_aucs.pickle'.format(self.base_path)
+
+        self.path_domain_feedback_individual = '{}evaluation/experts_domain/scores_individual.csv'.format(self.base_path)
+        self.path_domain_feedback_individual_plot = '{}evaluation/experts_domain/scores_plot.html'.format(self.base_path)
+        self.path_domain_feedback_ranking_count = '{}evaluation/experts_domain/ranking_count.csv'.format(self.base_path)
+        self.path_domain_feedback_ranking_count_plot = '{}evaluation/experts_domain/ranking_count_plot.html'.format(self.base_path)
 
 
 
@@ -779,6 +788,75 @@ class AbstractExperiment:
 
         print(json.dumps(raw_data[condition]))
         exit()
+
+    def domain_feedback(self):
+        """
+        Assigns scores to all domain experts
+        :return:
+        """
+        df_meta = pd.read_csv(self.path_meta, index_col=0, header=0)
+        df_evaluation_result = pd.read_csv(self.path_budget_evaluation_result, header=None, names=['id', 'dataset_name', 'condition', 'name', 'token', 'comment', 'ip', 'date'])
+        df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
+        df_meta = df_meta[df_meta.index.isin(df_evaluation_base['Feature'])][['IG']].sort_values('IG', ascending=False)
+        df_meta['Feature'] = df_meta.index
+        df_meta = df_meta.reset_index()
+        df_translations = pd.read_csv(self.path_descriptions_domain)
+        features_ordered = df_meta['Feature']
+
+        scores = {df_meta.loc[i, 'Feature']: max(math.pow(self.no_relevant_features-i, 2), 0) for i in range(len(df_meta))}
+        df_domain = df_evaluation_result[(df_evaluation_result['dataset_name'] == self.dataset_name) & (df_evaluation_result['condition'] == ERCondition.DOMAIN)]
+
+        parser = ERParser(df_evaluation_base)
+        def format(row):
+            features = list(parser.parse(row.token)['Feature'])
+            return pd.Series({'Name': row['name'], 'Features': features})
+
+        df_formatted = df_domain.apply(format, axis='columns')
+        def get_score(features):
+            first_n = features[:self.no_relevant_features]
+            return sum([scores[f] for f in first_n])
+        best_score = sum([v for k,v in scores.items()])# get_score(df_meta['Feature'])
+        df_formatted['Score'] = df_formatted['Features'].apply(get_score)
+        # normalise best score
+        df_formatted['Score'] = df_formatted['Score'].apply(lambda v: v/best_score*100)
+        df_formatted['Anonymous'] = list(range(len(df_formatted)))
+
+        def translate_feature(feature):
+            # exit()
+            return df_translations[df_translations['Feature'] == feature]['Name'].values[0]
+
+
+        # print('--')
+        # for features in df_formatted['Features']:
+        #     print(list(features))
+
+        freq = {}
+        for i in range(self.no_relevant_features):
+            f = [features[i] for features in df_formatted['Features']]
+            freq[i+1] = dict(Counter(f))
+
+
+        df_ranking_count = pd.DataFrame(freq).fillna(0)
+
+        df_ranking_count.index = [translate_feature(feature) for feature in list(df_ranking_count.index)]
+        df_ranking_count.to_csv(self.path_domain_feedback_ranking_count)
+        df_formatted['Features'] = df_formatted['Features'].apply(lambda l: [translate_feature(f) for f in l])
+        df_formatted.to_csv(self.path_domain_feedback_individual, index=False)
+
+    def domain_feedback_plot_ranking_counts(self):
+        df = pd.read_csv(self.path_domain_feedback_ranking_count, index_col=0)
+        print(df.head())
+        fig = DomainFeedbackPieChart().get_figure(df)
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_domain_feedback_ranking_count_plot)
+
+    def domain_feedback_plot_scores(self):
+        df = pd.read_csv(self.path_domain_feedback_individual)
+        print(df.head())
+        fig = DomainScoresBarChart().get_figure(df)
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_domain_feedback_individual_plot)
+
+
+
 
 
 
