@@ -647,6 +647,46 @@ class DomainScoresBarChart:
         fig = go.Figure(data=data, layout=layout)
         return fig
 
+
+class FeatureIgBarChart:
+    def get_trace(self, df):
+        df = df.sort_values('IG', ascending=False)
+        return go.Bar(
+            x=df.index,
+            y=df['IG'],
+            name='Score',
+            marker=dict(
+                color="gray",
+            )
+        )
+
+
+    def get_layout(self, title):
+        return go.Layout(
+            title=title,
+            xaxis=dict(
+                title='Aspekt',
+            ),
+            yaxis=dict(
+                title="Information Gain",
+                # range=[0, 100],
+            ),
+            showlegend=False,
+        )
+
+    def get_figure(self, df):
+        """
+        :param df:
+        :param feature_range: how many features to show (default 1-9)
+        :return:
+        """
+        title = "Information Gain für jeden Aspekt"
+        data = [self.get_trace(df)]
+        layout = self.get_layout(title)
+        fig = go.Figure(data=data, layout=layout)
+        return fig
+
+
 def get_colours():
     alphas = [0.3, 0.6, 1]
     c = [np.random.randint(0, 256) for i in range(3)]

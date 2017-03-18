@@ -34,6 +34,17 @@ Momentan ist er sich nicht sicher, welche Informationen für eine solche Vorauss
           Lesebeispiel 2: <i>Der Aspekt "Kleine Familie" wurde von 16.7% der Teilnehmer als drittbesten Aspekt gewählt (Position 3).</i>
       </p>
       <iframe class="graph-plotly" src="{% static student.graph_ranking_count %}"></iframe>
+<h4>Beste Aspekte</h4>
+      <p>Die besten Aspekte wurden über ihren <a href="https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence" target="_blank" title="Information Gain on Wikipedia">
+          <b>Information Gain</b></a> mit Bezug auf die Zielvariable berechnet. Die folgende Graphik zeigt die berechneten Werte.</p>
+      <p>
+          Lesebeispiel / Interpretation 1: <i>Die Information "Hoehere Ausbildung" (ob der SuS nach der Sekundarschule noch eine höhere Ausbildungen machen möchte oder nicht) sagt am meisten darüber aus, ob der SuS mit einer eher hohen oder eher tiefen Schulnote abschliessen wird.</i><br>
+          Lesebeispiel / Interpretation 2: <i>Die Information "Viele Absenzen" (ob der SuS viele Absenzen hat (mehr als 21)) sagt nur sehr wenig darüber aus, ob der SuS mit einer eher hohen oder eher tiefen Note abschliessen wird.</i>
+
+      </p>
+
+    <iframe class="graph-plotly" src="{% static student.graph_actual_ig %}"></iframe>
+
 
 
       <h4>Scores (anonymisiert)</h4>

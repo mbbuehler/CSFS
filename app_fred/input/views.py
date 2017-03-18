@@ -134,6 +134,7 @@ def evaluation(request):
         'student': {
             'graph_ranking_count': 'graphs/student_ranking_count_plot.html',
             'graph_scores': 'graphs/student_scores_plot.html',
+            'graph_actual_ig': 'graphs/student_actual_ig_plot.html'
         }
 
     }

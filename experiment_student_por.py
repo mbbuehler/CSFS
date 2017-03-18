@@ -181,7 +181,8 @@ paid==yes                1    1    0    0    1    2    0    0    0     0     1  
         # self.add_csfs_auc_to_human_vs_actual()
         # self.domain_feedback()
         # self.domain_feedback_plot_ranking_counts()
-        self.domain_feedback_plot_scores()
+        # self.domain_feedback_plot_scores()
+        self.domain_feedback_plot_actual_ig()
 
         # experiment.evaluate_condition(ERCondition.RANDOM)
 

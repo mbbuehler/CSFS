@@ -23,7 +23,7 @@ from application.CSFSConditionEvaluation import TestEvaluation
 from application.EvaluationRanking import ERCondition, ERCostEvaluator, ERNofeaturesEvaluator, ERFilterer, ERParser
 from csfs_stats import hedges_g, cohen_d
 from csfs_visualisations import CIVisualiser, AnswerDeltaVisualiserLinePlot, \
-    AnswerDeltaVisualiserBar, AnswerDeltaVisualiserBox, DomainFeedbackPieChart, DomainScoresBarChart
+    AnswerDeltaVisualiserBar, AnswerDeltaVisualiserBox, DomainFeedbackPieChart, DomainScoresBarChart, FeatureIgBarChart
 from humans_vs_actual_auc import FeatureRankerAUC, FeatureCombinationCalculator
 from infoformulas_listcomp import H, _H, IG_from_series
 from table_effect_size import EffectSizeMatrix
@@ -115,6 +115,7 @@ class AbstractExperiment:
         self.path_domain_feedback_individual_plot = '{}evaluation/experts_domain/scores_plot.html'.format(self.base_path)
         self.path_domain_feedback_ranking_count = '{}evaluation/experts_domain/ranking_count.csv'.format(self.base_path)
         self.path_domain_feedback_ranking_count_plot = '{}evaluation/experts_domain/ranking_count_plot.html'.format(self.base_path)
+        self.path_domain_feedback_actual_ig_plot = '{}evaluation/experts_domain/actual_ig_plot.html'.format(self.base_path)
 
 
 
@@ -789,6 +790,15 @@ class AbstractExperiment:
         print(json.dumps(raw_data[condition]))
         exit()
 
+    def translate_feature(self, df_translations, feature):
+        """
+        :param df_translations: pd.read_csv(self.path_descriptions_domain)
+        :return:
+        """
+        return df_translations[df_translations['Feature'] == feature]['Name'].values[0]
+
+
+
     def domain_feedback(self):
         """
         Assigns scores to all domain experts
@@ -821,11 +831,6 @@ class AbstractExperiment:
         df_formatted['Score'] = df_formatted['Score'].apply(lambda v: v/best_score*100)
         df_formatted['Anonymous'] = list(range(len(df_formatted)))
 
-        def translate_feature(feature):
-            # exit()
-            return df_translations[df_translations['Feature'] == feature]['Name'].values[0]
-
-
         # print('--')
         # for features in df_formatted['Features']:
         #     print(list(features))
@@ -838,9 +843,9 @@ class AbstractExperiment:
 
         df_ranking_count = pd.DataFrame(freq).fillna(0)
 
-        df_ranking_count.index = [translate_feature(feature) for feature in list(df_ranking_count.index)]
+        df_ranking_count.index = [self.translate_feature(df_translations, feature) for feature in list(df_ranking_count.index)]
         df_ranking_count.to_csv(self.path_domain_feedback_ranking_count)
-        df_formatted['Features'] = df_formatted['Features'].apply(lambda l: [translate_feature(f) for f in l])
+        df_formatted['Features'] = df_formatted['Features'].apply(lambda l: [self.translate_feature(df_translations, f) for f in l])
         df_formatted.to_csv(self.path_domain_feedback_individual, index=False)
 
     def domain_feedback_plot_ranking_counts(self):
@@ -855,8 +860,15 @@ class AbstractExperiment:
         fig = DomainScoresBarChart().get_figure(df)
         plotly.offline.plot(fig, auto_open=True, filename=self.path_domain_feedback_individual_plot)
 
+    def domain_feedback_plot_actual_ig(self):
+        df_meta = pd.read_csv(self.path_meta, index_col=0)
+        df_evaluation_base = pd.read_csv(self.path_budget_evaluation_base)
+        df_translations = pd.read_csv(self.path_descriptions_domain)
 
-
+        df_meta = df_meta.loc[df_evaluation_base['Feature']]
+        df_meta.index = [self.translate_feature(df_translations, f) for f in df_meta.index]
+        fig = FeatureIgBarChart().get_figure(df_meta)
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_domain_feedback_actual_ig_plot)
 
 
 
