@@ -56,6 +56,7 @@ class ExperimentOlympia(AbstractExperiment):
         self.path_final_evaluation_combined = '{}evaluation/final_evaluation_combined.csv'.format(self.base_path)
 
         self.path_auc_plots = '{}evaluation/visualisation/{}_histograms_aucs.html'.format(self.base_path, self.dataset_name)
+        self.path_descriptions_domain = '{}evaluation/experts_domain/olympia_description_domain.csv'.format(self.base_path)
 
 
         self.target = 'medals'
@@ -196,8 +197,12 @@ class ExperimentOlympia(AbstractExperiment):
         # experiment.humans_vs_actual_auc_plot()
         # self.add_csfs_auc_to_human_vs_actual()
         #self.human_comparison_table(feature_slice=self.feature_slice)
+        self.domain_feedback()
+        # self.domain_feedback_plot_ranking_counts()
+        # self.domain_feedback_plot_scores()
+        # self.domain_feedback_plot_actual_ig()
 
-        experiment.evaluate_condition(ERCondition.RANDOM)
+        # experiment.evaluate_condition(ERCondition.RANDOM)
 
 if __name__ == '__main__':
     experiment = ExperimentOlympia('olympia', 4, 'experiment2-4_all')

@@ -135,6 +135,11 @@ def evaluation(request):
             'graph_ranking_count': 'graphs/student_ranking_count_plot.html',
             'graph_scores': 'graphs/student_scores_plot.html',
             'graph_actual_ig': 'graphs/student_actual_ig_plot.html'
+        },
+        'olympia': {
+            'graph_ranking_count': 'graphs/olympia_ranking_count_plot.html',
+            'graph_scores': 'graphs/olympia_scores_plot.html',
+            'graph_actual_ig': 'graphs/olympia_actual_ig_plot.html'
         }
 
     }

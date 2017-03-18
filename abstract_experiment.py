@@ -815,6 +815,7 @@ class AbstractExperiment:
 
         scores = {df_meta.loc[i, 'Feature']: max(math.pow(self.no_relevant_features-i, 2), 0) for i in range(len(df_meta))}
         df_domain = df_evaluation_result[(df_evaluation_result['dataset_name'] == self.dataset_name) & (df_evaluation_result['condition'] == ERCondition.DOMAIN)]
+        print(len(df_domain))
 
         parser = ERParser(df_evaluation_base)
         def format(row):

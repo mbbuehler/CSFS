@@ -48,8 +48,6 @@ class ExperimentStudent(AbstractExperiment):
         self.path_final_evaluation_combined = '{}evaluation/final_evaluation_combined.csv'.format(self.base_path)
         self.path_auc_plots = '{}evaluation/visualisation/{}_histograms_aucs.html'.format(self.base_path, self.dataset_name)
 
-
-
         self.path_descriptions_domain = '{}evaluation/experts_domain/student_descriptions_domain.csv'.format(self.base_path)
         self.target = 'G3'
 
