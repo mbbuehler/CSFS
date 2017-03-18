@@ -46,6 +46,7 @@ class ExperimentIncome(AbstractExperiment):
         self.path_final_evaluation_combined = '{}evaluation/final_evaluation_combined.csv'.format(self.base_path)
 
         self.path_auc_plots = '{}evaluation/visualisation/{}_histograms_aucs.html'.format(self.base_path, self.dataset_name)
+        self.path_descriptions_domain = '{}evaluation/experts_domain/income_description_domain.csv'.format(self.base_path)
 
 
         self.target = 'income==>50K'
@@ -115,7 +116,11 @@ class ExperimentIncome(AbstractExperiment):
         # self.add_csfs_auc_to_human_vs_actual()
 
         #self.human_comparison_table(feature_slice=self.feature_slice)
-        experiment.evaluate_condition(ERCondition.RANDOM)
+        # experiment.evaluate_condition(ERCondition.RANDOM)
+        # self.domain_feedback()
+        self.domain_feedback_plot_ranking_counts()
+        self.domain_feedback_plot_scores()
+        self.domain_feedback_plot_actual_ig()
 
 if __name__ == '__main__':
     experiment = ExperimentIncome('income', 1, 'experiment1')

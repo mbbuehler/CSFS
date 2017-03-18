@@ -140,6 +140,11 @@ def evaluation(request):
             'graph_ranking_count': 'graphs/olympia_ranking_count_plot.html',
             'graph_scores': 'graphs/olympia_scores_plot.html',
             'graph_actual_ig': 'graphs/olympia_actual_ig_plot.html'
+        },
+        'income': {
+            'graph_ranking_count': 'graphs/income_ranking_count_plot.html',
+            'graph_scores': 'graphs/income_scores_plot.html',
+            'graph_actual_ig': 'graphs/income_actual_ig_plot.html'
         }
 
     }
