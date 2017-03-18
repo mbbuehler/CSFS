@@ -13,5 +13,4 @@ urlpatterns = [
     url(r'links$', views.links, name='links'),
     url(r'thanks$', views.thanks, name='thanks'),
     url(r'evaluation/domain/(?P<dataset_name>\w+)$', views.domain_feedback, name='domain_feedback'),
-    url(r'evaluation/domain$', views.evaluation, name='evaluation'),
 ]
