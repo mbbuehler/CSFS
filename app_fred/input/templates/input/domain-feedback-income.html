@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+    <div class="col-md-12 col-sm-12">
+        <h1>Evaluation Domain Experts</h1>
+        <p>
+            This page shows a ranking evaluation for domain expert performance when ranking features according to their
+            relevance. As most of the participating domain experts are German speakers, the results are presented in
+            German.
+        </p>
+
+                <h3>Income Dataset</h3>
+                <p>
+                    <b>Anzahl Teilnehmer</b>: 12<br>
+                    <b>Quelle</b>: <a href="https://archive.ics.uci.edu/ml/datasets/Adult"
+                                      title="UCI Machine Learning Repository" target="_blank">UCI Machine Learning Repository</a>
+                </p>
+                <h4>Aufgabenstellung</h4>
+                <i>
+                    <p>Klara liebt es, mit ihren Freundinnen zu tratschen. Eines Tages beim Kaffee mit ihrer besten Freundin Beate fragt sie sich, was wohl nötig wäre, um das Einkommen einer Person vorauszusagen. Im Speziellen möchte sie herausfinden, welche Aspekte einer Person relevant sind, um vorauszusagen, ob diese Person mehr oder weniger als CHF 51'000.-- pro Jahr verdient. <br>
+
+Beispielsweise beobachten Klara und Beate, dass Leute mit einem tiefen Einkommen selten Wohneigentum besitzen und erachten diesen Aspekt ("Mensch hat Wohneigentum") somit als sehr präzise. Andererseits haben auch nicht alle Leute mit einem hohen Einkommen Wohneigentum. Dieser eine Aspekt ist somit nur dann nützlich zur Einschätzung einer Person, falls diese auch Wohneigentum hat, sonst nicht. In diesem Fall sind weitere Aspekte nötig. <br>
+Klara und Beate machen eine intensive Brainstorming Session und sammeln 17 Ideen für solche Aspekte. Nun sind die beiden nicht sicher, welche der Ideen denn tatsächlich relevant sind. Daher bitten sie dich um Hilfe. Sie möchten, dass du ihre Ideen nach ihrer Relevanz sortierst. <br><br>
+                    </p>
+                </i>
+                <h4>Beliebteste Aspekte</h4>
+                <p>Diese Graphik zeigt die Verteilung der Features auf den ersten drei Plätzen.
+                </p>
+                <iframe class="graph-plotly" src="{% static income.graph_ranking_count %}"></iframe>
+                <h4>Beste Aspekte</h4>
+                <p>Die besten Aspekte wurden über ihren <a
+                        href="https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence" target="_blank"
+                        title="Information Gain on Wikipedia">
+                    <b>Information Gain</b></a> mit Bezug auf die Zielvariable berechnet. Die folgende Graphik zeigt die
+                    berechneten Werte.</p>
+
+                <iframe class="graph-plotly" src="{% static income.graph_actual_ig %}"></iframe>
+
+
+                <h4>Scores (anonymisiert)</h4>
+                <p>Jeder Teilnehmer erhält eine Score. 100 Punkte entsprechen einem perfekten Ranking (alle Positionen
+                    korrekt).
+                    Für die Berechnung der Scores wurden nur die 8 am höchsten gerankten Aspekte in Betracht gezogen. Um
+                    den persönlichen Score zu erfahren, bitte eine E-Mail schicken an <i>marcel PUNKT buehler AT
+                        uzh.ch</i> (nur für Teilnehmer).</p>
+                <iframe class="graph-plotly" src="{% static income.graph_scores %}"></iframe>
+
+            </div>
+        </div>
+
+
+    </div>
+
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+        });
+    </script>
+{% endblock %}

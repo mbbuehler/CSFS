@@ -150,3 +150,22 @@ def evaluation(request):
     }
     return render(request, 'input/evaluation.html', context)
 
+def domain_feedback(request, dataset_name):
+    context = {
+        'student': {
+            'graph_ranking_count': 'graphs/student_ranking_count_plot.html',
+            'graph_scores': 'graphs/student_scores_plot.html',
+            'graph_actual_ig': 'graphs/student_actual_ig_plot.html'
+        },
+        'olympia': {
+            'graph_ranking_count': 'graphs/olympia_ranking_count_plot.html',
+            'graph_scores': 'graphs/olympia_scores_plot.html',
+            'graph_actual_ig': 'graphs/olympia_actual_ig_plot.html'
+        },
+        'income': {
+            'graph_ranking_count': 'graphs/income_ranking_count_plot.html',
+            'graph_scores': 'graphs/income_scores_plot.html',
+            'graph_actual_ig': 'graphs/income_actual_ig_plot.html'
+        }
+    }
+    return render(request, 'input/domain-feedback-{}.html'.format(dataset_name), context)

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+    <div class="col-md-12 col-sm-12">
+        <h1>Evaluation Domain Experts</h1>
+        <p>
+            This page shows a ranking evaluation for domain expert performance when ranking features according to their
+            relevance. As most of the participating domain experts are German speakers, the results are presented in
+            German.
+        </p>
+
+
+                <h3>Olympics Dataset</h3>
+                <p>
+                    <b>Anzahl Teilnehmer</b>: 10<br>
+                    <b>Quelle</b>: <a href="https://www.cia.gov/library/publications/the-world-factbook/"
+                                      title="CIA World Factbook" target="_blank">CIA World Factbook</a> and Bredtmann,
+                    J., Crede, C. J., and Otten, S. (2016). Olympic
+                    medals: Does the past predict the future? Significance, 13(3):22–25.
+                </p>
+                <h4>Aufgabenstellung</h4>
+                <i>
+                    <p>
+                        Dein Freund Beat hat ein grosses Hobby: Sport-Wetten. Er liebt es, mit seinen Freunden auf den
+                        Ausgang von Fussball-Spielen oder Tennis-Matches zu wetten. Kürzlich hatte er eine Idee für eine
+                        neue Herausforderung: Wetten, welche Länder an den nächsten Olympischen Spielen Goldmedaillen
+                        gewinnen. <br>
+
+                        Beat ist überzeugt, dass gewisse Aspekte eines Landes (z.B. wie viel Elektrizität es verbraucht
+                        oder wie viel Geld es für Bildung ausgibt) ihm beim der Voraussage, ob ein Land Goldmedaillen
+                        gewinnen wird oder nicht, helfen können. Er hat bereits eine Reihe von Ideen gesammelt. Nur ist
+                        er sich aber nicht sicher, welche Aspekte denn tatsächlich relevant sind und welche nicht. Daher
+                        bittet er dich um Hilfe. Er möchte, dass du seine Ideen ihrer Relevanz nach sortierst. <br>
+
+                        Bitte helfe Beat und sortiere die Aspekte in absteigender Reihenfolge. Der relevanteste Aspekt
+                        sollte zuoberst sein, der am wenigsten relevante Aspekt zuunterst. Wenn du an einem Ort unsicher
+                        bist, notiere bitte deine Gedanken im Textfeld unten. <br>
+                    </p>
+                </i>
+                <h4>Beliebteste Aspekte</h4>
+                <p>Diese Graphik zeigt die Verteilung der Features auf den ersten drei Plätzen.
+                </p>
+                <iframe class="graph-plotly" src="{% static olympia.graph_ranking_count %}"></iframe>
+                <h4>Beste Aspekte</h4>
+                <p>Die besten Aspekte wurden über ihren <a
+                        href="https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence" target="_blank"
+                        title="Information Gain on Wikipedia">
+                    <b>Information Gain</b></a> mit Bezug auf die Zielvariable berechnet. Die folgende Graphik zeigt die
+                    berechneten Werte.</p>
+
+                <iframe class="graph-plotly" src="{% static olympia.graph_actual_ig %}"></iframe>
+
+
+                <h4>Scores (anonymisiert)</h4>
+                <p>Jeder Teilnehmer erhält eine Score. 100 Punkte entsprechen einem perfekten Ranking (alle Positionen
+                    korrekt).
+                    Für die Berechnung der Scores wurden nur die 8 am höchsten gerankten Aspekte in Betracht gezogen. Um
+                    den persönlichen Score zu erfahren, bitte eine E-Mail schicken an <i>marcel PUNKT buehler AT
+                        uzh.ch</i> (nur für Teilnehmer).</p>
+                <iframe class="graph-plotly" src="{% static olympia.graph_scores %}"></iframe>
+
+
+
+
+
+    </div>
+
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+        });
+    </script>
+{% endblock %}

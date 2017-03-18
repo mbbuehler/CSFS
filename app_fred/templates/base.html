@@ -69,8 +69,13 @@
                     <li class="nav-link">
                         <a href="{% url 'links' %}">Links / Downloads</a>
                     </li>
-                    <li class="nav-link">
-                        <a href="{% url 'evaluation' %}">Domain Experts</a>
+                    <li class="nav-link dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="{% url 'evaluation' %}">Domain Experts <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'domain_feedback' dataset_name='student' %}">Student Dataset</a></li>
+                            <li><a href="{% url 'domain_feedback' dataset_name='olympics' %}">Olympics Dataset</a></li>
+                            <li><a href="{% url 'domain_feedback' dataset_name='income' %}">Income Dataset</a></li>
+                        </ul>
                     </li>
                     <li class="nav-link">
                         <a href="{% url 'thanks' %}">Thank You</a>
