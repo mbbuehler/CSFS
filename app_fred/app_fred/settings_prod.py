@@ -6,9 +6,9 @@ from app_fred.settings import *
 DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',#'django.db.backends.mysql',
-        'NAME': DEV_DB_NAME,
-        'USER': DEV_DB_USER,
-        'PASSWORD': DEV_DB_PASSWORD,
+        'NAME': PROD_DB_NAME,
+        'USER': PROD_DB_USER,
+        'PASSWORD': PROD_DB_PASSWORD,
         'HOST': 'localhost',
         'PORT': '3306',
         'TEST': {

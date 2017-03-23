@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 
-ALLOWED_HOSTS = ['mbuehler.ch', 'geokokos.ch', '62.202.31.20', 'localhost']
+ALLOWED_HOSTS = ['mbuehler.ch', '62.202.31.20', 'localhost']
 
 
 PATH_KROWDD_FILES = 'static/job_files/'
@@ -114,6 +114,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # TODO: check is this still needed?
 import pymysql
