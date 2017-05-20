@@ -63,6 +63,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'app_fred.context_processors.google_analytics',
             ],
         },
     },
@@ -120,3 +121,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # TODO: check is this still needed?
 import pymysql
 pymysql.install_as_MySQLdb()
+
+GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-99640600-1'
+GOOGLE_ANALYTICS_DOMAIN = 'mbuehler.ch'
