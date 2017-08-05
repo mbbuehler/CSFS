@@ -509,8 +509,26 @@ class CSFSVsHumansBarChart:
                 )
             )
         )
+    @staticmethod
+    def get_trace_classifier(data, feature_range, classifier):
+        symbols = {'dt': 'start', 'mlp': 'x'}
+        symbol = symbols[classifier]
+        y = [data[d][classifier]['avg_auc'] for d in feature_range]
+        return go.Scatter(
+            x=list(feature_range),
+            y=y,
+            mode='markers',
+            marker=dict(
+                symbol=symbol,
+                size=10,
+                color=colors[ERCondition.CSFS],
+                line=dict(
+                    width=2,
+                )
+            )
+        )
 
-    def get_figure(self, data, data_best_classifier, data_worst_classifier, feature_range=range(1, 10)):
+    def get_figure(self, data, data_classifiers, data_best_classifier, data_worst_classifier, feature_range=range(1, 10)):
         """
 
         :param data: dict with key in {'income', 'olympia', 'student'} and value pd.DataFrame with multilevel columns conditions -> {ci_hi, ci_lo, count, mean, std} and index: number of features
@@ -528,10 +546,14 @@ class CSFSVsHumansBarChart:
             for condition in df_dataset.columns:
                 trace = self.get_trace(df_dataset, feature_range, condition, showlegend)
                 fig.append_trace(trace, 1, i + 1)
-            trace_best_classifier = self.get_trace_best_classifier(data_best_classifier[datasets[i]], feature_range)
-            fig.append_trace(trace_best_classifier, 1, i+1)
-            trace_worst_classifier = self.get_trace_worst_classifier(data_worst_classifier[datasets[i]], feature_range)
-            fig.append_trace(trace_worst_classifier, 1, i+1)
+            # trace_best_classifier = self.get_trace_best_classifier(data_best_classifier[datasets[i]], feature_range)
+            # fig.append_trace(trace_best_classifier, 1, i+1)
+            # trace_worst_classifier = self.get_trace_worst_classifier(data_worst_classifier[datasets[i]], feature_range)
+            # fig.append_trace(trace_worst_classifier, 1, i+1)
+            trace_dt = self.get_trace_classifier(data_classifiers[datasets[i]], feature_range, 'dt')
+            trace_mlp = self.get_trace_classifier(data_classifiers[datasets[i]], feature_range, 'mlp')
+            fig.append_trace(trace_dt, 1, i+1)
+            fig.append_trace(trace_mlp, 1, i+1)
 
             showlegend = False
             fig['layout']['yaxis' + str(i + 1)].update(range=[0.5, 0.9])

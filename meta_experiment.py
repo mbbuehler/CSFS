@@ -389,6 +389,19 @@ class MetaExperiment:
                 data[ds_name][n_feat]['avg_auc'] = avg_auc
         return data
 
+    def get_data_classifiers(self, ds_names, feature_range):
+        classifiers = ['dt', 'mlp']
+        all_data = {c: self.get_evaluation_data(c) for c in classifiers}
+
+        data = {ds_name: {x: {'classifier': None, 'avg_auc': None} for x in feature_range} for ds_name in ds_names}
+        # e.g. {student: {1: {classifier: mlp, avg_auc: 0.6}, 2: {classifier: dt, avg_auc: 0.61},...}, olympia: {...}}
+        for ds_name in ds_names:
+            for n_feat in feature_range:
+                for classifier in classifiers:
+                    avg_auc = np.mean(all_data[classifier][ds_name]['KrowDD'][n_feat])
+                    data[ds_name][n_feat][classifier] = avg_auc
+        return data
+
 
     def plot_bar_humans_vs_csfs2(self, feature_range=range(1,10)):
         """
@@ -412,8 +425,8 @@ class MetaExperiment:
 
         data_best_classifier = self.get_data_best_classifier(data.keys(), feature_range)  # data for best/worst classifier for each
         data_worst_classifier = self.get_data_worst_classifier(data.keys(), feature_range)  # data for best/worst classifier for each
-
-        fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, data_best_classifier=data_best_classifier, data_worst_classifier=data_worst_classifier, feature_range=range(1,10))
+        data_classifiers = self.get_data_classifiers(data.keys(), feature_range)
+        fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, data_classifiers, data_best_classifier=data_best_classifier, data_worst_classifier=data_worst_classifier, feature_range=range(1,10))
         plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_nb)
 
     def table_human_vs_csfs(self):
