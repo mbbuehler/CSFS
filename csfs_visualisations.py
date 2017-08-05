@@ -35,20 +35,20 @@ colors = {ERCondition.LAYPERSON: COLORS_HEX.VIOLET,
           'Human': COLORS_HEX.ORANGE_DARK,
           }
 # thesis colors
-colors = {
-    # ERCondition.LAYPERSON: COLORS_HEX.VIOLET,
-    #       ERCondition.DOMAIN: COLORS_HEX.GREEN,
-    #       ERCondition.EXPERT: COLORS_HEX.ORANGE_BRIGHT,
-    #       ERCondition.CSFS: COLORS_HEX.BLUE,
-    #       ERCondition.RANDOM: COLORS_HEX.DARKGREY,
-    #       ERCondition.HUMAN: COLORS_HEX.YELLOW,
-    'Laypeople': COLORS_HEX.VIOLET,
-    'Domain Experts': COLORS_HEX.ORANGE_BRIGHT,
-    'Data Scientists': COLORS_HEX.BLUE,
-    'KrowDD': COLORS_HEX.GREEN,
-    'Random': COLORS_HEX.DARKGREY,
-    'Human': COLORS_HEX.ORANGE_BRIGHT,
-}
+# colors = {
+#     # ERCondition.LAYPERSON: COLORS_HEX.VIOLET,
+#     #       ERCondition.DOMAIN: COLORS_HEX.GREEN,
+#     #       ERCondition.EXPERT: COLORS_HEX.ORANGE_BRIGHT,
+#     #       ERCondition.CSFS: COLORS_HEX.BLUE,
+#     #       ERCondition.RANDOM: COLORS_HEX.DARKGREY,
+#     #       ERCondition.HUMAN: COLORS_HEX.YELLOW,
+#     'Laypeople': COLORS_HEX.VIOLET,
+#     'Domain Experts': COLORS_HEX.ORANGE_BRIGHT,
+#     'Data Scientists': COLORS_HEX.BLUE,
+#     'KrowDD': COLORS_HEX.GREEN,
+#     'Random': COLORS_HEX.DARKGREY,
+#     'Human': COLORS_HEX.ORANGE_BRIGHT,
+# }
 
 
 class CIVisualiser:
@@ -476,7 +476,41 @@ class CSFSVsHumansBarChart:
             showlegend=show_legend
         )
 
-    def get_figure(self, data, feature_range=range(1, 10)):
+    @staticmethod
+    def get_trace_best_classifier(data_best, feature_range):
+        y = [data_best[d]['avg_auc'] for d in feature_range]
+        return go.Scatter(
+            x=list(feature_range),
+            y=y,
+            mode='markers',
+            marker=dict(
+                symbol='star',
+                size=10,
+                color=colors[ERCondition.CSFS]+'0.5',
+                line=dict(
+                    width=2,
+                )
+            )
+        )
+
+    @staticmethod
+    def get_trace_worst_classifier(data_worst, feature_range):
+        y = [data_worst[d]['avg_auc'] for d in feature_range]
+        return go.Scatter(
+            x=list(feature_range),
+            y=y,
+            mode='markers',
+            marker=dict(
+                symbol='x',
+                size=10,
+                color=colors[ERCondition.CSFS],
+                line=dict(
+                    width=2,
+                )
+            )
+        )
+
+    def get_figure(self, data, data_best_classifier, data_worst_classifier, feature_range=range(1, 10)):
         """
 
         :param data: dict with key in {'income', 'olympia', 'student'} and value pd.DataFrame with multilevel columns conditions -> {ci_hi, ci_lo, count, mean, std} and index: number of features
@@ -494,8 +528,14 @@ class CSFSVsHumansBarChart:
             for condition in df_dataset.columns:
                 trace = self.get_trace(df_dataset, feature_range, condition, showlegend)
                 fig.append_trace(trace, 1, i + 1)
+            trace_best_classifier = self.get_trace_best_classifier(data_best_classifier[datasets[i]], feature_range)
+            fig.append_trace(trace_best_classifier, 1, i+1)
+            trace_worst_classifier = self.get_trace_worst_classifier(data_worst_classifier[datasets[i]], feature_range)
+            fig.append_trace(trace_worst_classifier, 1, i+1)
+
             showlegend = False
             fig['layout']['yaxis' + str(i + 1)].update(range=[0.5, 0.9])
+            break
 
         fig['layout'].update(
             height=500,

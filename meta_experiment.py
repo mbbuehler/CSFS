@@ -61,12 +61,12 @@ class MetaExperiment:
 
         self.datasets = {'Student': self.ds_student, 'Income': self.ds_income, 'Olympics': self.ds_olympia}
 
-    def get_evaluation_data(self):
+    def get_evaluation_data(self, classifier='nb'):
         """
         Returns dict with key: dataset name as in Paper and value: pd.DataFrame with columns=Conditions (names from paper, e.g. Data Scientists) and rows=NoFeatures
         :return: dict
         """
-        return {ds: pd.read_json("{}{}_evaluated_nb.json".format(self.path_data, ds)) for ds in self.datasets}
+        return {ds: pd.read_json("{}{}_evaluated_{}.json".format(self.path_data, ds, classifier)) for ds in self.datasets}
 
     def final_evaluation_combine_all(self):
         # for patrick
@@ -354,6 +354,42 @@ class MetaExperiment:
         fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, feature_range=range(1,10))
         plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_mlp)
 
+    def get_data_best_classifier(self, ds_names, feature_range):
+        def get_best(all_data, n_feat, ds_name, classifiers):
+            scores = {c: np.mean(all_data[c][ds_name]['KrowDD'][n_feat]) for c in classifiers}
+            c_max = max(scores, key=scores.get)
+            return c_max, scores[c_max]
+        classifiers = ['nb', 'dt', 'mlp']
+        all_data = {c: self.get_evaluation_data(c) for c in classifiers}
+
+        data = {ds_name: {x: {'classifier': None, 'avg_auc': None} for x in feature_range} for ds_name in ds_names}
+        # e.g. {student: {1: {classifier: mlp, avg_auc: 0.6}, 2: {classifier: dt, avg_auc: 0.61},...}, olympia: {...}}
+        for ds_name in ds_names:
+            for n_feat in feature_range:
+                classifier, avg_auc = get_best(all_data, n_feat, ds_name, classifiers)
+                data[ds_name][n_feat]['classifier'] = classifier
+                data[ds_name][n_feat]['avg_auc'] = avg_auc
+        return data
+
+    def get_data_worst_classifier(self, ds_names, feature_range):
+        # nearly a copy of get_data_best_classifier...
+        def get_best(all_data, n_feat, ds_name, classifiers):
+            scores = {c: np.mean(all_data[c][ds_name]['KrowDD'][n_feat]) for c in classifiers}
+            c_max = min(scores, key=scores.get)
+            return c_max, scores[c_max]
+        classifiers = ['nb', 'dt', 'mlp']
+        all_data = {c: self.get_evaluation_data(c) for c in classifiers}
+
+        data = {ds_name: {x: {'classifier': None, 'avg_auc': None} for x in feature_range} for ds_name in ds_names}
+        # e.g. {student: {1: {classifier: mlp, avg_auc: 0.6}, 2: {classifier: dt, avg_auc: 0.61},...}, olympia: {...}}
+        for ds_name in ds_names:
+            for n_feat in feature_range:
+                classifier, avg_auc = get_best(all_data, n_feat, ds_name, classifiers)
+                data[ds_name][n_feat]['classifier'] = classifier
+                data[ds_name][n_feat]['avg_auc'] = avg_auc
+        return data
+
+
     def plot_bar_humans_vs_csfs2(self, feature_range=range(1,10)):
         """
         Bar chart comparing the combined condition (data scientsts + domain experts) with csfs
@@ -361,7 +397,7 @@ class MetaExperiment:
         :param auto_plot:
         :return:
         """
-        data = self.get_evaluation_data()
+        data = self.get_evaluation_data(classifier='nb')
         def prepare_row(row):
                 """
                 Returns new row with two columns: combined experts and data scientists + cfs
@@ -374,7 +410,10 @@ class MetaExperiment:
                 return row_new
         data_filtered = {ds_name: data[ds_name].loc[feature_range].apply(prepare_row, axis='columns') for ds_name in data}
 
-        fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, feature_range=range(1,10))
+        data_best_classifier = self.get_data_best_classifier(data.keys(), feature_range)  # data for best/worst classifier for each
+        data_worst_classifier = self.get_data_worst_classifier(data.keys(), feature_range)  # data for best/worst classifier for each
+
+        fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, data_best_classifier=data_best_classifier, data_worst_classifier=data_worst_classifier, feature_range=range(1,10))
         plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_nb)
 
     def table_human_vs_csfs(self):
@@ -643,7 +682,7 @@ def run():
     # experiment.plot_bar_comparing_humans()
     # experiment.table_human_vs_csfs()
     # experiment.table_human_vs_csfs2()
-    experiment.table_lay_vs_csfs()
+    # experiment.table_lay_vs_csfs()
     # experiment.move_and_rename_auc_for_all_conditions()
     # experiment.single_humans_performance()
     # experiment.data_scientist_performance()
@@ -651,7 +690,7 @@ def run():
 
     # experiment.compare_classifiers()
     # experiment.compare_classifiers_vis()
-    # experiment.plot_bar_humans_vs_csfs2()
+    experiment.plot_bar_humans_vs_csfs2()
     # experiment.save_data_for_paper()
     # experiment.plot_bar_comparing_humans2()
     # experiment.tmp()
