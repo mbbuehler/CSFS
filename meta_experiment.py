@@ -7,6 +7,7 @@ import numpy as np
 import pickle
 
 import plotly
+from functools import reduce
 from tabulate import tabulate
 
 from application.CSFSConditionEvaluation import AUCForOrderedFeaturesCalculator
@@ -43,6 +44,8 @@ class MetaExperiment:
         self.path_csfs_vs_humans_plot_nb = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans_nb.html'
         self.path_csfs_vs_humans_plot_dt = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans_dt.html'
         self.path_csfs_vs_humans_plot_mlp = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans_mlp.html'
+        self.path_csfs_vs_humans_plot_with_classifiers = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans_with_classifiers.html'
+
         self.path_csfs_vs_humans_data = 'paper_plots-and-data/krowdd_vs_humans/'
 
         self.path_single_human_performance_data = 'final_evaluation/private_single_human_performance.json'
@@ -389,16 +392,24 @@ class MetaExperiment:
                 data[ds_name][n_feat]['avg_auc'] = avg_auc
         return data
 
-    def get_data_classifiers(self, ds_names, feature_range):
+    def get_data_classifiers(self, ds_names, feature_range, conditions):
+        """
+
+        :param ds_names:
+        :param feature_range:
+        :param conditions: list e.g. ['KrowDD'] or ['Data Scientists', 'Domain Experts']
+        :return:
+        """
         classifiers = ['dt', 'mlp']
         all_data = {c: self.get_evaluation_data(c) for c in classifiers}
 
-        data = {ds_name: {x: {'classifier': None, 'avg_auc': None} for x in feature_range} for ds_name in ds_names}
+        data = {ds_name: {x: {c: None} for c in classifiers for x in feature_range} for ds_name in ds_names}
         # e.g. {student: {1: {classifier: mlp, avg_auc: 0.6}, 2: {classifier: dt, avg_auc: 0.61},...}, olympia: {...}}
         for ds_name in ds_names:
             for n_feat in feature_range:
                 for classifier in classifiers:
-                    avg_auc = np.mean(all_data[classifier][ds_name]['KrowDD'][n_feat])
+                    aucs = reduce(lambda a, b: a + b, [all_data[classifier][ds_name][cond][n_feat] for cond in conditions], [])
+                    avg_auc = np.mean(aucs)
                     data[ds_name][n_feat][classifier] = avg_auc
         return data
 
@@ -425,9 +436,11 @@ class MetaExperiment:
 
         data_best_classifier = self.get_data_best_classifier(data.keys(), feature_range)  # data for best/worst classifier for each
         data_worst_classifier = self.get_data_worst_classifier(data.keys(), feature_range)  # data for best/worst classifier for each
-        data_classifiers = self.get_data_classifiers(data.keys(), feature_range)
-        fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, data_classifiers, data_best_classifier=data_best_classifier, data_worst_classifier=data_worst_classifier, feature_range=range(1,10))
-        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_nb)
+        data_classifiers_krowdd = self.get_data_classifiers(data.keys(), feature_range, conditions=['KrowDD'])
+        data_classifiers_human = self.get_data_classifiers(data.keys(), feature_range, conditions=['Data Scientists', 'Domain Experts'])
+
+        fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, data_classifiers_krowdd=data_classifiers_krowdd, data_classifiers_human=data_classifiers_human, data_best_classifier=data_best_classifier, data_worst_classifier=data_worst_classifier, feature_range=range(1, 10))
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_with_classifiers)
 
     def table_human_vs_csfs(self):
         """
