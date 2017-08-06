@@ -45,6 +45,8 @@ class MetaExperiment:
         self.path_csfs_vs_humans_plot_dt = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans_dt.html'
         self.path_csfs_vs_humans_plot_mlp = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans_mlp.html'
         self.path_csfs_vs_humans_plot_with_classifiers = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans_with_classifiers.html'
+        self.path_csfs_vs_humans_plot_best_worst = 'paper_plots-and-data/krowdd_vs_humans/krowdd_vs_humans_best_worst.html'
+
 
         self.path_csfs_vs_humans_data = 'paper_plots-and-data/krowdd_vs_humans/'
 
@@ -439,7 +441,7 @@ class MetaExperiment:
         data_classifiers_krowdd = self.get_data_classifiers(data.keys(), feature_range, conditions=['KrowDD'])
         data_classifiers_human = self.get_data_classifiers(data.keys(), feature_range, conditions=['Data Scientists', 'Domain Experts'])
 
-        fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, data_classifiers_krowdd=data_classifiers_krowdd, data_classifiers_human=data_classifiers_human, data_best_classifier=data_best_classifier, data_worst_classifier=data_worst_classifier, feature_range=range(1, 10))
+        fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, data_classifiers_krowdd=data_classifiers_krowdd, data_classifiers_human=data_classifiers_human, feature_range=range(1, 10))
         plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_with_classifiers)
 
     def plot_bar_humans_vs_csfs3(self, feature_range=range(1,10)):
@@ -466,7 +468,7 @@ class MetaExperiment:
         data_filtered = {ds_name: data[ds_name].loc[feature_range].apply(prepare_row, axis='columns') for ds_name in data}
 
         fig = CSFSVsHumansBarChart3().get_figure(data=data_filtered, feature_range=feature_range)
-        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_with_classifiers)
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_best_worst)
 
     def table_human_vs_csfs(self):
         """
@@ -742,8 +744,8 @@ def run():
 
     # experiment.compare_classifiers()
     # experiment.compare_classifiers_vis()
-    # experiment.plot_bar_humans_vs_csfs2()
-    experiment.plot_bar_humans_vs_csfs3()
+    experiment.plot_bar_humans_vs_csfs2()
+    # experiment.plot_bar_humans_vs_csfs3()
     # experiment.save_data_for_paper()
     # experiment.plot_bar_comparing_humans2()
     # experiment.tmp()
