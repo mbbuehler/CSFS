@@ -15,6 +15,7 @@ class COLORS_HEX:
     GREY = '#BABABA'
     DARKGREY = '#666666'
     YELLOW = '#FFF100'
+    LIGHTGREY = '#D3D3D3'
 
 
 from application.EvaluationRanking import ERCondition
@@ -31,7 +32,7 @@ colors = {ERCondition.LAYPERSON: COLORS_HEX.VIOLET,
           'Domain Experts': COLORS_HEX.GREEN,
           'Data Scientists': COLORS_HEX.ORANGE_BRIGHT,
           'KrowDD': COLORS_HEX.BLUE,
-          'Random': COLORS_HEX.DARKGREY,
+          'Random': COLORS_HEX.LIGHTGREY, #DARKGREY,
           'Human': COLORS_HEX.ORANGE_DARK,
           }
 # thesis colors
@@ -477,39 +478,6 @@ class CSFSVsHumansBarChart:
         )
 
     @staticmethod
-    def get_trace_best_classifier(data_best, feature_range):
-        y = [data_best[d]['avg_auc'] for d in feature_range]
-        return go.Scatter(
-            x=list(feature_range),
-            y=y,
-            mode='markers',
-            marker=dict(
-                symbol='star',
-                size=10,
-                color=colors[ERCondition.CSFS]+'0.5',
-                line=dict(
-                    width=2,
-                )
-            )
-        )
-
-    @staticmethod
-    def get_trace_worst_classifier(data_worst, feature_range):
-        y = [data_worst[d]['avg_auc'] for d in feature_range]
-        return go.Scatter(
-            x=list(feature_range),
-            y=y,
-            mode='markers',
-            marker=dict(
-                symbol='x',
-                size=10,
-                color=colors[ERCondition.CSFS],
-                line=dict(
-                    width=2,
-                )
-            )
-        )
-    @staticmethod
     def get_trace_classifier(data, feature_range, classifier, label, condition_no, show_legend):
         symbols = {'dt': 'diamond', 'mlp': 'x'}
         symbol = symbols[classifier]
@@ -530,7 +498,7 @@ class CSFSVsHumansBarChart:
             )
         )
 
-    def get_figure(self, data, data_classifiers_krowdd, data_classifiers_human, data_best_classifier, data_worst_classifier, feature_range=range(1, 10)):
+    def get_figure(self, data, data_classifiers_krowdd, data_classifiers_human, feature_range=range(1, 10)):
         """
 
         :param data: dict with key in {'income', 'olympia', 'student'} and value pd.DataFrame with multilevel columns conditions -> {ci_hi, ci_lo, count, mean, std} and index: number of features
@@ -547,10 +515,7 @@ class CSFSVsHumansBarChart:
             print(datasets[i])
             trace = self.get_trace(df_dataset, feature_range, 'KrowDD', showlegend)
             fig.append_trace(trace, 1, i + 1)
-            # trace_best_classifier = self.get_trace_best_classifier(data_best_classifier[datasets[i]], feature_range)
-            # fig.append_trace(trace_best_classifier, 1, i+1)
-            # trace_worst_classifier = self.get_trace_worst_classifier(data_worst_classifier[datasets[i]], feature_range)
-            # fig.append_trace(trace_worst_classifier, 1, i+1)
+
             trace_dt = self.get_trace_classifier(data_classifiers_krowdd[datasets[i]], feature_range, 'dt', label='KrowDD: Decision Tree', condition_no=ERCondition.CSFS, show_legend=showlegend)
             trace_mlp = self.get_trace_classifier(data_classifiers_krowdd[datasets[i]], feature_range, 'mlp', label='KrowDD: Multilayer Perceptron', condition_no=ERCondition.CSFS, show_legend=showlegend)
             fig.append_trace(trace_dt, 1, i+1)
@@ -566,6 +531,97 @@ class CSFSVsHumansBarChart:
 
             showlegend = False
             fig['layout']['yaxis' + str(i + 1)].update(range=[0.5, 0.9])
+            # break
+
+        fig['layout'].update(
+            height=500,
+            font=get_font(),
+            showlegend=True,
+            legend=dict(
+                x=0.42,
+                y=1.3,
+                orientation='h',
+            )
+        )
+
+        return fig
+
+
+class CSFSVsHumansBarChart3:  # for showing best and worst possible performance, too
+    def get_trace(self, df, feature_range, condition, show_legend):
+        # print(df[condition_human]) # index: no features, value: list
+        y = [np.mean(df.loc[no_features, condition]) for no_features in feature_range]
+        list_ci = [CSFSBootstrap.get_ci(df.loc[no_features, condition]) for no_features in feature_range]
+        ci_delta = [ci[1] - ci[0] for ci in list_ci]
+        error_y = [d / 2 for d in ci_delta]
+
+        return go.Bar(
+            x=list(feature_range),
+            y=y,
+            name=condition,
+            error_y=dict(
+                type='data',
+                array=error_y,
+                visible=True
+            ),
+            marker=dict(
+                color=colors[condition]
+            ),
+            showlegend=show_legend
+        )
+
+    @staticmethod
+    def get_trace_extremes(df, feature_range, mode, label, color, show_legend):  # get trace for best / worst
+        symbols = {'Best': 'diamond', 'Worst': 'x'}
+        symbol = symbols[mode]
+        y = [np.mean(df.loc[no_features, mode]) for no_features in feature_range]
+        return go.Scatter(
+            x=list(feature_range),
+            y=y,
+            mode='markers',
+            name=label,
+            showlegend=show_legend,
+            marker=dict(
+                symbol=symbol,
+                size=10,
+                color=color,
+                line=dict(
+                    width=2,
+                )
+            )
+        )
+
+    def get_figure(self, data, feature_range=range(1, 10)):
+        """
+
+        :param data: dict with key in {'income', 'olympia', 'student'} and value pd.DataFrame with multilevel columns conditions -> {ci_hi, ci_lo, count, mean, std} and index: number of features
+        :param feature_range: limit of feature range to visualise
+        :param conditions: human conditions
+        :return:
+        """
+        datasets = sorted(list(data.keys()))
+        dataset_count = len(datasets)
+        fig = tools.make_subplots(rows=1, cols=dataset_count, subplot_titles=datasets)  # vertical_spacing=0.05
+        showlegend = True
+        for i in range(dataset_count):
+            df_dataset = data[datasets[i]]
+            print(datasets[i])
+            trace = self.get_trace(df_dataset, feature_range, 'KrowDD', showlegend)
+            fig.append_trace(trace, 1, i + 1)
+
+            trace = self.get_trace(df_dataset, feature_range, 'Human', showlegend)
+            fig.append_trace(trace, 1, i + 1)
+            # trace = self.get_trace(df_dataset, feature_range, 'Random', showlegend)
+            # fig.append_trace(trace, 1, i + 1)
+
+            trace_best = self.get_trace_extremes(df_dataset, feature_range, 'Best', label='Best', color=COLORS_HEX.GREEN, show_legend=showlegend)
+            trace_worst = self.get_trace_extremes(df_dataset, feature_range, 'Worst', label='Worst', color=COLORS_HEX.YELLOW, show_legend=showlegend)
+            fig.append_trace(trace_best, 1, i+1)
+            fig.append_trace(trace_worst, 1, i+1)
+
+
+            showlegend = False
+            fig['layout']['yaxis' + str(i + 1)].update(range=[0.35, 0.9])
             # break
 
         fig['layout'].update(

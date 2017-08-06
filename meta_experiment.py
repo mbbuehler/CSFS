@@ -13,7 +13,7 @@ from tabulate import tabulate
 from application.CSFSConditionEvaluation import AUCForOrderedFeaturesCalculator
 from application.EvaluationRanking import ERCondition, ERFilterer, ERParser
 from csfs_visualisations import HumanVsActualBarChart, AnswerDeltaVisualiserBox, HumanComparisonBarChart, \
-    CSFSVsHumansBarChart, ClassifiersComparisonBarChart
+    CSFSVsHumansBarChart, ClassifiersComparisonBarChart, CSFSVsHumansBarChart3
 from experiment_income import ExperimentIncome
 from experiment_olympia import ExperimentOlympia
 from experiment_student_por import ExperimentStudent
@@ -417,7 +417,7 @@ class MetaExperiment:
     def plot_bar_humans_vs_csfs2(self, feature_range=range(1,10)):
         """
         Bar chart comparing the combined condition (data scientsts + domain experts) with csfs
-        change classifier 3 times (data in, data out, vis filename)
+        v2.0: Shows points for all classifiers
         :param auto_plot:
         :return:
         """
@@ -440,6 +440,32 @@ class MetaExperiment:
         data_classifiers_human = self.get_data_classifiers(data.keys(), feature_range, conditions=['Data Scientists', 'Domain Experts'])
 
         fig = CSFSVsHumansBarChart().get_figure(data=data_filtered, data_classifiers_krowdd=data_classifiers_krowdd, data_classifiers_human=data_classifiers_human, data_best_classifier=data_best_classifier, data_worst_classifier=data_worst_classifier, feature_range=range(1, 10))
+        plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_with_classifiers)
+
+    def plot_bar_humans_vs_csfs3(self, feature_range=range(1,10)):
+        """
+        Bar chart comparing the combined condition (data scientsts + domain experts) with csfs
+        v3.0: Shows best/worst
+        :param auto_plot:
+        :return:
+        """
+        data = self.get_evaluation_data(classifier='nb')
+        def prepare_row(row):
+                """
+                Returns new row with two columns: combined experts and data scientists + cfs
+                :param row:
+                :return:
+                """
+                values_csfs = row['KrowDD']
+                values_human = row['Domain Experts'] + row['Data Scientists']
+                values_best = row['Best']
+                values_worst = row['Worst']
+                row_new = pd.Series({'KrowDD': values_csfs, 'Human': values_human, 'Best': values_best, 'Worst': values_worst,
+                                     'Random': row['Random']})
+                return row_new
+        data_filtered = {ds_name: data[ds_name].loc[feature_range].apply(prepare_row, axis='columns') for ds_name in data}
+
+        fig = CSFSVsHumansBarChart3().get_figure(data=data_filtered, feature_range=feature_range)
         plotly.offline.plot(fig, auto_open=True, filename=self.path_csfs_vs_humans_plot_with_classifiers)
 
     def table_human_vs_csfs(self):
@@ -716,7 +742,8 @@ def run():
 
     # experiment.compare_classifiers()
     # experiment.compare_classifiers_vis()
-    experiment.plot_bar_humans_vs_csfs2()
+    # experiment.plot_bar_humans_vs_csfs2()
+    experiment.plot_bar_humans_vs_csfs3()
     # experiment.save_data_for_paper()
     # experiment.plot_bar_comparing_humans2()
     # experiment.tmp()
