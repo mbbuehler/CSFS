@@ -3,24 +3,23 @@
 {% load static %}
 
 {% block content %}
+
     <div class="col-md-6 col-sm-12">
     <h1>Links</h1>
     <ul>
-    {% for label, link in links.items %}
-        <li><b>{{ label }}</b>: <a href="{{ link }}" target="_blank" title="{{ label }}">{{ link }}</a></li>
+    {% for l in links %}
+        <li><a href="{{ l.link }}" target="_blank" title="{{ l.name }}"><b>{{ l.name }}</b></a>: {{ l.description }}</li>
     {% endfor %}
     </ul>
     </div>
 
     <div class="col-md-6 col-sm-12">
-    <h2>Written Thesis</h2>
-        <p>I am not allowed to publish my thesis online at the moment. Feel free to contact me if you would like to know more: marcel DOT buehler AT uzh DOT ch . Thank you!</p>
-{#    <h1>Downloads</h1>#}
-{#    <ul>#}
-{#    {% for label, path in downloads.items %}#}
-{#        <li><b>{{ label }}</b>: <a href="{% static path %}" title="Click to download" target="_blank">Click to download</a></li>#}
-{#    {% endfor %}#}
-{#    </ul> #}
+    <h2>Publication</h2>
+        <p>
+        The KrowDD paper has been accepted for <a href="http://www.dslab.it.aoyama.ac.jp/dsaa2017/" title="DSAA 2017" target="_blank">
+        DSAA2017 - The 4th IEEE International Conference on Data Science and Advanced Analytics</a>. The conference takes place from 19-21st October 2017 in Tokyo.
+            All accepted papers are listed <a href="http://www.dslab.it.aoyama.ac.jp/dsaa2017/papers/" title="DSAA 2017 Papers" target="_blank">here</a>.
+    </p>
     </div>
 
 

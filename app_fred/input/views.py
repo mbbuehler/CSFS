@@ -1,4 +1,5 @@
 import json
+from collections import OrderedDict
 
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -17,7 +18,6 @@ def index(request):
     return render(request, 'input/index.html', {})
 
 
-
 @require_http_methods(['GET', 'POST'])
 def job_new(request, job_id=-1):
     newjobform = NewJobForm()
@@ -32,7 +32,7 @@ def job_new(request, job_id=-1):
         data = request.POST
         files = request.FILES
         newjobform = NewJobForm(data, files)
-        if newjobform.is_valid(): # does not work with csv reader TODO
+        if newjobform.is_valid():  # does not work with csv reader TODO
             # csrfmiddlewaretoken=CUa2JJgJv22UnYj0nynyX10lfFNW8gOSujjv3mzAESMuGEPZl2Tkx1bUZDNpLCPT&email=marcel.buehler%40uzh.ch&amt_key=abcde&features_csv=features_student.csv&target_mean=0.5&target_mean_question=&job_id=
             # job = JobFactory.create(data, files) if data['job_id'] == '' else JobFactory.update(data)
             job = JobFactory.create(data, files)
@@ -51,9 +51,9 @@ def job_status_select(request):
     messages = {}
     form = SelectJobForm()
     if 'uuid' in request.GET:
-        qs_job_id = Job.objects.\
-            filter(uuid=request.GET['uuid']).\
-            filter(email=request.GET['email']).\
+        qs_job_id = Job.objects. \
+            filter(uuid=request.GET['uuid']). \
+            filter(email=request.GET['email']). \
             values('id')
         form = SelectJobForm(request.GET)
         if qs_job_id.count() == 0:
@@ -96,6 +96,7 @@ def job_start(request, job_id):
     }
     return JsonResponse(context)
 
+
 @require_http_methods(['GET'])
 def job_result(request, job_id=-1):
     job = Job.objects.get(pk=job_id)
@@ -112,22 +113,31 @@ def job_result(request, job_id=-1):
     }
     return render(request, 'input/job_result.html', context)
 
+
 def links(request):
     context = {
         'downloads': {
             'Written Thesis': 'downloads/buehler_2017_krowdd.pdf'
         },
-        'links': {
-            'KrowDD GitHub': 'https://github.com/mbbuehler/KrowDD',
-            'PPLib GitHub': 'https://github.com/uzh/PPLib',
-        }
+        'links': [
+            {'name': 'KrowDD GitHub', 'link': 'https://github.com/mbbuehler/KrowDD',
+             'description': 'GitHub repository containing code for research, website and data for experiments'},
+            {'name': 'Conference DSAA 2017', 'link': 'http://www.dslab.it.aoyama.ac.jp/dsaa2017/',
+             'description': 'DSAA 2017'},
+            {'name': 'Research Chair', 'link': 'http://www.ifi.uzh.ch/en.html',
+             'description': 'Department of Informatics, University of Zurich'},
+            {'name': 'PPLib GitHub', 'link': 'https://github.com/uzh/PPLib', 'description': 'PPLib People Programming LIBrary: Easily find the best Crowdsourcing process for your application'},
+            {'name': 'About Me', 'link': 'https://www.linkedin.com/in/mcbuehler/', 'description': 'Profile on LinkedIn'},
+        ]
     }
     return render(request, 'input/links.html', context)
+
 
 def thanks(request):
     context = {
     }
     return render(request, 'input/thanks.html', context)
+
 
 def evaluation(request):
     context = {
@@ -149,6 +159,7 @@ def evaluation(request):
 
     }
     return render(request, 'input/evaluation.html', context)
+
 
 def domain_feedback(request, dataset_name):
     context = {
