@@ -1,7 +1,7 @@
 
 Expert estimates for feature relevance are imperfect
 ===================
-A crowdsourcing approach to estimate feature relevance before obtaining data.
+Our paper shows that expert estimates for feature relevance are imperfect. This is why we developed **KrowDD**: a crowdsourcing approach to estimate feature relevance before obtaining data.
 
 Keywords
 -------------
