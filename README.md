@@ -1,4 +1,5 @@
-KrowDD: Estimating the Usefulness of a Feature before Obtaining Data for It
+
+Expert estimates for feature relevance are imperfect
 ===================
 A crowdsourcing approach to estimate feature relevance before obtaining data.
 
@@ -8,7 +9,7 @@ Feature Ranking, Feature Selection, Crowdsourcing, Wisdom of Crowds, Machine Lea
 
 Functional Prototype
 -------------
-A working prototype is available [here](http://mbuehler.ch/krowdd). For more details, see Section "Web Application" bellow.
+A working prototype is available [here](http://mbuehler.ch/krowdd). For more details, see Section "Web Application" bellow or download the paper on the [UZH website](https://www.merlin.uzh.ch/publication/show/15636).
 
 Datasets (Preprocessed)
 -------------
